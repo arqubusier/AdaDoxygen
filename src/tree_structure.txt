@@ -4,6 +4,8 @@ unit_declaration_q
     - body_declarative_items_ql
 	  - function_body_declaration
 	  - variable_declaration
+	  - ordinary_type_declaration
+	  - procedure_body_declaration
 	  
 function_body_declaration
   - parameter_profile_ql (a list of parameter_specification)
@@ -14,3 +16,14 @@ function_body_declaration
 	    - identifier@ref_name holds datatype
   - result_profile_q
     - identifier@ref_name holds datatype
+	
+ordinary_type_declaration
+  - type_declaration_view_q
+    - record_type_definition
+	  - record_definition_q
+	    - record_definition
+		  - record_components_ql
+		    - component_declaration (list)
+			
+procedure_body_declaration
+  - same as function
