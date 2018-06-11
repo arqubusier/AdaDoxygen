@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <compilation_unit unit_kind="A_Procedure_Body" unit_class="A_Public_Declaration_And_Body" unit_origin="An_Application_Unit" unit_full_name="Calculator" def_name="Calculator" source_file="calculator.adb">
-   <sloc line="1" col="1" endline="53" endcol="15"/>
+   <sloc line="1" col="1" endline="95" endcol="15"/>
    <context_clause_elements_ql>
       <with_clause>
          <sloc line="1" col="1" endline="1" endcol="38"/>
@@ -77,7 +77,7 @@
    </context_clause_elements_ql>
    <unit_declaration_q>
       <procedure_body_declaration>
-         <sloc line="5" col="1" endline="53" endcol="15"/>
+         <sloc line="5" col="1" endline="95" endcol="15"/>
          <is_overriding_declaration_q>
             <not_an_element>
                <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -278,8 +278,26 @@
                <aspect_specifications_ql>
                </aspect_specifications_ql>
             </variable_declaration>
+            <implementation_defined_pragma pragma_name="Comment">
+               <sloc line="11" col="2" endline="11" endcol="58"/>
+               <pragma_argument_associations_ql>
+                  <pragma_argument_association>
+                     <sloc line="11" col="18" endline="11" endcol="56"/>
+                     <formal_parameter_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </formal_parameter_q>
+                     <actual_parameter_q>
+                        <string_literal type="ada://ordinary_type/Standard-1:1/String-1:1" lit_val="&quot;Sum integer x and y and return result&quot;">
+                           <sloc line="11" col="18" endline="11" endcol="56"/>
+                        </string_literal>
+                     </actual_parameter_q>
+                  </pragma_argument_association>
+               </pragma_argument_associations_ql>
+            </implementation_defined_pragma>
             <function_body_declaration>
-               <sloc line="11" col="2" endline="16" endcol="9"/>
+               <sloc line="12" col="2" endline="46" endcol="9"/>
                <is_overriding_declaration_q>
                   <not_an_element>
                      <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -291,16 +309,16 @@
                   </not_an_element>
                </is_not_overriding_declaration_q>
                <names_ql>
-                  <defining_identifier def_name="Add" def="ada://function_body/Calculator+5:11/Add+11:11" type="null">
-                     <sloc line="11" col="11" endline="11" endcol="13"/>
+                  <defining_identifier def_name="Add" def="ada://function_body/Calculator+5:11/Add+12:11" type="null">
+                     <sloc line="12" col="11" endline="12" endcol="13"/>
                   </defining_identifier>
                </names_ql>
                <parameter_profile_ql>
                   <parameter_specification mode="A_DEFAULT_IN_MODE">
-                     <sloc line="11" col="15" endline="11" endcol="24"/>
+                     <sloc line="12" col="15" endline="12" endcol="24"/>
                      <names_ql>
-                        <defining_identifier def_name="x" def="ada://parameter/Calculator+5:11/Add+11:11/x+11:15" type="null">
-                           <sloc line="11" col="15" endline="11" endcol="15"/>
+                        <defining_identifier def_name="x" def="ada://parameter/Calculator+5:11/Add+12:11/x+12:15" type="null">
+                           <sloc line="12" col="15" endline="12" endcol="15"/>
                         </defining_identifier>
                      </names_ql>
                      <has_aliased_q>
@@ -315,7 +333,7 @@
                      </has_null_exclusion_q>
                      <object_declaration_view_q>
                         <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                           <sloc line="11" col="18" endline="11" endcol="24"/>
+                           <sloc line="12" col="18" endline="12" endcol="24"/>
                         </identifier>
                      </object_declaration_view_q>
                      <initialization_expression_q>
@@ -325,10 +343,10 @@
                      </initialization_expression_q>
                   </parameter_specification>
                   <parameter_specification mode="A_DEFAULT_IN_MODE">
-                     <sloc line="11" col="27" endline="11" endcol="36"/>
+                     <sloc line="12" col="27" endline="12" endcol="36"/>
                      <names_ql>
-                        <defining_identifier def_name="y" def="ada://parameter/Calculator+5:11/Add+11:11/y+11:27" type="null">
-                           <sloc line="11" col="27" endline="11" endcol="27"/>
+                        <defining_identifier def_name="y" def="ada://parameter/Calculator+5:11/Add+12:11/y+12:27" type="null">
+                           <sloc line="12" col="27" endline="12" endcol="27"/>
                         </defining_identifier>
                      </names_ql>
                      <has_aliased_q>
@@ -343,7 +361,7 @@
                      </has_null_exclusion_q>
                      <object_declaration_view_q>
                         <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                           <sloc line="11" col="30" endline="11" endcol="36"/>
+                           <sloc line="12" col="30" endline="12" endcol="36"/>
                         </identifier>
                      </object_declaration_view_q>
                      <initialization_expression_q>
@@ -360,17 +378,17 @@
                </is_not_null_return_q>
                <result_profile_q>
                   <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                     <sloc line="11" col="46" endline="11" endcol="52"/>
+                     <sloc line="12" col="46" endline="12" endcol="52"/>
                   </identifier>
                </result_profile_q>
                <aspect_specifications_ql>
                </aspect_specifications_ql>
                <body_declarative_items_ql>
                   <variable_declaration>
-                     <sloc line="12" col="3" endline="12" endcol="13"/>
+                     <sloc line="13" col="3" endline="13" endcol="13"/>
                      <names_ql>
-                        <defining_identifier def_name="z" def="ada://variable/Calculator+5:11/Add+11:11/z+12:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                           <sloc line="12" col="3" endline="12" endcol="3"/>
+                        <defining_identifier def_name="z" def="ada://variable/Calculator+5:11/Add+12:11/z+13:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="13" col="3" endline="13" endcol="3"/>
                         </defining_identifier>
                      </names_ql>
                      <has_aliased_q>
@@ -380,7 +398,7 @@
                      </has_aliased_q>
                      <object_declaration_view_q>
                         <subtype_indication>
-                           <sloc line="12" col="6" endline="12" endcol="12"/>
+                           <sloc line="13" col="6" endline="13" endcol="12"/>
                            <has_aliased_q>
                               <not_an_element>
                                  <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -393,7 +411,7 @@
                            </has_null_exclusion_q>
                            <subtype_mark_q>
                               <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                                 <sloc line="12" col="6" endline="12" endcol="12"/>
+                                 <sloc line="13" col="6" endline="13" endcol="12"/>
                               </identifier>
                            </subtype_mark_q>
                            <subtype_constraint_q>
@@ -411,49 +429,613 @@
                      <aspect_specifications_ql>
                      </aspect_specifications_ql>
                   </variable_declaration>
+                  <implementation_defined_pragma pragma_name="Comment">
+                     <sloc line="15" col="3" endline="15" endcol="47"/>
+                     <pragma_argument_associations_ql>
+                        <pragma_argument_association>
+                           <sloc line="15" col="19" endline="15" endcol="45"/>
+                           <formal_parameter_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </formal_parameter_q>
+                           <actual_parameter_q>
+                              <string_literal type="ada://ordinary_type/Standard-1:1/String-1:1" lit_val="&quot;This is a nested function&quot;">
+                                 <sloc line="15" col="19" endline="15" endcol="45"/>
+                              </string_literal>
+                           </actual_parameter_q>
+                        </pragma_argument_association>
+                     </pragma_argument_associations_ql>
+                  </implementation_defined_pragma>
+                  <function_body_declaration>
+                     <sloc line="16" col="3" endline="36" endcol="17"/>
+                     <is_overriding_declaration_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </is_overriding_declaration_q>
+                     <is_not_overriding_declaration_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </is_not_overriding_declaration_q>
+                     <names_ql>
+                        <defining_identifier def_name="AddSubFunc" def="ada://function_body/Calculator+5:11/Add+12:11/AddSubFunc+16:12" type="null">
+                           <sloc line="16" col="12" endline="16" endcol="21"/>
+                        </defining_identifier>
+                     </names_ql>
+                     <parameter_profile_ql>
+                        <parameter_specification mode="A_DEFAULT_IN_MODE">
+                           <sloc line="16" col="23" endline="16" endcol="38"/>
+                           <names_ql>
+                              <defining_identifier def_name="someFloat" def="ada://parameter/Calculator+5:11/Add+12:11/AddSubFunc+16:12/someFloat+16:23" type="null">
+                                 <sloc line="16" col="23" endline="16" endcol="31"/>
+                              </defining_identifier>
+                           </names_ql>
+                           <has_aliased_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </has_aliased_q>
+                           <has_null_exclusion_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </has_null_exclusion_q>
+                           <object_declaration_view_q>
+                              <identifier ref_name="Float" ref="ada://ordinary_type/Standard-1:1/Float-1:1" type="null">
+                                 <sloc line="16" col="34" endline="16" endcol="38"/>
+                              </identifier>
+                           </object_declaration_view_q>
+                           <initialization_expression_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </initialization_expression_q>
+                        </parameter_specification>
+                     </parameter_profile_ql>
+                     <is_not_null_return_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </is_not_null_return_q>
+                     <result_profile_q>
+                        <identifier ref_name="Float" ref="ada://ordinary_type/Standard-1:1/Float-1:1" type="null">
+                           <sloc line="16" col="48" endline="16" endcol="52"/>
+                        </identifier>
+                     </result_profile_q>
+                     <aspect_specifications_ql>
+                     </aspect_specifications_ql>
+                     <body_declarative_items_ql>
+                        <variable_declaration>
+                           <sloc line="17" col="4" endline="17" endcol="13"/>
+                           <names_ql>
+                              <defining_identifier def_name="z2" def="ada://variable/Calculator+5:11/Add+12:11/AddSubFunc+16:12/z2+17:4" type="ada://ordinary_type/Standard-1:1/Float-1:1">
+                                 <sloc line="17" col="4" endline="17" endcol="5"/>
+                              </defining_identifier>
+                           </names_ql>
+                           <has_aliased_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </has_aliased_q>
+                           <object_declaration_view_q>
+                              <subtype_indication>
+                                 <sloc line="17" col="8" endline="17" endcol="12"/>
+                                 <has_aliased_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_aliased_q>
+                                 <has_null_exclusion_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_null_exclusion_q>
+                                 <subtype_mark_q>
+                                    <identifier ref_name="Float" ref="ada://ordinary_type/Standard-1:1/Float-1:1" type="null">
+                                       <sloc line="17" col="8" endline="17" endcol="12"/>
+                                    </identifier>
+                                 </subtype_mark_q>
+                                 <subtype_constraint_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </subtype_constraint_q>
+                              </subtype_indication>
+                           </object_declaration_view_q>
+                           <initialization_expression_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </initialization_expression_q>
+                           <aspect_specifications_ql>
+                           </aspect_specifications_ql>
+                        </variable_declaration>
+                        <implementation_defined_pragma pragma_name="Comment">
+                           <sloc line="19" col="4" endline="19" endcol="55"/>
+                           <pragma_argument_associations_ql>
+                              <pragma_argument_association>
+                                 <sloc line="19" col="20" endline="19" endcol="53"/>
+                                 <formal_parameter_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </formal_parameter_q>
+                                 <actual_parameter_q>
+                                    <string_literal type="ada://ordinary_type/Standard-1:1/String-1:1" lit_val="&quot;This is a nested nested function&quot;">
+                                       <sloc line="19" col="20" endline="19" endcol="53"/>
+                                    </string_literal>
+                                 </actual_parameter_q>
+                              </pragma_argument_association>
+                           </pragma_argument_associations_ql>
+                        </implementation_defined_pragma>
+                        <function_body_declaration>
+                           <sloc line="20" col="4" endline="25" endcol="21"/>
+                           <is_overriding_declaration_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </is_overriding_declaration_q>
+                           <is_not_overriding_declaration_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </is_not_overriding_declaration_q>
+                           <names_ql>
+                              <defining_identifier def_name="AddSubSubFunc" def="ada://function_body/Calculator+5:11/Add+12:11/AddSubFunc+16:12/AddSubSubFunc+20:13" type="null">
+                                 <sloc line="20" col="13" endline="20" endcol="25"/>
+                              </defining_identifier>
+                           </names_ql>
+                           <parameter_profile_ql>
+                              <parameter_specification mode="A_DEFAULT_IN_MODE">
+                                 <sloc line="20" col="27" endline="20" endcol="47"/>
+                                 <names_ql>
+                                    <defining_identifier def_name="someOtherFloat" def="ada://parameter/Calculator+5:11/Add+12:11/AddSubFunc+16:12/AddSubSubFunc+20:13/someOtherFloat+20:27" type="null">
+                                       <sloc line="20" col="27" endline="20" endcol="40"/>
+                                    </defining_identifier>
+                                 </names_ql>
+                                 <has_aliased_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_aliased_q>
+                                 <has_null_exclusion_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_null_exclusion_q>
+                                 <object_declaration_view_q>
+                                    <identifier ref_name="Float" ref="ada://ordinary_type/Standard-1:1/Float-1:1" type="null">
+                                       <sloc line="20" col="43" endline="20" endcol="47"/>
+                                    </identifier>
+                                 </object_declaration_view_q>
+                                 <initialization_expression_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </initialization_expression_q>
+                              </parameter_specification>
+                           </parameter_profile_ql>
+                           <is_not_null_return_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </is_not_null_return_q>
+                           <result_profile_q>
+                              <identifier ref_name="Float" ref="ada://ordinary_type/Standard-1:1/Float-1:1" type="null">
+                                 <sloc line="20" col="57" endline="20" endcol="61"/>
+                              </identifier>
+                           </result_profile_q>
+                           <aspect_specifications_ql>
+                           </aspect_specifications_ql>
+                           <body_declarative_items_ql>
+                              <variable_declaration>
+                                 <sloc line="21" col="5" endline="21" endcol="14"/>
+                                 <names_ql>
+                                    <defining_identifier def_name="z3" def="ada://variable/Calculator+5:11/Add+12:11/AddSubFunc+16:12/AddSubSubFunc+20:13/z3+21:5" type="ada://ordinary_type/Standard-1:1/Float-1:1">
+                                       <sloc line="21" col="5" endline="21" endcol="6"/>
+                                    </defining_identifier>
+                                 </names_ql>
+                                 <has_aliased_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_aliased_q>
+                                 <object_declaration_view_q>
+                                    <subtype_indication>
+                                       <sloc line="21" col="9" endline="21" endcol="13"/>
+                                       <has_aliased_q>
+                                          <not_an_element>
+                                             <sloc line="1" col="1" endline="0" endcol="0"/>
+                                          </not_an_element>
+                                       </has_aliased_q>
+                                       <has_null_exclusion_q>
+                                          <not_an_element>
+                                             <sloc line="1" col="1" endline="0" endcol="0"/>
+                                          </not_an_element>
+                                       </has_null_exclusion_q>
+                                       <subtype_mark_q>
+                                          <identifier ref_name="Float" ref="ada://ordinary_type/Standard-1:1/Float-1:1" type="null">
+                                             <sloc line="21" col="9" endline="21" endcol="13"/>
+                                          </identifier>
+                                       </subtype_mark_q>
+                                       <subtype_constraint_q>
+                                          <not_an_element>
+                                             <sloc line="1" col="1" endline="0" endcol="0"/>
+                                          </not_an_element>
+                                       </subtype_constraint_q>
+                                    </subtype_indication>
+                                 </object_declaration_view_q>
+                                 <initialization_expression_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </initialization_expression_q>
+                                 <aspect_specifications_ql>
+                                 </aspect_specifications_ql>
+                              </variable_declaration>
+                           </body_declarative_items_ql>
+                           <body_statements_ql>
+                              <assignment_statement>
+                                 <sloc line="23" col="5" endline="23" endcol="25"/>
+                                 <label_names_ql>
+                                 </label_names_ql>
+                                 <assignment_variable_name_q>
+                                    <identifier ref_name="z3" ref="ada://variable/Calculator+5:11/Add+12:11/AddSubFunc+16:12/AddSubSubFunc+20:13/z3+21:5" type="ada://ordinary_type/Standard-1:1/Float-1:1">
+                                       <sloc line="23" col="5" endline="23" endcol="6"/>
+                                    </identifier>
+                                 </assignment_variable_name_q>
+                                 <assignment_expression_q>
+                                    <identifier ref_name="someOtherFloat" ref="ada://parameter/Calculator+5:11/Add+12:11/AddSubFunc+16:12/AddSubSubFunc+20:13/someOtherFloat+20:27" type="ada://ordinary_type/Standard-1:1/Float-1:1">
+                                       <sloc line="23" col="11" endline="23" endcol="24"/>
+                                    </identifier>
+                                 </assignment_expression_q>
+                              </assignment_statement>
+                              <return_statement>
+                                 <sloc line="24" col="5" endline="24" endcol="14"/>
+                                 <label_names_ql>
+                                 </label_names_ql>
+                                 <return_expression_q>
+                                    <identifier ref_name="z3" ref="ada://variable/Calculator+5:11/Add+12:11/AddSubFunc+16:12/AddSubSubFunc+20:13/z3+21:5" type="ada://ordinary_type/Standard-1:1/Float-1:1">
+                                       <sloc line="24" col="12" endline="24" endcol="13"/>
+                                    </identifier>
+                                 </return_expression_q>
+                              </return_statement>
+                           </body_statements_ql>
+                           <body_exception_handlers_ql>
+                           </body_exception_handlers_ql>
+                        </function_body_declaration>
+                        <procedure_body_declaration>
+                           <sloc line="27" col="4" endline="31" endcol="28"/>
+                           <is_overriding_declaration_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </is_overriding_declaration_q>
+                           <is_not_overriding_declaration_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </is_not_overriding_declaration_q>
+                           <names_ql>
+                              <defining_identifier def_name="Print_numbers_nested" def="ada://procedure_body/Calculator+5:11/Add+12:11/AddSubFunc+16:12/Print_numbers_nested+27:14" type="null">
+                                 <sloc line="27" col="14" endline="27" endcol="33"/>
+                              </defining_identifier>
+                           </names_ql>
+                           <parameter_profile_ql>
+                              <parameter_specification mode="A_DEFAULT_IN_MODE">
+                                 <sloc line="27" col="35" endline="27" endcol="46"/>
+                                 <names_ql>
+                                    <defining_identifier def_name="nr1" def="ada://parameter/Calculator+5:11/Add+12:11/AddSubFunc+16:12/Print_numbers_nested+27:14/nr1+27:35" type="null">
+                                       <sloc line="27" col="35" endline="27" endcol="37"/>
+                                    </defining_identifier>
+                                 </names_ql>
+                                 <has_aliased_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_aliased_q>
+                                 <has_null_exclusion_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_null_exclusion_q>
+                                 <object_declaration_view_q>
+                                    <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
+                                       <sloc line="27" col="40" endline="27" endcol="46"/>
+                                    </identifier>
+                                 </object_declaration_view_q>
+                                 <initialization_expression_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </initialization_expression_q>
+                              </parameter_specification>
+                              <parameter_specification mode="A_DEFAULT_IN_MODE">
+                                 <sloc line="27" col="49" endline="27" endcol="60"/>
+                                 <names_ql>
+                                    <defining_identifier def_name="nr2" def="ada://parameter/Calculator+5:11/Add+12:11/AddSubFunc+16:12/Print_numbers_nested+27:14/nr2+27:49" type="null">
+                                       <sloc line="27" col="49" endline="27" endcol="51"/>
+                                    </defining_identifier>
+                                 </names_ql>
+                                 <has_aliased_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_aliased_q>
+                                 <has_null_exclusion_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_null_exclusion_q>
+                                 <object_declaration_view_q>
+                                    <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
+                                       <sloc line="27" col="54" endline="27" endcol="60"/>
+                                    </identifier>
+                                 </object_declaration_view_q>
+                                 <initialization_expression_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </initialization_expression_q>
+                              </parameter_specification>
+                           </parameter_profile_ql>
+                           <aspect_specifications_ql>
+                           </aspect_specifications_ql>
+                           <body_declarative_items_ql>
+                           </body_declarative_items_ql>
+                           <body_statements_ql>
+                              <procedure_call_statement>
+                                 <sloc line="29" col="5" endline="29" endcol="13"/>
+                                 <label_names_ql>
+                                 </label_names_ql>
+                                 <called_name_q>
+                                    <identifier ref_name="Put" ref="ada://procedure/Ada.Integer_Text_IO-18:9/Ada.Integer_Text_IO-1:1/Put-1:1" type="null">
+                                       <sloc line="29" col="5" endline="29" endcol="7"/>
+                                    </identifier>
+                                 </called_name_q>
+                                 <call_statement_parameters_ql>
+                                    <parameter_association>
+                                       <sloc line="29" col="9" endline="29" endcol="11"/>
+                                       <formal_parameter_q>
+                                          <not_an_element>
+                                             <sloc line="1" col="1" endline="0" endcol="0"/>
+                                          </not_an_element>
+                                       </formal_parameter_q>
+                                       <actual_parameter_q>
+                                          <identifier ref_name="nr1" ref="ada://parameter/Calculator+5:11/Add+12:11/AddSubFunc+16:12/Print_numbers_nested+27:14/nr1+27:35" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                             <sloc line="29" col="9" endline="29" endcol="11"/>
+                                          </identifier>
+                                       </actual_parameter_q>
+                                    </parameter_association>
+                                 </call_statement_parameters_ql>
+                                 <is_prefix_notation_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </is_prefix_notation_q>
+                              </procedure_call_statement>
+                              <procedure_call_statement>
+                                 <sloc line="30" col="5" endline="30" endcol="13"/>
+                                 <label_names_ql>
+                                 </label_names_ql>
+                                 <called_name_q>
+                                    <identifier ref_name="Put" ref="ada://procedure/Ada.Integer_Text_IO-18:9/Ada.Integer_Text_IO-1:1/Put-1:1" type="null">
+                                       <sloc line="30" col="5" endline="30" endcol="7"/>
+                                    </identifier>
+                                 </called_name_q>
+                                 <call_statement_parameters_ql>
+                                    <parameter_association>
+                                       <sloc line="30" col="9" endline="30" endcol="11"/>
+                                       <formal_parameter_q>
+                                          <not_an_element>
+                                             <sloc line="1" col="1" endline="0" endcol="0"/>
+                                          </not_an_element>
+                                       </formal_parameter_q>
+                                       <actual_parameter_q>
+                                          <identifier ref_name="nr2" ref="ada://parameter/Calculator+5:11/Add+12:11/AddSubFunc+16:12/Print_numbers_nested+27:14/nr2+27:49" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                             <sloc line="30" col="9" endline="30" endcol="11"/>
+                                          </identifier>
+                                       </actual_parameter_q>
+                                    </parameter_association>
+                                 </call_statement_parameters_ql>
+                                 <is_prefix_notation_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </is_prefix_notation_q>
+                              </procedure_call_statement>
+                           </body_statements_ql>
+                           <body_exception_handlers_ql>
+                           </body_exception_handlers_ql>
+                        </procedure_body_declaration>
+                     </body_declarative_items_ql>
+                     <body_statements_ql>
+                        <assignment_statement>
+                           <sloc line="34" col="4" endline="34" endcol="19"/>
+                           <label_names_ql>
+                           </label_names_ql>
+                           <assignment_variable_name_q>
+                              <identifier ref_name="z2" ref="ada://variable/Calculator+5:11/Add+12:11/AddSubFunc+16:12/z2+17:4" type="ada://ordinary_type/Standard-1:1/Float-1:1">
+                                 <sloc line="34" col="4" endline="34" endcol="5"/>
+                              </identifier>
+                           </assignment_variable_name_q>
+                           <assignment_expression_q>
+                              <identifier ref_name="someFloat" ref="ada://parameter/Calculator+5:11/Add+12:11/AddSubFunc+16:12/someFloat+16:23" type="ada://ordinary_type/Standard-1:1/Float-1:1">
+                                 <sloc line="34" col="10" endline="34" endcol="18"/>
+                              </identifier>
+                           </assignment_expression_q>
+                        </assignment_statement>
+                        <return_statement>
+                           <sloc line="35" col="4" endline="35" endcol="13"/>
+                           <label_names_ql>
+                           </label_names_ql>
+                           <return_expression_q>
+                              <identifier ref_name="z2" ref="ada://variable/Calculator+5:11/Add+12:11/AddSubFunc+16:12/z2+17:4" type="ada://ordinary_type/Standard-1:1/Float-1:1">
+                                 <sloc line="35" col="11" endline="35" endcol="12"/>
+                              </identifier>
+                           </return_expression_q>
+                        </return_statement>
+                     </body_statements_ql>
+                     <body_exception_handlers_ql>
+                     </body_exception_handlers_ql>
+                  </function_body_declaration>
+                  <ordinary_type_declaration>
+                     <sloc line="38" col="3" endline="41" endcol="13"/>
+                     <names_ql>
+                        <defining_identifier def_name="StringTest_type" def="ada://ordinary_type/Calculator+5:11/Add+12:11/StringTest_type+38:8" type="null">
+                           <sloc line="38" col="8" endline="38" endcol="22"/>
+                        </defining_identifier>
+                     </names_ql>
+                     <discriminant_part_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </discriminant_part_q>
+                     <type_declaration_view_q>
+                        <record_type_definition>
+                           <sloc line="39" col="3" endline="41" endcol="12"/>
+                           <has_abstract_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </has_abstract_q>
+                           <has_limited_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </has_limited_q>
+                           <record_definition_q>
+                              <record_definition>
+                                 <sloc line="39" col="3" endline="41" endcol="12"/>
+                                 <has_limited_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </has_limited_q>
+                                 <record_components_ql>
+                                    <component_declaration>
+                                       <sloc line="40" col="4" endline="40" endcol="22"/>
+                                       <names_ql>
+                                          <defining_identifier def_name="str" def="ada://component/Calculator+5:11/Add+12:11/StringTest_type+38:8/str+40:4" type="null">
+                                             <sloc line="40" col="4" endline="40" endcol="6"/>
+                                          </defining_identifier>
+                                       </names_ql>
+                                       <has_aliased_q>
+                                          <not_an_element>
+                                             <sloc line="1" col="1" endline="0" endcol="0"/>
+                                          </not_an_element>
+                                       </has_aliased_q>
+                                       <object_declaration_view_q>
+                                          <component_definition>
+                                             <sloc line="40" col="10" endline="40" endcol="21"/>
+                                             <has_aliased_q>
+                                                <not_an_element>
+                                                   <sloc line="1" col="1" endline="0" endcol="0"/>
+                                                </not_an_element>
+                                             </has_aliased_q>
+                                             <component_definition_view_q>
+                                                <subtype_indication>
+                                                   <sloc line="40" col="10" endline="40" endcol="21"/>
+                                                   <has_aliased_q>
+                                                      <not_an_element>
+                                                         <sloc line="1" col="1" endline="0" endcol="0"/>
+                                                      </not_an_element>
+                                                   </has_aliased_q>
+                                                   <has_null_exclusion_q>
+                                                      <not_an_element>
+                                                         <sloc line="1" col="1" endline="0" endcol="0"/>
+                                                      </not_an_element>
+                                                   </has_null_exclusion_q>
+                                                   <subtype_mark_q>
+                                                      <identifier ref_name="String" ref="ada://ordinary_type/Standard-1:1/String-1:1" type="null">
+                                                         <sloc line="40" col="10" endline="40" endcol="15"/>
+                                                      </identifier>
+                                                   </subtype_mark_q>
+                                                   <subtype_constraint_q>
+                                                      <index_constraint>
+                                                         <sloc line="40" col="16" endline="40" endcol="21"/>
+                                                         <discrete_ranges_ql>
+                                                            <discrete_simple_expression_range>
+                                                               <sloc line="40" col="17" endline="40" endcol="20"/>
+                                                               <lower_bound_q>
+                                                                  <integer_literal type="universal integer" lit_val="1">
+                                                                     <sloc line="40" col="17" endline="40" endcol="17"/>
+                                                                  </integer_literal>
+                                                               </lower_bound_q>
+                                                               <upper_bound_q>
+                                                                  <integer_literal type="universal integer" lit_val="2">
+                                                                     <sloc line="40" col="20" endline="40" endcol="20"/>
+                                                                  </integer_literal>
+                                                               </upper_bound_q>
+                                                            </discrete_simple_expression_range>
+                                                         </discrete_ranges_ql>
+                                                      </index_constraint>
+                                                   </subtype_constraint_q>
+                                                </subtype_indication>
+                                             </component_definition_view_q>
+                                          </component_definition>
+                                       </object_declaration_view_q>
+                                       <initialization_expression_q>
+                                          <not_an_element>
+                                             <sloc line="1" col="1" endline="0" endcol="0"/>
+                                          </not_an_element>
+                                       </initialization_expression_q>
+                                       <aspect_specifications_ql>
+                                       </aspect_specifications_ql>
+                                    </component_declaration>
+                                 </record_components_ql>
+                              </record_definition>
+                           </record_definition_q>
+                        </record_type_definition>
+                     </type_declaration_view_q>
+                     <aspect_specifications_ql>
+                     </aspect_specifications_ql>
+                  </ordinary_type_declaration>
                </body_declarative_items_ql>
                <body_statements_ql>
                   <assignment_statement>
-                     <sloc line="14" col="3" endline="14" endcol="13"/>
+                     <sloc line="44" col="3" endline="44" endcol="13"/>
                      <label_names_ql>
                      </label_names_ql>
                      <assignment_variable_name_q>
-                        <identifier ref_name="z" ref="ada://variable/Calculator+5:11/Add+11:11/z+12:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                           <sloc line="14" col="3" endline="14" endcol="3"/>
+                        <identifier ref_name="z" ref="ada://variable/Calculator+5:11/Add+12:11/z+13:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="44" col="3" endline="44" endcol="3"/>
                         </identifier>
                      </assignment_variable_name_q>
                      <assignment_expression_q>
                         <function_call type="ada://ordinary_type/Standard-1:1/Integer-1:1" checks="do_overflow_check">
-                           <sloc line="14" col="8" endline="14" endcol="12"/>
+                           <sloc line="44" col="8" endline="44" endcol="12"/>
                            <prefix_q>
                               <plus_operator ref_name="&quot;+&quot;" ref="implicit declaration" type="null">
-                                 <sloc line="14" col="10" endline="14" endcol="10"/>
+                                 <sloc line="44" col="10" endline="44" endcol="10"/>
                               </plus_operator>
                            </prefix_q>
                            <function_call_parameters_ql>
                               <parameter_association>
-                                 <sloc line="14" col="8" endline="14" endcol="8"/>
+                                 <sloc line="44" col="8" endline="44" endcol="8"/>
                                  <formal_parameter_q>
                                     <not_an_element>
                                        <sloc line="1" col="1" endline="0" endcol="0"/>
                                     </not_an_element>
                                  </formal_parameter_q>
                                  <actual_parameter_q>
-                                    <identifier ref_name="x" ref="ada://parameter/Calculator+5:11/Add+11:11/x+11:15" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                       <sloc line="14" col="8" endline="14" endcol="8"/>
+                                    <identifier ref_name="x" ref="ada://parameter/Calculator+5:11/Add+12:11/x+12:15" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                       <sloc line="44" col="8" endline="44" endcol="8"/>
                                     </identifier>
                                  </actual_parameter_q>
                               </parameter_association>
                               <parameter_association>
-                                 <sloc line="14" col="12" endline="14" endcol="12"/>
+                                 <sloc line="44" col="12" endline="44" endcol="12"/>
                                  <formal_parameter_q>
                                     <not_an_element>
                                        <sloc line="1" col="1" endline="0" endcol="0"/>
                                     </not_an_element>
                                  </formal_parameter_q>
                                  <actual_parameter_q>
-                                    <identifier ref_name="y" ref="ada://parameter/Calculator+5:11/Add+11:11/y+11:27" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                       <sloc line="14" col="12" endline="14" endcol="12"/>
+                                    <identifier ref_name="y" ref="ada://parameter/Calculator+5:11/Add+12:11/y+12:27" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                       <sloc line="44" col="12" endline="44" endcol="12"/>
                                     </identifier>
                                  </actual_parameter_q>
                               </parameter_association>
@@ -472,12 +1054,12 @@
                      </assignment_expression_q>
                   </assignment_statement>
                   <return_statement>
-                     <sloc line="15" col="3" endline="15" endcol="11"/>
+                     <sloc line="45" col="3" endline="45" endcol="11"/>
                      <label_names_ql>
                      </label_names_ql>
                      <return_expression_q>
-                        <identifier ref_name="z" ref="ada://variable/Calculator+5:11/Add+11:11/z+12:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                           <sloc line="15" col="10" endline="15" endcol="10"/>
+                        <identifier ref_name="z" ref="ada://variable/Calculator+5:11/Add+12:11/z+13:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="45" col="10" endline="45" endcol="10"/>
                         </identifier>
                      </return_expression_q>
                   </return_statement>
@@ -486,7 +1068,7 @@
                </body_exception_handlers_ql>
             </function_body_declaration>
             <function_body_declaration>
-               <sloc line="18" col="2" endline="23" endcol="9"/>
+               <sloc line="48" col="2" endline="53" endcol="9"/>
                <is_overriding_declaration_q>
                   <not_an_element>
                      <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -498,16 +1080,16 @@
                   </not_an_element>
                </is_not_overriding_declaration_q>
                <names_ql>
-                  <defining_identifier def_name="Sub" def="ada://function_body/Calculator+5:11/Sub+18:11" type="null">
-                     <sloc line="18" col="11" endline="18" endcol="13"/>
+                  <defining_identifier def_name="Sub" def="ada://function_body/Calculator+5:11/Sub+48:11" type="null">
+                     <sloc line="48" col="11" endline="48" endcol="13"/>
                   </defining_identifier>
                </names_ql>
                <parameter_profile_ql>
                   <parameter_specification mode="A_DEFAULT_IN_MODE">
-                     <sloc line="18" col="15" endline="18" endcol="24"/>
+                     <sloc line="48" col="15" endline="48" endcol="24"/>
                      <names_ql>
-                        <defining_identifier def_name="a" def="ada://parameter/Calculator+5:11/Sub+18:11/a+18:15" type="null">
-                           <sloc line="18" col="15" endline="18" endcol="15"/>
+                        <defining_identifier def_name="a" def="ada://parameter/Calculator+5:11/Sub+48:11/a+48:15" type="null">
+                           <sloc line="48" col="15" endline="48" endcol="15"/>
                         </defining_identifier>
                      </names_ql>
                      <has_aliased_q>
@@ -522,7 +1104,7 @@
                      </has_null_exclusion_q>
                      <object_declaration_view_q>
                         <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                           <sloc line="18" col="18" endline="18" endcol="24"/>
+                           <sloc line="48" col="18" endline="48" endcol="24"/>
                         </identifier>
                      </object_declaration_view_q>
                      <initialization_expression_q>
@@ -532,10 +1114,10 @@
                      </initialization_expression_q>
                   </parameter_specification>
                   <parameter_specification mode="A_DEFAULT_IN_MODE">
-                     <sloc line="18" col="27" endline="18" endcol="36"/>
+                     <sloc line="48" col="27" endline="48" endcol="36"/>
                      <names_ql>
-                        <defining_identifier def_name="b" def="ada://parameter/Calculator+5:11/Sub+18:11/b+18:27" type="null">
-                           <sloc line="18" col="27" endline="18" endcol="27"/>
+                        <defining_identifier def_name="b" def="ada://parameter/Calculator+5:11/Sub+48:11/b+48:27" type="null">
+                           <sloc line="48" col="27" endline="48" endcol="27"/>
                         </defining_identifier>
                      </names_ql>
                      <has_aliased_q>
@@ -550,7 +1132,7 @@
                      </has_null_exclusion_q>
                      <object_declaration_view_q>
                         <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                           <sloc line="18" col="30" endline="18" endcol="36"/>
+                           <sloc line="48" col="30" endline="48" endcol="36"/>
                         </identifier>
                      </object_declaration_view_q>
                      <initialization_expression_q>
@@ -567,17 +1149,17 @@
                </is_not_null_return_q>
                <result_profile_q>
                   <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                     <sloc line="18" col="46" endline="18" endcol="52"/>
+                     <sloc line="48" col="46" endline="48" endcol="52"/>
                   </identifier>
                </result_profile_q>
                <aspect_specifications_ql>
                </aspect_specifications_ql>
                <body_declarative_items_ql>
                   <variable_declaration>
-                     <sloc line="19" col="3" endline="19" endcol="13"/>
+                     <sloc line="49" col="3" endline="49" endcol="13"/>
                      <names_ql>
-                        <defining_identifier def_name="z" def="ada://variable/Calculator+5:11/Sub+18:11/z+19:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                           <sloc line="19" col="3" endline="19" endcol="3"/>
+                        <defining_identifier def_name="z" def="ada://variable/Calculator+5:11/Sub+48:11/z+49:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="49" col="3" endline="49" endcol="3"/>
                         </defining_identifier>
                      </names_ql>
                      <has_aliased_q>
@@ -587,7 +1169,7 @@
                      </has_aliased_q>
                      <object_declaration_view_q>
                         <subtype_indication>
-                           <sloc line="19" col="6" endline="19" endcol="12"/>
+                           <sloc line="49" col="6" endline="49" endcol="12"/>
                            <has_aliased_q>
                               <not_an_element>
                                  <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -600,7 +1182,7 @@
                            </has_null_exclusion_q>
                            <subtype_mark_q>
                               <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                                 <sloc line="19" col="6" endline="19" endcol="12"/>
+                                 <sloc line="49" col="6" endline="49" endcol="12"/>
                               </identifier>
                            </subtype_mark_q>
                            <subtype_constraint_q>
@@ -621,46 +1203,46 @@
                </body_declarative_items_ql>
                <body_statements_ql>
                   <assignment_statement>
-                     <sloc line="21" col="3" endline="21" endcol="13"/>
+                     <sloc line="51" col="3" endline="51" endcol="13"/>
                      <label_names_ql>
                      </label_names_ql>
                      <assignment_variable_name_q>
-                        <identifier ref_name="z" ref="ada://variable/Calculator+5:11/Sub+18:11/z+19:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                           <sloc line="21" col="3" endline="21" endcol="3"/>
+                        <identifier ref_name="z" ref="ada://variable/Calculator+5:11/Sub+48:11/z+49:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="51" col="3" endline="51" endcol="3"/>
                         </identifier>
                      </assignment_variable_name_q>
                      <assignment_expression_q>
                         <function_call type="ada://ordinary_type/Standard-1:1/Integer-1:1" checks="do_overflow_check">
-                           <sloc line="21" col="8" endline="21" endcol="12"/>
+                           <sloc line="51" col="8" endline="51" endcol="12"/>
                            <prefix_q>
                               <minus_operator ref_name="&quot;-&quot;" ref="implicit declaration" type="null">
-                                 <sloc line="21" col="10" endline="21" endcol="10"/>
+                                 <sloc line="51" col="10" endline="51" endcol="10"/>
                               </minus_operator>
                            </prefix_q>
                            <function_call_parameters_ql>
                               <parameter_association>
-                                 <sloc line="21" col="8" endline="21" endcol="8"/>
+                                 <sloc line="51" col="8" endline="51" endcol="8"/>
                                  <formal_parameter_q>
                                     <not_an_element>
                                        <sloc line="1" col="1" endline="0" endcol="0"/>
                                     </not_an_element>
                                  </formal_parameter_q>
                                  <actual_parameter_q>
-                                    <identifier ref_name="a" ref="ada://parameter/Calculator+5:11/Sub+18:11/a+18:15" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                       <sloc line="21" col="8" endline="21" endcol="8"/>
+                                    <identifier ref_name="a" ref="ada://parameter/Calculator+5:11/Sub+48:11/a+48:15" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                       <sloc line="51" col="8" endline="51" endcol="8"/>
                                     </identifier>
                                  </actual_parameter_q>
                               </parameter_association>
                               <parameter_association>
-                                 <sloc line="21" col="12" endline="21" endcol="12"/>
+                                 <sloc line="51" col="12" endline="51" endcol="12"/>
                                  <formal_parameter_q>
                                     <not_an_element>
                                        <sloc line="1" col="1" endline="0" endcol="0"/>
                                     </not_an_element>
                                  </formal_parameter_q>
                                  <actual_parameter_q>
-                                    <identifier ref_name="b" ref="ada://parameter/Calculator+5:11/Sub+18:11/b+18:27" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                       <sloc line="21" col="12" endline="21" endcol="12"/>
+                                    <identifier ref_name="b" ref="ada://parameter/Calculator+5:11/Sub+48:11/b+48:27" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                       <sloc line="51" col="12" endline="51" endcol="12"/>
                                     </identifier>
                                  </actual_parameter_q>
                               </parameter_association>
@@ -679,12 +1261,12 @@
                      </assignment_expression_q>
                   </assignment_statement>
                   <return_statement>
-                     <sloc line="22" col="3" endline="22" endcol="11"/>
+                     <sloc line="52" col="3" endline="52" endcol="11"/>
                      <label_names_ql>
                      </label_names_ql>
                      <return_expression_q>
-                        <identifier ref_name="z" ref="ada://variable/Calculator+5:11/Sub+18:11/z+19:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                           <sloc line="22" col="10" endline="22" endcol="10"/>
+                        <identifier ref_name="z" ref="ada://variable/Calculator+5:11/Sub+48:11/z+49:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="52" col="10" endline="52" endcol="10"/>
                         </identifier>
                      </return_expression_q>
                   </return_statement>
@@ -692,11 +1274,29 @@
                <body_exception_handlers_ql>
                </body_exception_handlers_ql>
             </function_body_declaration>
+            <implementation_defined_pragma pragma_name="Comment">
+               <sloc line="55" col="2" endline="55" endcol="42"/>
+               <pragma_argument_associations_ql>
+                  <pragma_argument_association>
+                     <sloc line="55" col="18" endline="55" endcol="40"/>
+                     <formal_parameter_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </formal_parameter_q>
+                     <actual_parameter_q>
+                        <string_literal type="ada://ordinary_type/Standard-1:1/String-1:1" lit_val="&quot;Commenting some stuff&quot;">
+                           <sloc line="55" col="18" endline="55" endcol="40"/>
+                        </string_literal>
+                     </actual_parameter_q>
+                  </pragma_argument_association>
+               </pragma_argument_associations_ql>
+            </implementation_defined_pragma>
             <ordinary_type_declaration>
-               <sloc line="25" col="2" endline="29" endcol="13"/>
+               <sloc line="56" col="2" endline="60" endcol="13"/>
                <names_ql>
-                  <defining_identifier def_name="Constant_type" def="ada://ordinary_type/Calculator+5:11/Constant_type+25:7" type="null">
-                     <sloc line="25" col="7" endline="25" endcol="19"/>
+                  <defining_identifier def_name="Constant_type" def="ada://ordinary_type/Calculator+5:11/Constant_type+56:7" type="null">
+                     <sloc line="56" col="7" endline="56" endcol="19"/>
                   </defining_identifier>
                </names_ql>
                <discriminant_part_q>
@@ -706,7 +1306,7 @@
                </discriminant_part_q>
                <type_declaration_view_q>
                   <record_type_definition>
-                     <sloc line="26" col="3" endline="29" endcol="12"/>
+                     <sloc line="57" col="3" endline="60" endcol="12"/>
                      <has_abstract_q>
                         <not_an_element>
                            <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -719,7 +1319,7 @@
                      </has_limited_q>
                      <record_definition_q>
                         <record_definition>
-                           <sloc line="26" col="3" endline="29" endcol="12"/>
+                           <sloc line="57" col="3" endline="60" endcol="12"/>
                            <has_limited_q>
                               <not_an_element>
                                  <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -727,10 +1327,10 @@
                            </has_limited_q>
                            <record_components_ql>
                               <component_declaration>
-                                 <sloc line="27" col="4" endline="27" endcol="23"/>
+                                 <sloc line="58" col="4" endline="58" endcol="23"/>
                                  <names_ql>
-                                    <defining_identifier def_name="name" def="ada://component/Calculator+5:11/Constant_type+25:7/name+27:4" type="null">
-                                       <sloc line="27" col="4" endline="27" endcol="7"/>
+                                    <defining_identifier def_name="name" def="ada://component/Calculator+5:11/Constant_type+56:7/name+58:4" type="null">
+                                       <sloc line="58" col="4" endline="58" endcol="7"/>
                                     </defining_identifier>
                                  </names_ql>
                                  <has_aliased_q>
@@ -740,7 +1340,7 @@
                                  </has_aliased_q>
                                  <object_declaration_view_q>
                                     <component_definition>
-                                       <sloc line="27" col="11" endline="27" endcol="22"/>
+                                       <sloc line="58" col="11" endline="58" endcol="22"/>
                                        <has_aliased_q>
                                           <not_an_element>
                                              <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -748,7 +1348,7 @@
                                        </has_aliased_q>
                                        <component_definition_view_q>
                                           <subtype_indication>
-                                             <sloc line="27" col="11" endline="27" endcol="22"/>
+                                             <sloc line="58" col="11" endline="58" endcol="22"/>
                                              <has_aliased_q>
                                                 <not_an_element>
                                                    <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -761,23 +1361,23 @@
                                              </has_null_exclusion_q>
                                              <subtype_mark_q>
                                                 <identifier ref_name="String" ref="ada://ordinary_type/Standard-1:1/String-1:1" type="null">
-                                                   <sloc line="27" col="11" endline="27" endcol="16"/>
+                                                   <sloc line="58" col="11" endline="58" endcol="16"/>
                                                 </identifier>
                                              </subtype_mark_q>
                                              <subtype_constraint_q>
                                                 <index_constraint>
-                                                   <sloc line="27" col="17" endline="27" endcol="22"/>
+                                                   <sloc line="58" col="17" endline="58" endcol="22"/>
                                                    <discrete_ranges_ql>
                                                       <discrete_simple_expression_range>
-                                                         <sloc line="27" col="18" endline="27" endcol="21"/>
+                                                         <sloc line="58" col="18" endline="58" endcol="21"/>
                                                          <lower_bound_q>
                                                             <integer_literal type="universal integer" lit_val="1">
-                                                               <sloc line="27" col="18" endline="27" endcol="18"/>
+                                                               <sloc line="58" col="18" endline="58" endcol="18"/>
                                                             </integer_literal>
                                                          </lower_bound_q>
                                                          <upper_bound_q>
                                                             <integer_literal type="universal integer" lit_val="2">
-                                                               <sloc line="27" col="21" endline="27" endcol="21"/>
+                                                               <sloc line="58" col="21" endline="58" endcol="21"/>
                                                             </integer_literal>
                                                          </upper_bound_q>
                                                       </discrete_simple_expression_range>
@@ -797,10 +1397,10 @@
                                  </aspect_specifications_ql>
                               </component_declaration>
                               <component_declaration>
-                                 <sloc line="28" col="4" endline="28" endcol="17"/>
+                                 <sloc line="59" col="4" endline="59" endcol="17"/>
                                  <names_ql>
-                                    <defining_identifier def_name="value" def="ada://component/Calculator+5:11/Constant_type+25:7/value+28:4" type="null">
-                                       <sloc line="28" col="4" endline="28" endcol="8"/>
+                                    <defining_identifier def_name="value" def="ada://component/Calculator+5:11/Constant_type+56:7/value+59:4" type="null">
+                                       <sloc line="59" col="4" endline="59" endcol="8"/>
                                     </defining_identifier>
                                  </names_ql>
                                  <has_aliased_q>
@@ -810,7 +1410,7 @@
                                  </has_aliased_q>
                                  <object_declaration_view_q>
                                     <component_definition>
-                                       <sloc line="28" col="12" endline="28" endcol="16"/>
+                                       <sloc line="59" col="12" endline="59" endcol="16"/>
                                        <has_aliased_q>
                                           <not_an_element>
                                              <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -818,7 +1418,7 @@
                                        </has_aliased_q>
                                        <component_definition_view_q>
                                           <subtype_indication>
-                                             <sloc line="28" col="12" endline="28" endcol="16"/>
+                                             <sloc line="59" col="12" endline="59" endcol="16"/>
                                              <has_aliased_q>
                                                 <not_an_element>
                                                    <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -831,7 +1431,7 @@
                                              </has_null_exclusion_q>
                                              <subtype_mark_q>
                                                 <identifier ref_name="Float" ref="ada://ordinary_type/Standard-1:1/Float-1:1" type="null">
-                                                   <sloc line="28" col="12" endline="28" endcol="16"/>
+                                                   <sloc line="59" col="12" endline="59" endcol="16"/>
                                                 </identifier>
                                              </subtype_mark_q>
                                              <subtype_constraint_q>
@@ -860,10 +1460,10 @@
                </aspect_specifications_ql>
             </ordinary_type_declaration>
             <variable_declaration>
-               <sloc line="31" col="2" endline="31" endcol="20"/>
+               <sloc line="62" col="2" endline="62" endcol="20"/>
                <names_ql>
-                  <defining_identifier def_name="pi" def="ada://variable/Calculator+5:11/pi+31:2" type="ada://ordinary_type/Calculator+5:11/Constant_type+25:7">
-                     <sloc line="31" col="2" endline="31" endcol="3"/>
+                  <defining_identifier def_name="pi" def="ada://variable/Calculator+5:11/pi+62:2" type="ada://ordinary_type/Calculator+5:11/Constant_type+56:7">
+                     <sloc line="62" col="2" endline="62" endcol="3"/>
                   </defining_identifier>
                </names_ql>
                <has_aliased_q>
@@ -873,7 +1473,7 @@
                </has_aliased_q>
                <object_declaration_view_q>
                   <subtype_indication>
-                     <sloc line="31" col="7" endline="31" endcol="19"/>
+                     <sloc line="62" col="7" endline="62" endcol="19"/>
                      <has_aliased_q>
                         <not_an_element>
                            <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -885,8 +1485,8 @@
                         </not_an_element>
                      </has_null_exclusion_q>
                      <subtype_mark_q>
-                        <identifier ref_name="Constant_type" ref="ada://ordinary_type/Calculator+5:11/Constant_type+25:7" type="null">
-                           <sloc line="31" col="7" endline="31" endcol="19"/>
+                        <identifier ref_name="Constant_type" ref="ada://ordinary_type/Calculator+5:11/Constant_type+56:7" type="null">
+                           <sloc line="62" col="7" endline="62" endcol="19"/>
                         </identifier>
                      </subtype_mark_q>
                      <subtype_constraint_q>
@@ -904,8 +1504,26 @@
                <aspect_specifications_ql>
                </aspect_specifications_ql>
             </variable_declaration>
+            <implementation_defined_pragma pragma_name="Comment">
+               <sloc line="64" col="2" endline="64" endcol="45"/>
+               <pragma_argument_associations_ql>
+                  <pragma_argument_association>
+                     <sloc line="64" col="18" endline="64" endcol="43"/>
+                     <formal_parameter_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </formal_parameter_q>
+                     <actual_parameter_q>
+                        <string_literal type="ada://ordinary_type/Standard-1:1/String-1:1" lit_val="&quot;Prints the input numbers&quot;">
+                           <sloc line="64" col="18" endline="64" endcol="43"/>
+                        </string_literal>
+                     </actual_parameter_q>
+                  </pragma_argument_association>
+               </pragma_argument_associations_ql>
+            </implementation_defined_pragma>
             <procedure_body_declaration>
-               <sloc line="33" col="2" endline="37" endcol="19"/>
+               <sloc line="65" col="2" endline="69" endcol="19"/>
                <is_overriding_declaration_q>
                   <not_an_element>
                      <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -917,16 +1535,16 @@
                   </not_an_element>
                </is_not_overriding_declaration_q>
                <names_ql>
-                  <defining_identifier def_name="Print_numbers" def="ada://procedure_body/Calculator+5:11/Print_numbers+33:12" type="null">
-                     <sloc line="33" col="12" endline="33" endcol="24"/>
+                  <defining_identifier def_name="Print_numbers" def="ada://procedure_body/Calculator+5:11/Print_numbers+65:12" type="null">
+                     <sloc line="65" col="12" endline="65" endcol="24"/>
                   </defining_identifier>
                </names_ql>
                <parameter_profile_ql>
                   <parameter_specification mode="A_DEFAULT_IN_MODE">
-                     <sloc line="33" col="26" endline="33" endcol="37"/>
+                     <sloc line="65" col="26" endline="65" endcol="37"/>
                      <names_ql>
-                        <defining_identifier def_name="nr1" def="ada://parameter/Calculator+5:11/Print_numbers+33:12/nr1+33:26" type="null">
-                           <sloc line="33" col="26" endline="33" endcol="28"/>
+                        <defining_identifier def_name="nr1" def="ada://parameter/Calculator+5:11/Print_numbers+65:12/nr1+65:26" type="null">
+                           <sloc line="65" col="26" endline="65" endcol="28"/>
                         </defining_identifier>
                      </names_ql>
                      <has_aliased_q>
@@ -941,7 +1559,7 @@
                      </has_null_exclusion_q>
                      <object_declaration_view_q>
                         <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                           <sloc line="33" col="31" endline="33" endcol="37"/>
+                           <sloc line="65" col="31" endline="65" endcol="37"/>
                         </identifier>
                      </object_declaration_view_q>
                      <initialization_expression_q>
@@ -951,10 +1569,10 @@
                      </initialization_expression_q>
                   </parameter_specification>
                   <parameter_specification mode="A_DEFAULT_IN_MODE">
-                     <sloc line="33" col="40" endline="33" endcol="51"/>
+                     <sloc line="65" col="40" endline="65" endcol="51"/>
                      <names_ql>
-                        <defining_identifier def_name="nr2" def="ada://parameter/Calculator+5:11/Print_numbers+33:12/nr2+33:40" type="null">
-                           <sloc line="33" col="40" endline="33" endcol="42"/>
+                        <defining_identifier def_name="nr2" def="ada://parameter/Calculator+5:11/Print_numbers+65:12/nr2+65:40" type="null">
+                           <sloc line="65" col="40" endline="65" endcol="42"/>
                         </defining_identifier>
                      </names_ql>
                      <has_aliased_q>
@@ -969,7 +1587,7 @@
                      </has_null_exclusion_q>
                      <object_declaration_view_q>
                         <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
-                           <sloc line="33" col="45" endline="33" endcol="51"/>
+                           <sloc line="65" col="45" endline="65" endcol="51"/>
                         </identifier>
                      </object_declaration_view_q>
                      <initialization_expression_q>
@@ -985,25 +1603,25 @@
                </body_declarative_items_ql>
                <body_statements_ql>
                   <procedure_call_statement>
-                     <sloc line="35" col="3" endline="35" endcol="11"/>
+                     <sloc line="67" col="3" endline="67" endcol="11"/>
                      <label_names_ql>
                      </label_names_ql>
                      <called_name_q>
                         <identifier ref_name="Put" ref="ada://procedure/Ada.Integer_Text_IO-18:9/Ada.Integer_Text_IO-1:1/Put-1:1" type="null">
-                           <sloc line="35" col="3" endline="35" endcol="5"/>
+                           <sloc line="67" col="3" endline="67" endcol="5"/>
                         </identifier>
                      </called_name_q>
                      <call_statement_parameters_ql>
                         <parameter_association>
-                           <sloc line="35" col="7" endline="35" endcol="9"/>
+                           <sloc line="67" col="7" endline="67" endcol="9"/>
                            <formal_parameter_q>
                               <not_an_element>
                                  <sloc line="1" col="1" endline="0" endcol="0"/>
                               </not_an_element>
                            </formal_parameter_q>
                            <actual_parameter_q>
-                              <identifier ref_name="nr1" ref="ada://parameter/Calculator+5:11/Print_numbers+33:12/nr1+33:26" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                 <sloc line="35" col="7" endline="35" endcol="9"/>
+                              <identifier ref_name="nr1" ref="ada://parameter/Calculator+5:11/Print_numbers+65:12/nr1+65:26" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                 <sloc line="67" col="7" endline="67" endcol="9"/>
                               </identifier>
                            </actual_parameter_q>
                         </parameter_association>
@@ -1015,25 +1633,25 @@
                      </is_prefix_notation_q>
                   </procedure_call_statement>
                   <procedure_call_statement>
-                     <sloc line="36" col="3" endline="36" endcol="11"/>
+                     <sloc line="68" col="3" endline="68" endcol="11"/>
                      <label_names_ql>
                      </label_names_ql>
                      <called_name_q>
                         <identifier ref_name="Put" ref="ada://procedure/Ada.Integer_Text_IO-18:9/Ada.Integer_Text_IO-1:1/Put-1:1" type="null">
-                           <sloc line="36" col="3" endline="36" endcol="5"/>
+                           <sloc line="68" col="3" endline="68" endcol="5"/>
                         </identifier>
                      </called_name_q>
                      <call_statement_parameters_ql>
                         <parameter_association>
-                           <sloc line="36" col="7" endline="36" endcol="9"/>
+                           <sloc line="68" col="7" endline="68" endcol="9"/>
                            <formal_parameter_q>
                               <not_an_element>
                                  <sloc line="1" col="1" endline="0" endcol="0"/>
                               </not_an_element>
                            </formal_parameter_q>
                            <actual_parameter_q>
-                              <identifier ref_name="nr2" ref="ada://parameter/Calculator+5:11/Print_numbers+33:12/nr2+33:40" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                 <sloc line="36" col="7" endline="36" endcol="9"/>
+                              <identifier ref_name="nr2" ref="ada://parameter/Calculator+5:11/Print_numbers+65:12/nr2+65:40" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                 <sloc line="68" col="7" endline="68" endcol="9"/>
                               </identifier>
                            </actual_parameter_q>
                         </parameter_association>
@@ -1049,7 +1667,7 @@
                </body_exception_handlers_ql>
             </procedure_body_declaration>
             <procedure_body_declaration>
-               <sloc line="39" col="2" endline="42" endcol="17"/>
+               <sloc line="71" col="2" endline="77" endcol="17"/>
                <is_overriding_declaration_q>
                   <not_an_element>
                      <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -1061,8 +1679,8 @@
                   </not_an_element>
                </is_not_overriding_declaration_q>
                <names_ql>
-                  <defining_identifier def_name="Print_hello" def="ada://procedure_body/Calculator+5:11/Print_hello+39:12" type="null">
-                     <sloc line="39" col="12" endline="39" endcol="22"/>
+                  <defining_identifier def_name="Print_hello" def="ada://procedure_body/Calculator+5:11/Print_hello+71:12" type="null">
+                     <sloc line="71" col="12" endline="71" endcol="22"/>
                   </defining_identifier>
                </names_ql>
                <parameter_profile_ql>
@@ -1070,20 +1688,166 @@
                <aspect_specifications_ql>
                </aspect_specifications_ql>
                <body_declarative_items_ql>
+                  <variable_declaration>
+                     <sloc line="72" col="3" endline="72" endcol="13"/>
+                     <names_ql>
+                        <defining_identifier def_name="x" def="ada://variable/Calculator+5:11/Print_hello+71:12/x+72:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="72" col="3" endline="72" endcol="3"/>
+                        </defining_identifier>
+                     </names_ql>
+                     <has_aliased_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </has_aliased_q>
+                     <object_declaration_view_q>
+                        <subtype_indication>
+                           <sloc line="72" col="6" endline="72" endcol="12"/>
+                           <has_aliased_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </has_aliased_q>
+                           <has_null_exclusion_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </has_null_exclusion_q>
+                           <subtype_mark_q>
+                              <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
+                                 <sloc line="72" col="6" endline="72" endcol="12"/>
+                              </identifier>
+                           </subtype_mark_q>
+                           <subtype_constraint_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </subtype_constraint_q>
+                        </subtype_indication>
+                     </object_declaration_view_q>
+                     <initialization_expression_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </initialization_expression_q>
+                     <aspect_specifications_ql>
+                     </aspect_specifications_ql>
+                  </variable_declaration>
                </body_declarative_items_ql>
                <body_statements_ql>
                   <procedure_call_statement>
-                     <sloc line="41" col="3" endline="41" endcol="20"/>
+                     <sloc line="74" col="3" endline="74" endcol="25"/>
                      <label_names_ql>
                      </label_names_ql>
                      <called_name_q>
-                        <identifier ref_name="Put_Line" ref="ada://procedure/Ada.Text_IO-49:9/Put_Line-263:14" type="null">
-                           <sloc line="41" col="3" endline="41" endcol="10"/>
+                        <identifier ref_name="Print_numbers" ref="ada://procedure_body/Calculator+5:11/Print_numbers+65:12" type="null">
+                           <sloc line="74" col="3" endline="74" endcol="15"/>
                         </identifier>
                      </called_name_q>
                      <call_statement_parameters_ql>
                         <parameter_association>
-                           <sloc line="41" col="12" endline="41" endcol="18"/>
+                           <sloc line="74" col="17" endline="74" endcol="18"/>
+                           <formal_parameter_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </formal_parameter_q>
+                           <actual_parameter_q>
+                              <integer_literal type="universal integer" lit_val="42">
+                                 <sloc line="74" col="17" endline="74" endcol="18"/>
+                              </integer_literal>
+                           </actual_parameter_q>
+                        </parameter_association>
+                        <parameter_association>
+                           <sloc line="74" col="20" endline="74" endcol="23"/>
+                           <formal_parameter_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </formal_parameter_q>
+                           <actual_parameter_q>
+                              <integer_literal type="universal integer" lit_val="1337">
+                                 <sloc line="74" col="20" endline="74" endcol="23"/>
+                              </integer_literal>
+                           </actual_parameter_q>
+                        </parameter_association>
+                     </call_statement_parameters_ql>
+                     <is_prefix_notation_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </is_prefix_notation_q>
+                  </procedure_call_statement>
+                  <assignment_statement>
+                     <sloc line="75" col="3" endline="75" endcol="20"/>
+                     <label_names_ql>
+                     </label_names_ql>
+                     <assignment_variable_name_q>
+                        <identifier ref_name="x" ref="ada://variable/Calculator+5:11/Print_hello+71:12/x+72:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="75" col="3" endline="75" endcol="3"/>
+                        </identifier>
+                     </assignment_variable_name_q>
+                     <assignment_expression_q>
+                        <function_call type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="75" col="8" endline="75" endcol="19"/>
+                           <prefix_q>
+                              <identifier ref_name="Add" ref="ada://function_body/Calculator+5:11/Add+12:11" type="null">
+                                 <sloc line="75" col="8" endline="75" endcol="10"/>
+                              </identifier>
+                           </prefix_q>
+                           <function_call_parameters_ql>
+                              <parameter_association>
+                                 <sloc line="75" col="12" endline="75" endcol="13"/>
+                                 <formal_parameter_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </formal_parameter_q>
+                                 <actual_parameter_q>
+                                    <integer_literal type="universal integer" lit_val="42">
+                                       <sloc line="75" col="12" endline="75" endcol="13"/>
+                                    </integer_literal>
+                                 </actual_parameter_q>
+                              </parameter_association>
+                              <parameter_association>
+                                 <sloc line="75" col="15" endline="75" endcol="18"/>
+                                 <formal_parameter_q>
+                                    <not_an_element>
+                                       <sloc line="1" col="1" endline="0" endcol="0"/>
+                                    </not_an_element>
+                                 </formal_parameter_q>
+                                 <actual_parameter_q>
+                                    <integer_literal type="universal integer" lit_val="1337">
+                                       <sloc line="75" col="15" endline="75" endcol="18"/>
+                                    </integer_literal>
+                                 </actual_parameter_q>
+                              </parameter_association>
+                           </function_call_parameters_ql>
+                           <is_prefix_call_q>
+                              <is_prefix_call>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </is_prefix_call>
+                           </is_prefix_call_q>
+                           <is_prefix_notation_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </is_prefix_notation_q>
+                        </function_call>
+                     </assignment_expression_q>
+                  </assignment_statement>
+                  <procedure_call_statement>
+                     <sloc line="76" col="3" endline="76" endcol="20"/>
+                     <label_names_ql>
+                     </label_names_ql>
+                     <called_name_q>
+                        <identifier ref_name="Put_Line" ref="ada://procedure/Ada.Text_IO-49:9/Put_Line-263:14" type="null">
+                           <sloc line="76" col="3" endline="76" endcol="10"/>
+                        </identifier>
+                     </called_name_q>
+                     <call_statement_parameters_ql>
+                        <parameter_association>
+                           <sloc line="76" col="12" endline="76" endcol="18"/>
                            <formal_parameter_q>
                               <not_an_element>
                                  <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -1091,7 +1855,7 @@
                            </formal_parameter_q>
                            <actual_parameter_q>
                               <string_literal type="ada://ordinary_type/Standard-1:1/String-1:1" lit_val="&quot;Hello&quot;">
-                                 <sloc line="41" col="12" endline="41" endcol="18"/>
+                                 <sloc line="76" col="12" endline="76" endcol="18"/>
                               </string_literal>
                            </actual_parameter_q>
                         </parameter_association>
@@ -1106,78 +1870,166 @@
                <body_exception_handlers_ql>
                </body_exception_handlers_ql>
             </procedure_body_declaration>
+            <procedure_body_declaration>
+               <sloc line="79" col="2" endline="83" endcol="15"/>
+               <is_overriding_declaration_q>
+                  <not_an_element>
+                     <sloc line="1" col="1" endline="0" endcol="0"/>
+                  </not_an_element>
+               </is_overriding_declaration_q>
+               <is_not_overriding_declaration_q>
+                  <not_an_element>
+                     <sloc line="1" col="1" endline="0" endcol="0"/>
+                  </not_an_element>
+               </is_not_overriding_declaration_q>
+               <names_ql>
+                  <defining_identifier def_name="doNothing" def="ada://procedure_body/Calculator+5:11/doNothing+79:12" type="null">
+                     <sloc line="79" col="12" endline="79" endcol="20"/>
+                  </defining_identifier>
+               </names_ql>
+               <parameter_profile_ql>
+               </parameter_profile_ql>
+               <aspect_specifications_ql>
+               </aspect_specifications_ql>
+               <body_declarative_items_ql>
+                  <variable_declaration>
+                     <sloc line="80" col="3" endline="80" endcol="13"/>
+                     <names_ql>
+                        <defining_identifier def_name="x" def="ada://variable/Calculator+5:11/doNothing+79:12/x+80:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="80" col="3" endline="80" endcol="3"/>
+                        </defining_identifier>
+                     </names_ql>
+                     <has_aliased_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </has_aliased_q>
+                     <object_declaration_view_q>
+                        <subtype_indication>
+                           <sloc line="80" col="6" endline="80" endcol="12"/>
+                           <has_aliased_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </has_aliased_q>
+                           <has_null_exclusion_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </has_null_exclusion_q>
+                           <subtype_mark_q>
+                              <identifier ref_name="Integer" ref="ada://ordinary_type/Standard-1:1/Integer-1:1" type="null">
+                                 <sloc line="80" col="6" endline="80" endcol="12"/>
+                              </identifier>
+                           </subtype_mark_q>
+                           <subtype_constraint_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </subtype_constraint_q>
+                        </subtype_indication>
+                     </object_declaration_view_q>
+                     <initialization_expression_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </initialization_expression_q>
+                     <aspect_specifications_ql>
+                     </aspect_specifications_ql>
+                  </variable_declaration>
+               </body_declarative_items_ql>
+               <body_statements_ql>
+                  <assignment_statement>
+                     <sloc line="82" col="3" endline="82" endcol="9"/>
+                     <label_names_ql>
+                     </label_names_ql>
+                     <assignment_variable_name_q>
+                        <identifier ref_name="x" ref="ada://variable/Calculator+5:11/doNothing+79:12/x+80:3" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                           <sloc line="82" col="3" endline="82" endcol="3"/>
+                        </identifier>
+                     </assignment_variable_name_q>
+                     <assignment_expression_q>
+                        <integer_literal type="universal integer" lit_val="5">
+                           <sloc line="82" col="8" endline="82" endcol="8"/>
+                        </integer_literal>
+                     </assignment_expression_q>
+                  </assignment_statement>
+               </body_statements_ql>
+               <body_exception_handlers_ql>
+               </body_exception_handlers_ql>
+            </procedure_body_declaration>
          </body_declarative_items_ql>
          <body_statements_ql>
             <assignment_statement>
-               <sloc line="46" col="2" endline="46" endcol="17"/>
+               <sloc line="87" col="2" endline="87" endcol="17"/>
                <label_names_ql>
                </label_names_ql>
                <assignment_variable_name_q>
                   <selected_component type="ada://ordinary_type/Standard-1:1/String-1:1">
-                     <sloc line="46" col="2" endline="46" endcol="8"/>
+                     <sloc line="87" col="2" endline="87" endcol="8"/>
                      <prefix_q>
-                        <identifier ref_name="pi" ref="ada://variable/Calculator+5:11/pi+31:2" type="ada://ordinary_type/Calculator+5:11/Constant_type+25:7">
-                           <sloc line="46" col="2" endline="46" endcol="3"/>
+                        <identifier ref_name="pi" ref="ada://variable/Calculator+5:11/pi+62:2" type="ada://ordinary_type/Calculator+5:11/Constant_type+56:7">
+                           <sloc line="87" col="2" endline="87" endcol="3"/>
                         </identifier>
                      </prefix_q>
                      <selector_q>
-                        <identifier ref_name="name" ref="ada://component/Calculator+5:11/Constant_type+25:7/name+27:4" type="ada://ordinary_type/Standard-1:1/String-1:1">
-                           <sloc line="46" col="5" endline="46" endcol="8"/>
+                        <identifier ref_name="name" ref="ada://component/Calculator+5:11/Constant_type+56:7/name+58:4" type="ada://ordinary_type/Standard-1:1/String-1:1">
+                           <sloc line="87" col="5" endline="87" endcol="8"/>
                         </identifier>
                      </selector_q>
                   </selected_component>
                </assignment_variable_name_q>
                <assignment_expression_q>
                   <string_literal type="ada://ordinary_type/Standard-1:1/String-1:1" lit_val="&quot;Pi&quot;">
-                     <sloc line="46" col="13" endline="46" endcol="16"/>
+                     <sloc line="87" col="13" endline="87" endcol="16"/>
                   </string_literal>
                </assignment_expression_q>
             </assignment_statement>
             <assignment_statement>
-               <sloc line="47" col="2" endline="47" endcol="18"/>
+               <sloc line="88" col="2" endline="88" endcol="18"/>
                <label_names_ql>
                </label_names_ql>
                <assignment_variable_name_q>
                   <selected_component type="ada://ordinary_type/Standard-1:1/Float-1:1">
-                     <sloc line="47" col="2" endline="47" endcol="9"/>
+                     <sloc line="88" col="2" endline="88" endcol="9"/>
                      <prefix_q>
-                        <identifier ref_name="pi" ref="ada://variable/Calculator+5:11/pi+31:2" type="ada://ordinary_type/Calculator+5:11/Constant_type+25:7">
-                           <sloc line="47" col="2" endline="47" endcol="3"/>
+                        <identifier ref_name="pi" ref="ada://variable/Calculator+5:11/pi+62:2" type="ada://ordinary_type/Calculator+5:11/Constant_type+56:7">
+                           <sloc line="88" col="2" endline="88" endcol="3"/>
                         </identifier>
                      </prefix_q>
                      <selector_q>
-                        <identifier ref_name="value" ref="ada://component/Calculator+5:11/Constant_type+25:7/value+28:4" type="ada://ordinary_type/Standard-1:1/Float-1:1">
-                           <sloc line="47" col="5" endline="47" endcol="9"/>
+                        <identifier ref_name="value" ref="ada://component/Calculator+5:11/Constant_type+56:7/value+59:4" type="ada://ordinary_type/Standard-1:1/Float-1:1">
+                           <sloc line="88" col="5" endline="88" endcol="9"/>
                         </identifier>
                      </selector_q>
                   </selected_component>
                </assignment_variable_name_q>
                <assignment_expression_q>
                   <real_literal type="universal real" lit_val="3.14">
-                     <sloc line="47" col="14" endline="47" endcol="17"/>
+                     <sloc line="88" col="14" endline="88" endcol="17"/>
                   </real_literal>
                </assignment_expression_q>
             </assignment_statement>
             <assignment_statement>
-               <sloc line="49" col="2" endline="49" endcol="18"/>
+               <sloc line="90" col="2" endline="90" endcol="18"/>
                <label_names_ql>
                </label_names_ql>
                <assignment_variable_name_q>
                   <identifier ref_name="n3" ref="ada://variable/Calculator+5:11/n3+8:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                     <sloc line="49" col="2" endline="49" endcol="3"/>
+                     <sloc line="90" col="2" endline="90" endcol="3"/>
                   </identifier>
                </assignment_variable_name_q>
                <assignment_expression_q>
                   <function_call type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                     <sloc line="49" col="8" endline="49" endcol="17"/>
+                     <sloc line="90" col="8" endline="90" endcol="17"/>
                      <prefix_q>
-                        <identifier ref_name="Add" ref="ada://function_body/Calculator+5:11/Add+11:11" type="null">
-                           <sloc line="49" col="8" endline="49" endcol="10"/>
+                        <identifier ref_name="Add" ref="ada://function_body/Calculator+5:11/Add+12:11" type="null">
+                           <sloc line="90" col="8" endline="90" endcol="10"/>
                         </identifier>
                      </prefix_q>
                      <function_call_parameters_ql>
                         <parameter_association>
-                           <sloc line="49" col="12" endline="49" endcol="13"/>
+                           <sloc line="90" col="12" endline="90" endcol="13"/>
                            <formal_parameter_q>
                               <not_an_element>
                                  <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -1185,12 +2037,12 @@
                            </formal_parameter_q>
                            <actual_parameter_q>
                               <identifier ref_name="n1" ref="ada://variable/Calculator+5:11/n1+6:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                 <sloc line="49" col="12" endline="49" endcol="13"/>
+                                 <sloc line="90" col="12" endline="90" endcol="13"/>
                               </identifier>
                            </actual_parameter_q>
                         </parameter_association>
                         <parameter_association>
-                           <sloc line="49" col="15" endline="49" endcol="16"/>
+                           <sloc line="90" col="15" endline="90" endcol="16"/>
                            <formal_parameter_q>
                               <not_an_element>
                                  <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -1198,65 +2050,7 @@
                            </formal_parameter_q>
                            <actual_parameter_q>
                               <identifier ref_name="n2" ref="ada://variable/Calculator+5:11/n2+7:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                 <sloc line="49" col="15" endline="49" endcol="16"/>
-                              </identifier>
-                           </actual_parameter_q>
-                        </parameter_association>
-                     </function_call_parameters_ql>
-                     <is_prefix_call_q>
-                        <is_prefix_call>
-                           <sloc line="1" col="1" endline="0" endcol="0"/>
-                        </is_prefix_call>
-                     </is_prefix_call_q>
-                     <is_prefix_notation_q>
-                        <not_an_element>
-                           <sloc line="1" col="1" endline="0" endcol="0"/>
-                        </not_an_element>
-                     </is_prefix_notation_q>
-                  </function_call>
-               </assignment_expression_q>
-            </assignment_statement>
-            <assignment_statement>
-               <sloc line="50" col="2" endline="50" endcol="18"/>
-               <label_names_ql>
-               </label_names_ql>
-               <assignment_variable_name_q>
-                  <identifier ref_name="n4" ref="ada://variable/Calculator+5:11/n4+9:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                     <sloc line="50" col="2" endline="50" endcol="3"/>
-                  </identifier>
-               </assignment_variable_name_q>
-               <assignment_expression_q>
-                  <function_call type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                     <sloc line="50" col="8" endline="50" endcol="17"/>
-                     <prefix_q>
-                        <identifier ref_name="Sub" ref="ada://function_body/Calculator+5:11/Sub+18:11" type="null">
-                           <sloc line="50" col="8" endline="50" endcol="10"/>
-                        </identifier>
-                     </prefix_q>
-                     <function_call_parameters_ql>
-                        <parameter_association>
-                           <sloc line="50" col="12" endline="50" endcol="13"/>
-                           <formal_parameter_q>
-                              <not_an_element>
-                                 <sloc line="1" col="1" endline="0" endcol="0"/>
-                              </not_an_element>
-                           </formal_parameter_q>
-                           <actual_parameter_q>
-                              <identifier ref_name="n3" ref="ada://variable/Calculator+5:11/n3+8:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                 <sloc line="50" col="12" endline="50" endcol="13"/>
-                              </identifier>
-                           </actual_parameter_q>
-                        </parameter_association>
-                        <parameter_association>
-                           <sloc line="50" col="15" endline="50" endcol="16"/>
-                           <formal_parameter_q>
-                              <not_an_element>
-                                 <sloc line="1" col="1" endline="0" endcol="0"/>
-                              </not_an_element>
-                           </formal_parameter_q>
-                           <actual_parameter_q>
-                              <identifier ref_name="n2" ref="ada://variable/Calculator+5:11/n2+7:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                                 <sloc line="50" col="15" endline="50" endcol="16"/>
+                                 <sloc line="90" col="15" endline="90" endcol="16"/>
                               </identifier>
                            </actual_parameter_q>
                         </parameter_association>
@@ -1275,17 +2069,92 @@
                </assignment_expression_q>
             </assignment_statement>
             <procedure_call_statement>
-               <sloc line="51" col="2" endline="51" endcol="9"/>
+               <sloc line="91" col="2" endline="91" endcol="11"/>
+               <label_names_ql>
+               </label_names_ql>
+               <called_name_q>
+                  <identifier ref_name="doNothing" ref="ada://procedure_body/Calculator+5:11/doNothing+79:12" type="null">
+                     <sloc line="91" col="2" endline="91" endcol="10"/>
+                  </identifier>
+               </called_name_q>
+               <call_statement_parameters_ql>
+               </call_statement_parameters_ql>
+               <is_prefix_notation_q>
+                  <not_an_element>
+                     <sloc line="1" col="1" endline="0" endcol="0"/>
+                  </not_an_element>
+               </is_prefix_notation_q>
+            </procedure_call_statement>
+            <assignment_statement>
+               <sloc line="92" col="2" endline="92" endcol="18"/>
+               <label_names_ql>
+               </label_names_ql>
+               <assignment_variable_name_q>
+                  <identifier ref_name="n4" ref="ada://variable/Calculator+5:11/n4+9:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                     <sloc line="92" col="2" endline="92" endcol="3"/>
+                  </identifier>
+               </assignment_variable_name_q>
+               <assignment_expression_q>
+                  <function_call type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                     <sloc line="92" col="8" endline="92" endcol="17"/>
+                     <prefix_q>
+                        <identifier ref_name="Sub" ref="ada://function_body/Calculator+5:11/Sub+48:11" type="null">
+                           <sloc line="92" col="8" endline="92" endcol="10"/>
+                        </identifier>
+                     </prefix_q>
+                     <function_call_parameters_ql>
+                        <parameter_association>
+                           <sloc line="92" col="12" endline="92" endcol="13"/>
+                           <formal_parameter_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </formal_parameter_q>
+                           <actual_parameter_q>
+                              <identifier ref_name="n3" ref="ada://variable/Calculator+5:11/n3+8:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                 <sloc line="92" col="12" endline="92" endcol="13"/>
+                              </identifier>
+                           </actual_parameter_q>
+                        </parameter_association>
+                        <parameter_association>
+                           <sloc line="92" col="15" endline="92" endcol="16"/>
+                           <formal_parameter_q>
+                              <not_an_element>
+                                 <sloc line="1" col="1" endline="0" endcol="0"/>
+                              </not_an_element>
+                           </formal_parameter_q>
+                           <actual_parameter_q>
+                              <identifier ref_name="n2" ref="ada://variable/Calculator+5:11/n2+7:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
+                                 <sloc line="92" col="15" endline="92" endcol="16"/>
+                              </identifier>
+                           </actual_parameter_q>
+                        </parameter_association>
+                     </function_call_parameters_ql>
+                     <is_prefix_call_q>
+                        <is_prefix_call>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </is_prefix_call>
+                     </is_prefix_call_q>
+                     <is_prefix_notation_q>
+                        <not_an_element>
+                           <sloc line="1" col="1" endline="0" endcol="0"/>
+                        </not_an_element>
+                     </is_prefix_notation_q>
+                  </function_call>
+               </assignment_expression_q>
+            </assignment_statement>
+            <procedure_call_statement>
+               <sloc line="93" col="2" endline="93" endcol="9"/>
                <label_names_ql>
                </label_names_ql>
                <called_name_q>
                   <identifier ref_name="Put" ref="ada://procedure/Ada.Integer_Text_IO-18:9/Ada.Integer_Text_IO-1:1/Put-1:1" type="null">
-                     <sloc line="51" col="2" endline="51" endcol="4"/>
+                     <sloc line="93" col="2" endline="93" endcol="4"/>
                   </identifier>
                </called_name_q>
                <call_statement_parameters_ql>
                   <parameter_association>
-                     <sloc line="51" col="6" endline="51" endcol="7"/>
+                     <sloc line="93" col="6" endline="93" endcol="7"/>
                      <formal_parameter_q>
                         <not_an_element>
                            <sloc line="1" col="1" endline="0" endcol="0"/>
@@ -1293,7 +2162,7 @@
                      </formal_parameter_q>
                      <actual_parameter_q>
                         <identifier ref_name="n4" ref="ada://variable/Calculator+5:11/n4+9:2" type="ada://ordinary_type/Standard-1:1/Integer-1:1">
-                           <sloc line="51" col="6" endline="51" endcol="7"/>
+                           <sloc line="93" col="6" endline="93" endcol="7"/>
                         </identifier>
                      </actual_parameter_q>
                   </parameter_association>
