@@ -1,17 +1,17 @@
 
 class CppFile:
 	
-	#hur gora med "String" : "char[]" ?
 	PRIMITIVES = {
 		"Integer" : "int",
 		"Float" : "float",
-		"String" : "char"
+		"void" : "void"
 	}
 	
 	def __init__(self,filename):
 		self.filename = filename
 		self.file = open("cpp/"+filename,"w+")
 		self.elements = [] #holds functions and structs
+		self.typedefs = []
 		
 	""" Recursively loop through each level in the XML-tree """
 	def loop(self,node,elements):
@@ -43,6 +43,7 @@ class CppFile:
 			prop = {}
 			prop['name'] = self.getName(propNode)
 			prop['type'] = propNode.find('object_declaration_view_q').find('component_definition').find('component_definition_view_q').find('subtype_indication').find('subtype_mark_q').find('identifier').get('ref_name')
+			prop['type'] = self.convertPrimitive(prop['type'])
 			struct['props'].append(prop)
 		struct['comment'] = self.getComment(commentNode)
 		return struct
@@ -59,12 +60,12 @@ class CppFile:
 		for paramNode in functionNode.find('parameter_profile_ql').findall('parameter_specification'):
 			param = {}
 			param['name'] = self.getName(paramNode)
-			param['type'] = paramNode.find('object_declaration_view_q').find('identifier').get('ref_name')
+			param['type'] = self.convertPrimitive(paramNode.find('object_declaration_view_q').find('identifier').get('ref_name'))
 			function['params'].append(param)
 		if functionNode.find('result_profile_q') is None:
 			function['output'] = 'void'
 		else:
-			function['output'] = functionNode.find('result_profile_q').find('identifier').get('ref_name')
+			function['output'] = self.convertPrimitive(functionNode.find('result_profile_q').find('identifier').get('ref_name'))
 		function['comment'] = self.getComment(commentNode)
 		return function
 	
@@ -83,24 +84,38 @@ class CppFile:
 			var = {}
 			var['name'] = self.getName(varNode)
 			var['type'] = varNode.find('object_declaration_view_q').find('subtype_indication').find('subtype_mark_q').find('identifier').get('ref_name')
+			var['type'] = self.convertPrimitive(var['type'])
 			vars.append(var)
 		return vars;
 	
-	def getCalls(self,callNodes):
+	def getCalls(self,bodyNodes):
 		calls = []
-		for callNode in callNodes:
-			call = {}
-			call['assign_to'] = ''
-			call['params'] = []
-			if callNode.tag == 'procedure_call_statement':
-				call['name'] = callNode.find('called_name_q').find('identifier').get('ref_name')
-				for paramNode in callNode.find('call_statement_parameters_ql').findall('parameter_association'):
-					param = paramNode.find('actual_parameter_q')[0].get('lit_val')
-					if param is not None:
-						call['params'].append(param)
-				calls.append(call)
-			
+		for child in bodyNodes:
+			if child.tag == 'procedure_call_statement':
+				calls.append({
+					'name' : child.find('called_name_q').find('identifier').get('ref_name'),
+					'params' : self.getArgs(child.find('call_statement_parameters_ql').findall('parameter_association')),
+					'is_void' : True
+				})
+			elif child.tag == 'function_call':
+				if child.find('prefix_q') is not None and child.find('prefix_q').find('identifier') is not None:
+					calls.append({
+						'name' : child.find('prefix_q').find('identifier').get('ref_name'),
+						'params' : self.getArgs(child.find('function_call_parameters_ql').findall('parameter_association')),
+						'is_void' : False
+					})
+			calls = calls + self.getCalls(child)
 		return calls
+		
+	def getArgs(self,argNodes):
+		args = []
+		for argNode in argNodes:
+			arg = argNode.find('actual_parameter_q')[0].get('lit_val')
+			if arg is not None: args.append(arg)
+			else:
+				arg = argNode.find('actual_parameter_q')[0].get('ref_name')
+				if arg is not None: args.append(arg)
+		return args
 	
 	""" 
 	The functions below converts the dictionary data to c++ code 
@@ -109,31 +124,38 @@ class CppFile:
 		out = self.convertComment(struct['comment'])
 		out += "struct "+struct['name']+"{\n"
 		for prop in struct['props']:
-			out += "\t"+self.convertPrimitive(prop['type'])+" "+prop['name']+";\n"
+			out += "\t"+prop['type']+" "+prop['name']+";\n"
 		out += "};"
 		return out
 	
 	def convertFunction(self,function):
 		out = self.convertComment(function['comment'])
-		out += self.convertPrimitive(function['output']) + " " + function['name']
+		out += function['output'] + " " + function['name']
 		out += " ("+self.convertParams(function['params'])+") {\n"
 		for var in function['body']['variables']:
-			out += self.convertPrimitive(var['type']) + " " + var['name'] + ";\n"
+			out += var['type'] + " " + var['name'] + ";\n"
 		for call in function['body']['calls']:
-			#if len(call['params']) > 0:
-			print call
+			if call['is_void'] is False: out += "(void)"
 			out += call['name']+"("+(",".join(call['params']))+");\n"
 		out += "\n}"
 		return out
 		
 	def convertPrimitive(self,type):
-		if type in self.PRIMITIVES.keys(): return self.PRIMITIVES[type]
+		#check for primitive key-value pair
+		if type in self.PRIMITIVES.keys(): 
+			return self.PRIMITIVES[type]
+		
+		#otherwise, add typedef if not exists
+		typedef = "unsigned int "+type+";"
+		if typedef not in self.typedefs:
+			print typedef
+			self.typedefs.append(typedef)
 		return type
 		
 	def convertParams(self,params):
 		paramStrings = []
 		for p in params:
-			paramStrings.append(self.convertPrimitive(p['type'])+" "+p['name'])
+			paramStrings.append(p['type']+" "+p['name'])
 		return (", ".join(paramStrings))
 	
 	def convertComment(self, comment):
@@ -145,8 +167,10 @@ class CppFile:
 	Write result to the c++ file
 	"""
 	def write(self):
-		out = "/*! @file "+self.filename+" */"
-		out += self.writeNested(None,self.elements)
+		out = "/*! @file "+self.filename+" */\n\n"
+		print self.typedefs
+		out += "\n".join(self.typedefs)
+		out += "\n"+self.writeNested(None,self.elements)
 		self.file.write(out)
 		
 	def writeNested(self,parent,elements):

@@ -1,12 +1,20 @@
 /*! @file calculator.cpp */
+
+unsigned int Constant_type;
+unsigned int String;
+unsigned int Natural;
+
 void Calculator () {
 int n1;
 int n2;
 int n3;
 int n4;
 Constant_type pi;
+(void)Add(n1);
+(void)Add(n2,n2);
 doNothing();
-Put();
+(void)Sub(n3,n2);
+Put(n4);
 
 }
 namespace Calculator {
@@ -32,17 +40,18 @@ float z3;
 }
 
 void Print_numbers_nested (int nr1, int nr2) {
-Put();
-Put();
+Put(nr1);
+Put(nr2);
 
 }
 
 }
 struct StringTest_type{
-	char str;
+	String str;
 };
 
 }
+/*! The sub-func */
 int Sub (int a, int b) {
 int z;
 
@@ -50,20 +59,23 @@ int z;
 
 /*! Commenting some stuff */
 struct Constant_type{
-	char name;
+	String name;
 	float value;
 };
 
 /*! Prints the input numbers */
 void Print_numbers (int nr1, int nr2) {
-Put();
-Put();
+Put(nr1);
+Put(nr2);
 
 }
 
+/*! Prints hello */
 void Print_hello () {
 int x;
+Natural n;
 Print_numbers(42,1337);
+(void)Add(42,1337);
 Put_Line("Hello");
 
 }
