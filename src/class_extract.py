@@ -10,10 +10,12 @@ class Extract:
 		
 	@staticmethod
 	def getPackageHead(packNode, commentNode):
+		elem = {}
 		elem['type'] = 'package'
 		elem['name'] = Extract.getName(packNode)
-
 		elem['childs'] = []
+		#elem['comment'] = Extract.getComment(commentNode)
+		return elem
 		
 	@staticmethod
 	def getStruct(structNode, commentNode):
@@ -28,7 +30,7 @@ class Extract:
 			prop['name'] = Extract.getName(propNode)
 			prop['type'] = propNode.find('object_declaration_view_q').find('component_definition').find('component_definition_view_q').find('subtype_indication').find('subtype_mark_q').find('identifier').get('ref_name')
 			elem['props'].append(prop)
-		elem['comment'] = Extract.getComment(commentNode)
+		#elem['comment'] = Extract.getComment(commentNode)
 		return elem
 	
 	@staticmethod
@@ -55,7 +57,7 @@ class Extract:
 			elem['output'] = 'void'
 		else:
 			elem['output'] = functionNode.find('result_profile_q').find('identifier').get('ref_name')
-		elem['comment'] = Extract.getComment(commentNode)
+		#elem['comment'] = Extract.getComment(commentNode)
 		return elem
 	
 	@staticmethod
@@ -63,12 +65,33 @@ class Extract:
 		return node.find('names_ql').find('defining_identifier').get('def_name')
 		
 	@staticmethod
-	def getComment(commentNode):
+	def getComment(nodes,i):
+		i2 = 0
+		for child in nodes:
+			if i2 == (i-1):
+				comment = Extract.getCommentValue(child)
+				if comment != '': return comment
+			if i2 == (i+1):
+				comment = Extract.getCommentBelow(child)
+				if comment != '': return comment
+			i2 +=1
+		return ''
+	
+	@staticmethod
+	def getCommentBelow(commentNode):
+		comment = Extract.getCommentValue(commentNode)
+		if comment == '': return ''
+		if comment[:2] == '"<': return comment[2:]
+		else: return ''
+	
+	@staticmethod
+	def getCommentValue(commentNode):
 		if commentNode is None: return ''
 		if commentNode.tag != 'implementation_defined_pragma': return ''
 		if commentNode.get('pragma_name') != 'Comment': return ''
-		return commentNode.find('pragma_argument_associations_ql').find('pragma_argument_association').find('actual_parameter_q').find('string_literal').get('lit_val')
-	
+		comment = commentNode.find('pragma_argument_associations_ql').find('pragma_argument_association').find('actual_parameter_q').find('string_literal').get('lit_val')
+		return comment
+		
 	@staticmethod
 	def getVariables(varNodes):
 		vars = []
@@ -117,6 +140,15 @@ class Extract:
 				arg = argNode.find('actual_parameter_q')[0].get('ref_name')
 				if arg is not None: args.append(arg)
 		return args
+		
+	""" Iterate identifiers and return all ref-name attributes """
+	@staticmethod
+	def getRefNames(node):
+		nodes = node.iter('identifier')
+		attrs = []
+		for idNode in nodes:
+			attrs.append(idNode.get('ref_name'))
+		return attrs
 		
 	
 	

@@ -3,13 +3,7 @@ from class_extract import Extract
 
 class CppFile:
 	
-	PRIMITIVES = {
-		"Integer" : "int",
-		"Float" : "float",
-		"void" : "void"
-	}
-	
-	def __init__(self,xmlfile,tree):
+	def __init__(self,xmlfile,tree,prefix):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.type = "program"
@@ -21,6 +15,7 @@ class CppFile:
 		self.typedefs = []
 		self.includes = []
 		self.namespaces = []
+		self.prefix = prefix
 		
 	""" Start parsing tree """
 	def parse(self):
@@ -39,36 +34,43 @@ class CppFile:
 	""" Recursively loop through each level in the XML-tree """
 	def _loop(self,node,elements,parent=None):
 		lastNode = None
+		i = 0
 		for child in node:
 			
 			if child.tag == 'function_body_declaration' or child.tag == 'procedure_body_declaration':
 				function = Extract.getFunction(child,lastNode)
+				function['comment'] = Extract.getComment(node,i)
 				elements.append(function)
 				if child.find('body_declarative_items_ql') is not None:
 					self._loop(child.find('body_declarative_items_ql'),function['childs'])
 			
 			elif child.tag == 'procedure_declaration' or child.tag == 'function_declaration':
 				function = Extract.getFunctionHead(child,lastNode)
+				function['comment'] = Extract.getComment(node,i)
 				elements.append(function)
 			
 			elif child.tag == 'ordinary_type_declaration':
 				struct = Extract.getStruct(child,lastNode)
+				struct['comment'] = Extract.getComment(node,i)
 				elements.append(struct)
 				if child.find('body_declarative_items_ql') is not None:
 					self._loop(child.find('body_declarative_items_ql'),struct['childs'])
 			
 			elif child.tag == 'package_body_declaration':
 				package = Extract.getPackage(child,lastNode)
+				package['comment'] = Extract.getComment(node,i)
 				elements.append(package)
-				if child.find('body_declarative_items_ql') is not None:
-					self._loop(child.find('body_declarative_items_ql'),package['childs'])
+				nextNode = child.find('body_declarative_items_ql')
+				if nextNode is not None:
+					self._loop(nextNode,package['childs'])
 					
 			elif child.tag == 'package_declaration':
 				package = Extract.getPackage(child,lastNode)
+				package['comment'] = Extract.getComment(node,i)
 				elements.append(package)
 				if child.find('visible_part_declarative_items_ql') is not None:
 					self._loop(child.find('visible_part_declarative_items_ql'),package['childs'])
-			
+			i+=1
 			lastNode = child
 			
 	""" Set valid includes when all files have been parsed """
@@ -84,32 +86,26 @@ class CppFile:
 			for pp in pps:
 				if name == pp.name and pp.filetype == 'hpp':
 					self.includes.append({'name':name,'file':pp.filename})
+					isIncluded = True
 					break
 					
 	""" Set namespaces """
 	def setNamespaces(self,pps):
-		print "implement this"
-	
-	""" Converts records/datatypes to c++ """
-	def convertPrimitive(self,type):
-		#check for primitive key-value pair
-		if type in self.PRIMITIVES.keys(): 
-			return self.PRIMITIVES[type]
-		
-		#otherwise, add typedef if not exists
-		typedef = "typedef unsigned int "+type+";"
-		if typedef not in self.typedefs:
-			print typedef
-			self.typedefs.append(typedef)
-		return type	
+		node = self.root.find('context_clause_elements_ql')
+		if node is None: return
+		for nsNode in node.findall('use_package_clause'):
+			attrs = Extract.getRefNames(nsNode)
+			self.namespaces.append("::".join(attrs))
 		
 	""" 
 	Write result to the c++ file
 	"""
 	def write(self):
-		out = "/*! @file "+self.filename+" */\n\n"
+		out = "/*! @file "+self.filename+" */"
 		for include in self.includes:
 			out += "\n"+Convert.include(include)
+		for namespace in self.namespaces:
+			out += "\n"+Convert.namespace(namespace)
 		out += "\n".join(self.typedefs)+"\n\n"
 		if self.type == 'package': out += "namespace "+self.name+"\n{"
 		out += "\n"+self.writeNested(None,self.elements)
@@ -120,7 +116,8 @@ class CppFile:
 		out = ''
 		for element in elements:
 			if len(element['childs']) > 0:
-				out += "namespace _"+element['name']+" {\n"
+				if element['type'] == 'package': out += "namespace "+element['name']+" {\n"
+				else: out += "namespace "+self.prefix+element['name']+" {\n"
 				out += self.writeNested(element,element['childs'])
 				out += "\n}"
 		

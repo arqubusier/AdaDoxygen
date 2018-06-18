@@ -64,6 +64,7 @@ procedure Calculator is
 		z := a - b;
 		return z;
 	end Sub;
+	pragma Comment ("<The sub-func");
 	
 	pragma Comment ("Commenting some stuff");
 	type Constant_type is

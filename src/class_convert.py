@@ -63,3 +63,8 @@ class Convert:
 	@staticmethod
 	def include(include):
 		return '#include "'+include['file']+'"'
+		
+	@staticmethod
+	def namespace(namespace):
+		return 'using namespace '+namespace+';'
+		
