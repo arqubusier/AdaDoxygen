@@ -12,7 +12,7 @@ class Extract:
 	def getPackageHead(packNode, commentNode):
 		elem = {}
 		elem['type'] = 'package'
-		elem['name'] = Extract.getName(packNode)
+		elem['name'] = Extract.getPackageName(packNode)
 		elem['childs'] = []
 		#elem['comment'] = Extract.getComment(commentNode)
 		return elem
@@ -65,17 +65,32 @@ class Extract:
 		return node.find('names_ql').find('defining_identifier').get('def_name')
 		
 	@staticmethod
+	def getPackageName(node):
+		if node.find('names_ql').find('defining_identifier') is not None:
+			return Extract.getName(node)
+		refNames = Extract.getRefNames(node.find('names_ql'))
+		refNames.append(node.find('names_ql').find('defining_expanded_name').get('def_name'))
+		return "::".join(refNames)
+		
+	@staticmethod
 	def getComment(nodes,i):
 		i2 = 0
 		for child in nodes:
 			if i2 == (i-1):
-				comment = Extract.getCommentValue(child)
+				comment = Extract.getCommentAbove(child)
 				if comment != '': return comment
 			if i2 == (i+1):
 				comment = Extract.getCommentBelow(child)
 				if comment != '': return comment
 			i2 +=1
 		return ''
+	
+	@staticmethod
+	def getCommentAbove(commentNode):
+		comment = Extract.getCommentValue(commentNode)
+		if comment == '': return ''
+		if comment[:2] == '"<': return ''
+		else: return comment
 	
 	@staticmethod
 	def getCommentBelow(commentNode):

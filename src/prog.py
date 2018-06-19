@@ -68,7 +68,7 @@ elif args.action == 'Ada2Cpp':
 		
 	print "---GENERATE PP FILES---"
 	for pp in pps:
-		print "Creating "+pp.filename+"..."
+		print "Creating "+pp.name+"..."
 		pp.write()
 	sys.exit("Ada2Cpp done")
 

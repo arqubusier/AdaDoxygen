@@ -20,16 +20,7 @@ class CppFile:
 	""" Start parsing tree """
 	def parse(self):
 		node = self.root.find('unit_declaration_q')
-		
-		if node.find('procedure_body_declaration') is not None:
-			self._loop(node,self.elements)
-		elif node.find('package_body_declaration') is not None:
-			self.type = "package"
-			self._loop(node.find('package_body_declaration').find('body_declarative_items_ql'),self.elements)
-		elif node.find('package_declaration') is not None:
-			self.type = "package"
-			self._loop(node.find('package_declaration').find('visible_part_declarative_items_ql'),self.elements)
-			
+		self._loop(node,self.elements)
 		
 	""" Recursively loop through each level in the XML-tree """
 	def _loop(self,node,elements,parent=None):
@@ -67,9 +58,13 @@ class CppFile:
 			elif child.tag == 'package_declaration':
 				package = Extract.getPackage(child,lastNode)
 				package['comment'] = Extract.getComment(node,i)
+				package['public'] = []
+				package['private'] = []
 				elements.append(package)
 				if child.find('visible_part_declarative_items_ql') is not None:
-					self._loop(child.find('visible_part_declarative_items_ql'),package['childs'])
+					self._loop(child.find('visible_part_declarative_items_ql'),package['public'])
+				if child.find('private_part_declarative_items_ql') is not None:
+					self._loop(child.find('private_part_declarative_items_ql'),package['private'])
 			i+=1
 			lastNode = child
 			
@@ -82,7 +77,7 @@ class CppFile:
 			attrs = []
 			for idNode in idNodes:
 				attrs.append(idNode.get('ref_name'))
-			name = "::".join(attrs)
+			name = ".".join(attrs)
 			for pp in pps:
 				if name == pp.name and pp.filetype == 'hpp':
 					self.includes.append({'name':name,'file':pp.filename})
@@ -107,7 +102,7 @@ class CppFile:
 		for namespace in self.namespaces:
 			out += "\n"+Convert.namespace(namespace)
 		out += "\n".join(self.typedefs)+"\n\n"
-		if self.type == 'package': out += "namespace "+self.name+"\n{"
+		if self.type == 'package': out += "class "+self.name+"\n{" #continue here and move this stuff to writeNested
 		out += "\n"+self.writeNested(None,self.elements)
 		if self.type == 'package': out += "\n}"
 		self.file.write(out)
@@ -115,12 +110,17 @@ class CppFile:
 	def writeNested(self,parent,elements):
 		out = ''
 		for element in elements:
-			if len(element['childs']) > 0:
-				if element['type'] == 'package': out += "namespace "+element['name']+" {\n"
+			if len(element['childs']) > 0 or element['type'] == 'package':
+				if element['type'] == 'package': out += "class "+element['name']+" {\n"
 				else: out += "namespace "+self.prefix+element['name']+" {\n"
 				out += self.writeNested(element,element['childs'])
-				out += "\n}"
-		
+				if 'private' in element: 
+					out += self.writeNested(element,element['private'])
+				if 'public' in element: 
+					out += "public:\n"
+					out += self.writeNested(element,element['public'])
+				if element['type'] == 'package': out += "\n};"
+				else: out += "\n}"
 			if element['type'] == 'struct':
 				out += "\n" + Convert.struct(element) + "\n"
 			elif element['type'] == 'function':
