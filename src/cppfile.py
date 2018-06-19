@@ -3,7 +3,7 @@ from class_extract import Extract
 
 class CppFile:
 	
-	def __init__(self,xmlfile,tree,prefix):
+	def __init__(self,xmlfile,tree,prefixFunction,prefixClass,includePrivate):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.type = "program"
@@ -15,7 +15,9 @@ class CppFile:
 		self.typedefs = []
 		self.includes = []
 		self.namespaces = []
-		self.prefix = prefix
+		self.prefixFunction = prefixFunction
+		self.prefixClass = prefixClass
+		self.includePrivate = includePrivate
 		
 	""" Start parsing tree """
 	def parse(self):
@@ -48,7 +50,7 @@ class CppFile:
 					self._loop(child.find('body_declarative_items_ql'),struct['childs'])
 			
 			elif child.tag == 'package_body_declaration':
-				package = Extract.getPackage(child,lastNode)
+				package = Extract.getPackage(child,self.prefixClass,lastNode)
 				package['comment'] = Extract.getComment(node,i)
 				elements.append(package)
 				nextNode = child.find('body_declarative_items_ql')
@@ -56,7 +58,7 @@ class CppFile:
 					self._loop(nextNode,package['childs'])
 					
 			elif child.tag == 'package_declaration':
-				package = Extract.getPackage(child,lastNode)
+				package = Extract.getPackage(child,self.prefixClass,lastNode)
 				package['comment'] = Extract.getComment(node,i)
 				package['public'] = []
 				package['private'] = []
@@ -72,6 +74,7 @@ class CppFile:
 	def setIncludes(self,pps):
 		node = self.root.find('context_clause_elements_ql')
 		if node is None: return
+
 		for withNode in node.findall('with_clause'):
 			idNodes = withNode.iter('identifier')
 			attrs = []
@@ -90,7 +93,16 @@ class CppFile:
 		if node is None: return
 		for nsNode in node.findall('use_package_clause'):
 			attrs = Extract.getRefNames(nsNode)
-			self.namespaces.append("::".join(attrs))
+			name = ".".join(attrs)
+			isIncluded = False
+			for include in self.includes:
+				if name == include['name']:
+					nsname = self.prefixClass+(("::"+self.prefixClass).join(attrs))
+					self.namespaces.append(nsname)
+					isIncluded = True
+					break
+			if isIncluded == False:
+				self.namespaces.append("::".join(attrs))
 		
 	""" 
 	Write result to the c++ file
@@ -102,28 +114,27 @@ class CppFile:
 		for namespace in self.namespaces:
 			out += "\n"+Convert.namespace(namespace)
 		out += "\n".join(self.typedefs)+"\n\n"
-		if self.type == 'package': out += "class "+self.name+"\n{" #continue here and move this stuff to writeNested
 		out += "\n"+self.writeNested(None,self.elements)
-		if self.type == 'package': out += "\n}"
 		self.file.write(out)
 	
 	def writeNested(self,parent,elements):
 		out = ''
 		for element in elements:
 			if len(element['childs']) > 0 or element['type'] == 'package':
-				if element['type'] == 'package': out += "class "+element['name']+" {\n"
-				else: out += "namespace "+self.prefix+element['name']+" {\n"
+				if element['type'] == 'package': out += "namespace "+element['name']+" {\n"
+				else: out += "namespace "+self.prefixFunction+element['name']+" {\n"
 				out += self.writeNested(element,element['childs'])
-				if 'private' in element: 
+				
+				if 'private' in element and self.includePrivate: 
 					out += self.writeNested(element,element['private'])
 				if 'public' in element: 
-					out += "public:\n"
+					out += "\n/*Public starts here...*/\n"
 					out += self.writeNested(element,element['public'])
-				if element['type'] == 'package': out += "\n};"
-				else: out += "\n}"
+					
+				out += "\n}"
 			if element['type'] == 'struct':
 				out += "\n" + Convert.struct(element) + "\n"
 			elif element['type'] == 'function':
-				out += "\n" + Convert.function(element) + "\n"
+				out += "\n" + Convert.function(element,self.prefixFunction) + "\n"
 			
 		return out

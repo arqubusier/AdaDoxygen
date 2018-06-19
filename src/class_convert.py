@@ -25,18 +25,18 @@ class Convert:
 		return out
 	
 	@staticmethod
-	def namespaces(function):
+	def namespaces(function,prefix):
 		if len(function['childs']) == 0: return ''
-		return "using namespace _" + function['name']+";\n"
+		return "using namespace " + prefix + function['name']+";\n"
 	
 	@staticmethod
-	def function(function):
+	def function(function,prefix):
 		out = Convert.comment(function['comment'])
 		out += function['output'] + " " + function['name']
 		out += " ("+Convert.params(function['params'])+")"
 		if 'body' in function:
 			out += ' {\n'
-			out += Convert.namespaces(function)
+			out += Convert.namespaces(function,prefix)
 			for var in function['body']['variables']:
 				out += var['type'] + " " + var['name'] + ";\n"
 			for call in function['body']['calls']:

@@ -4,15 +4,15 @@ The static methods below extracts data from XML-nodes into dictionaries
 class Extract:
 
 	@staticmethod
-	def getPackage(packNode, commentNode):
-		elem = Extract.getPackageHead(packNode,commentNode)
+	def getPackage(packNode,prefix, commentNode):
+		elem = Extract.getPackageHead(packNode,prefix,commentNode)
 		return elem
 		
 	@staticmethod
-	def getPackageHead(packNode, commentNode):
+	def getPackageHead(packNode,prefix, commentNode):
 		elem = {}
 		elem['type'] = 'package'
-		elem['name'] = Extract.getPackageName(packNode)
+		elem['name'] = Extract.getPackageName(packNode,prefix)
 		elem['childs'] = []
 		#elem['comment'] = Extract.getComment(commentNode)
 		return elem
@@ -24,13 +24,15 @@ class Extract:
 		elem['name'] = Extract.getName(structNode)
 		elem['props'] = []
 		elem['childs'] = []
-		tmpNode = structNode.find('type_declaration_view_q').find('record_type_definition').find('record_definition_q').find('record_definition').find('record_components_ql')
-		for propNode in tmpNode.findall('component_declaration'):
-			prop = {}
-			prop['name'] = Extract.getName(propNode)
-			prop['type'] = propNode.find('object_declaration_view_q').find('component_definition').find('component_definition_view_q').find('subtype_indication').find('subtype_mark_q').find('identifier').get('ref_name')
-			elem['props'].append(prop)
-		#elem['comment'] = Extract.getComment(commentNode)
+		tmpNode = structNode.find('type_declaration_view_q').find('record_type_definition')
+		if tmpNode is not None:
+			tmpNode = tmpNode.find('record_definition_q').find('record_definition').find('record_components_ql')
+			for propNode in tmpNode.findall('component_declaration'):
+				prop = {}
+				prop['name'] = Extract.getName(propNode)
+				prop['type'] = propNode.find('object_declaration_view_q').find('component_definition').find('component_definition_view_q').find('subtype_indication').find('subtype_mark_q').find('identifier').get('ref_name')
+				elem['props'].append(prop)
+			#elem['comment'] = Extract.getComment(commentNode)
 		return elem
 	
 	@staticmethod
@@ -51,12 +53,15 @@ class Extract:
 		for paramNode in functionNode.find('parameter_profile_ql').findall('parameter_specification'):
 			param = {}
 			param['name'] = Extract.getName(paramNode)
-			param['type'] = paramNode.find('object_declaration_view_q').find('identifier').get('ref_name')
+			attrs = Extract.getRefNames(paramNode.find('object_declaration_view_q'))
+			param['type'] = "::".join(attrs)
 			elem['params'].append(param)
 		if functionNode.find('result_profile_q') is None:
 			elem['output'] = 'void'
 		else:
-			elem['output'] = functionNode.find('result_profile_q').find('identifier').get('ref_name')
+			attrs = Extract.getRefNames(functionNode.find('result_profile_q'))
+			output = "::".join(attrs)
+			elem['output'] = output
 		#elem['comment'] = Extract.getComment(commentNode)
 		return elem
 	
@@ -65,11 +70,13 @@ class Extract:
 		return node.find('names_ql').find('defining_identifier').get('def_name')
 		
 	@staticmethod
-	def getPackageName(node):
+	def getPackageName(node,prefix):
 		if node.find('names_ql').find('defining_identifier') is not None:
-			return Extract.getName(node)
+			return prefix+Extract.getName(node)
 		refNames = Extract.getRefNames(node.find('names_ql'))
 		refNames.append(node.find('names_ql').find('defining_expanded_name').get('def_name'))
+		for i,refName in enumerate(refNames):
+			refNames[i] = prefix+refName
 		return "::".join(refNames)
 		
 	@staticmethod
