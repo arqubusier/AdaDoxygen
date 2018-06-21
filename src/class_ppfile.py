@@ -1,16 +1,17 @@
+import re
 from class_convert import Convert
 from class_extract import Extract
 
-class CppFile:
+class PPFile:
 	
-	def __init__(self,xmlfile,tree,prefixFunction,prefixClass,includePrivate):
+	def __init__(self,xmlfile,tree,prefixFunction,prefixClass,includePrivate,cpp_dir):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.type = "program"
 		self.source = self.root.get('source_file')
 		self.filename = Convert.filename(xmlfile)
 		self.filetype = self.filename.split('.')[-1]
-		self.file = open("cpp/"+self.filename,"w+")
+		self.file = open(cpp_dir+"/"+self.filename,"w+")
 		self.elements = [] #holds functions, structs and packages
 		self.typedefs = []
 		self.includes = []
@@ -18,6 +19,7 @@ class CppFile:
 		self.prefixFunction = prefixFunction
 		self.prefixClass = prefixClass
 		self.includePrivate = includePrivate
+		self.privateUris = []
 		
 	""" Start parsing tree """
 	def parse(self):
@@ -33,6 +35,7 @@ class CppFile:
 			if child.tag == 'function_body_declaration' or child.tag == 'procedure_body_declaration':
 				function = Extract.getFunction(child,lastNode)
 				function['comment'] = Extract.getComment(node,i)
+				function['uri'] = child.find('names_ql').find('defining_identifier').get('def')
 				elements.append(function)
 				if child.find('body_declarative_items_ql') is not None:
 					self._loop(child.find('body_declarative_items_ql'),function['childs'])
@@ -40,6 +43,7 @@ class CppFile:
 			elif child.tag == 'procedure_declaration' or child.tag == 'function_declaration':
 				function = Extract.getFunctionHead(child,lastNode)
 				function['comment'] = Extract.getComment(node,i)
+				function['uri'] = child.find('names_ql').find('defining_identifier').get('def')
 				elements.append(function)
 			
 			elif child.tag == 'ordinary_type_declaration':
@@ -103,7 +107,46 @@ class CppFile:
 					break
 			if isIncluded == False:
 				self.namespaces.append("::".join(attrs))
+				
+	def setPrivates(self,pps):
+		if self.filetype == 'hpp': return
+		hpp = None
+		for pp in pps:
+			if self.name == pp.name and pp.filetype == 'hpp': hpp = pp
+		if hpp is None:
+			print "Warning, no header-file for '"+self.name+"' found. Assuming all members to be public"
+			return
+		self.setPrivatesRecursive(self.elements,hpp)
 		
+	def setPrivatesRecursive(self,elements,hpp):
+		for el in elements:
+			if 'childs' in el: self.setPrivatesRecursive(el['childs'],hpp)
+			el['is_private'] = self.isPrivate(el,hpp.root)
+			if el['is_private']:
+				el['comment'] = ' <b>PRIVATE</b><br/>'+el['comment']
+			
+	def isPrivate(self,el,hppRoot):
+		if 'uri' not in el: return False
+		
+		p = re.compile('^(ada:\/\/[^\/]+)(_body)(.*)$')
+		m = p.match(el['uri'])
+		
+		if m is False: print "Warning, wierd uri: "+el['uri']
+		
+		uri = m.group(1)+m.group(3)		
+		nodes = hppRoot.iter('private_part_declarative_items_ql')
+		
+		for node in nodes:
+			tmpNode = node.find('.//defining_identifier')
+			if tmpNode is not None:
+				if uri == tmpNode.get('def'):
+					return True
+		return False
+		
+	def isPrivateElement(self,element):
+		if 'is_private' in element: return element['is_private']
+		return False
+			
 	""" 
 	Write result to the c++ file
 	"""
@@ -116,25 +159,27 @@ class CppFile:
 		out += "\n".join(self.typedefs)+"\n\n"
 		out += "\n"+self.writeNested(None,self.elements)
 		self.file.write(out)
+		self.file.close()
 	
 	def writeNested(self,parent,elements):
 		out = ''
 		for element in elements:
-			if len(element['childs']) > 0 or element['type'] == 'package':
-				if element['type'] == 'package': out += "namespace "+element['name']+" {\n"
-				else: out += "namespace "+self.prefixFunction+element['name']+" {\n"
-				out += self.writeNested(element,element['childs'])
-				
-				if 'private' in element and self.includePrivate: 
-					out += self.writeNested(element,element['private'])
-				if 'public' in element: 
-					out += "\n/*Public starts here...*/\n"
-					out += self.writeNested(element,element['public'])
+			if self.includePrivate or self.isPrivateElement(element) is False:
+				if len(element['childs']) > 0 or element['type'] == 'package':
+					if element['type'] == 'package': out += "namespace "+element['name']+" {\n"
+					else: out += "namespace "+self.prefixFunction+element['name']+" {\n"
+					out += self.writeNested(element,element['childs'])
 					
-				out += "\n}"
-			if element['type'] == 'struct':
-				out += "\n" + Convert.struct(element) + "\n"
-			elif element['type'] == 'function':
-				out += "\n" + Convert.function(element,self.prefixFunction) + "\n"
-			
+					if 'private' in element and self.includePrivate: 
+						out += self.writeNested(element,element['private'])
+					if 'public' in element: 
+						out += "\n/*Public starts here...*/\n"
+						out += self.writeNested(element,element['public'])
+						
+					out += "\n}"
+				if element['type'] == 'struct':
+					out += "\n" + Convert.struct(element) + "\n"
+				elif element['type'] == 'function':
+					out += "\n" + Convert.function(element,self.prefixFunction) + "\n"
+				
 		return out

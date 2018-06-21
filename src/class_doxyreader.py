@@ -15,3 +15,5 @@ class DoxyReader:
 				m = p.match(str)
 				if m and m.group(1) == 'YES':
 					self.include_private_bool = True
+		else:
+			sys.exit("Flag '-d DOXYGEN_FILE' is mandatory")

@@ -6,3 +6,7 @@ echo "XML to C++"
 python prog.py ./xmlnstest/*.xml
 #python prog.py ./xml/*.xml
 #doxygen doxygen_config.txt
+
+
+
+#python prog.py ../examples/namespace-test/*.ads ../examples/namespace-test/*.adb -a Everything
