@@ -7,9 +7,10 @@ from class_commentpreprocess import CommentPreprocess
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument('files', nargs='+', help="XML-files for Ada to C++. ADB/ADS-files for comment preprocessing")
-argparser.add_argument('-pf', '--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
-argparser.add_argument('-pp', '--prefix-packages', default="", help="Prefix for packages, default=''")
 argparser.add_argument('-d', '--doxygen-file', default="", help="Doxygen config file")
+argparser.add_argument('-p', '--project-file', default="", help="Ada project file")
+argparser.add_argument('--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
+argparser.add_argument('--prefix-packages', default="", help="Prefix for packages, default=''")
 
 args = argparser.parse_args()
 doxyReader = DoxyReader(args.doxygen_file)
@@ -20,7 +21,7 @@ tmp_dir_ada = tmp_dir+"/ada"
 tmp_dir_xml = tmp_dir+"/xml"
 tmp_dir_cpp = tmp_dir+"/cpp"
 
-adafiles = args.files
+adafiles = sorted(args.files,key=len)
 preprocfiles = []
 xmlfiles = []
 cppfiles = []
@@ -30,6 +31,8 @@ print "Prefix for functions: '"+args.prefix_functions+"'"
 print "Prefix for packages: '"+args.prefix_packages+"'"
 print "Include private members: '"+str(doxyReader.include_private_bool)+"'"
 print "Temporary directory: "+ tmp_dir
+print "Doxygen config file: "+ args.doxygen_file
+print "Ada project file: "+ args.project_file
 
 call(['rm','-r',tmp_dir])
 call(['mkdir',tmp_dir])
@@ -50,6 +53,9 @@ for adafile in adafiles:
 """ Convert ada to XML with gnat2xml """
 print "--CALLING gnat2xml--"
 gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml] + preprocfiles
+if args.project_file != '':
+	gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml,'-P../examples/synth/src']
+
 print " ".join(gnatArgs)
 call(gnatArgs)
 for file in preprocfiles:

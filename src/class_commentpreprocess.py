@@ -3,10 +3,14 @@
 class CommentPreprocess:
 	
 	def __init__(self,adafile):
-		with open(adafile,'r') as file:
-			self.lines_old = file.readlines()
-		self.comments = []
+		self.lines_old = []
 		self.lines_new = []
+		with open(adafile,'r') as file:
+			lines = file.readlines()
+			for line in lines: self.lines_old.append(line.strip("\n\r"))
+
+		self.comments = []
+		
 		self.linenumber = 0
 		for line in self.lines_old:
 			self.readLine(line)
@@ -15,6 +19,7 @@ class CommentPreprocess:
 		self.setNewLines(mergedComments)
 			
 	def getResult(self): return "\n".join(self.lines_new)
+	#def getResult(self): return "\n".join(self.lines_old)
 	
 	def setDefaultLineState(self):
 		self.is_comment = False
@@ -22,6 +27,7 @@ class CommentPreprocess:
 		self.enclose_char = "'"
 		self.was_escaped = False
 		self.was_dash = False
+		self.was_dash2 = False
 		self.comment = ''
 		
 			
@@ -42,15 +48,21 @@ class CommentPreprocess:
 				if self.is_open:
 					if c == self.enclose_char:
 						self.is_open = False
-				elif self.was_dash and c == '-':
+				elif self.was_dash2 and c == '!':
 					self.is_comment = True
 				elif c == '"' or c == "'":
 					self.is_open = True
 					self.enclose_char = c
 				elif c == '\\':
 					self.was_escaped = True
+				elif c == '-' and self.was_dash:
+					self.was_dash2 = True
 				elif c == '-':
 					self.was_dash = True
+					self.was_dash2 = False
+				else:
+					self.was_dash = False
+					self.was_dash2 = False
 			else:
 				self.was_escaped = False
 		
