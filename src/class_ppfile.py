@@ -71,6 +71,12 @@ class PPFile:
 					self._loop(child.find('visible_part_declarative_items_ql'),package['public'])
 				if child.find('private_part_declarative_items_ql') is not None:
 					self._loop(child.find('private_part_declarative_items_ql'),package['private'])
+			elif child.tag == 'package_renaming_declaration':
+				rename = Extract.getRename(child)
+				rename['comment'] = Extract.getComment(node,i)
+				elements.append(rename)
+				
+				
 			i+=1
 			lastNode = child
 			
@@ -179,6 +185,10 @@ class PPFile:
 					out += "\n}"
 				if element['type'] == 'struct':
 					out += "\n" + Convert.struct(element) + "\n"
+				if element['type'] == 'enum':
+					out += "\n" + Convert.enum(element) + "\n"
+				if element['type'] == 'rename':
+					out += "\n" + Convert.rename(element) + "\n"
 				elif element['type'] == 'function':
 					out += "\n" + Convert.function(element,self.prefixFunction) + "\n"
 				

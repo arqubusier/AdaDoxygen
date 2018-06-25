@@ -33,6 +33,15 @@ class Extract:
 				prop['type'] = propNode.find('object_declaration_view_q').find('component_definition').find('component_definition_view_q').find('subtype_indication').find('subtype_mark_q').find('identifier').get('ref_name')
 				elem['props'].append(prop)
 			#elem['comment'] = Extract.getComment(commentNode)
+		else:
+			tmpNode = structNode.find('type_declaration_view_q').find('enumeration_type_definition')
+			if tmpNode is not None:
+				tmpNodes = tmpNode.findall('.//defining_enumeration_literal')
+				enums = []
+				for tmpNode in tmpNodes:
+					enums.append(tmpNode.get('def_name'))
+				elem['type'] = 'enum'
+				elem['enums'] = enums
 		return elem
 	
 	@staticmethod
@@ -78,6 +87,15 @@ class Extract:
 		for i,refName in enumerate(refNames):
 			refNames[i] = prefix+refName
 		return "::".join(refNames)
+		
+	@staticmethod
+	def getRename(node):
+		elem = {}
+		elem['type'] = 'rename'
+		elem['name'] = Extract.getName(node)
+		elem['package_names'] = Extract.getRefNames(node.find('renamed_entity_q'))
+		elem['childs'] = []
+		return elem
 		
 	@staticmethod
 	def getComment(nodes,i):

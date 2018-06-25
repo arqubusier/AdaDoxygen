@@ -6,11 +6,12 @@ with Ada.Text_IO;
 use Ada.Text_IO;
 use Pkg1;
 
---'''
--- This is the main procedure
---'''
+--!'''
+--!This is the main procedure
+--!'''
 procedure Prog is
 	x : Integer;
+	--! This alias is commented
 	package twotwo renames Pkg2.Pkg22;
 	
 begin
@@ -23,4 +24,4 @@ begin
 	Pkg2.Print_Something;
 	Put_Line("Hi from main");
 end Prog;
---The program is ending here
+--!The program is ending here

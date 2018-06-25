@@ -23,6 +23,20 @@ class Convert:
 			out += "\t"+prop['type']+" "+prop['name']+";\n"
 		out += "};"
 		return out
+		
+	@staticmethod
+	def enum(enum):
+		comment = "<b>Enumaration type</b> ("+",".join(enum['enums'])+")<br/>"+enum['comment']
+		print comment
+		out = Convert.comment(comment)
+		out += "typedef int "+enum['name']+";"
+		return out
+		
+	@staticmethod
+	def rename(rename):
+		out = Convert.comment(rename['comment'])
+		out += "namespace "+rename['name']+"="+("::".join(rename['package_names']))+";"
+		return out
 	
 	@staticmethod
 	def namespaces(function,prefix):
@@ -57,7 +71,7 @@ class Convert:
 	@staticmethod
 	def comment(comment):
 		out = ''
-		if comment != '': out += "/*! "+comment.strip('"')+" */\n"
+		if comment != '': out += "/*! "+comment+" */\n"
 		return out
 		
 	@staticmethod
