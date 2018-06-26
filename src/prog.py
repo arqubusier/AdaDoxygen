@@ -16,15 +16,18 @@ args = argparser.parse_args()
 doxyReader = DoxyReader(args.doxygen_file)
 script_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + os.sep
 
-tmp_dir = script_dir+"_tmp"
-tmp_dir_ada = tmp_dir+"/ada"
-tmp_dir_xml = tmp_dir+"/xml"
-tmp_dir_cpp = tmp_dir+"/cpp"
+tmp_dir =  os.path.join(script_dir,"_tmp")
+tmp_dir_ada = os.path.join(tmp_dir,"ada")
+tmp_dir_xml = os.path.join(tmp_dir,"xml")
+tmp_dir_cpp = os.path.join(tmp_dir,"cpp")
 
 adafiles = sorted(args.files,key=len)
 preprocfiles = []
 xmlfiles = []
 cppfiles = []
+
+commonpath = os.path.commonprefix(adafiles)
+commondir = os.path.dirname(commonpath)
 
 print "--CONFIGS--"
 print "Prefix for functions: '"+args.prefix_functions+"'"
@@ -44,27 +47,39 @@ call(['mkdir',tmp_dir_cpp])
 print "--PREPROCESSING--"
 for adafile in adafiles:
 	preproc = CommentPreprocess(adafile)
-	preprocfilename = tmp_dir_ada+"/"+ntpath.basename(adafile)
+	if adafile.startswith(commondir) is False: 
+		sys.exit("Error: '"+adafile+"' does not start with "+commondir)
+	adafilepath = adafile[len(commondir)+1:]
+	preprocfilename = os.path.join(tmp_dir_ada,adafilepath)
+	preprocdirname = os.path.dirname(preprocfilename)
+	if not os.path.exists(preprocdirname): os.makedirs(preprocdirname)
 	with open(preprocfilename,"w+") as preprocfile:
 		print preprocfilename + " created"
 		preprocfiles.append(preprocfilename)
 		preprocfile.write(preproc.getResult())
 
+
 """ Convert ada to XML with gnat2xml """
 print "--CALLING gnat2xml--"
 gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml] + preprocfiles
 if args.project_file != '':
-	gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml,'-P../examples/synth/src']
+	gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml,'-P'+args.project_file,'-U']
 
 print " ".join(gnatArgs)
 call(gnatArgs)
-for file in preprocfiles:
-	xmlfiles.append(tmp_dir_xml+"/"+ntpath.basename(file)+".xml")
+
+def getXMLFiles(dir):
+	xmlfiles = []
+	for subdir, dirs, files in os.walk(dir):
+		for file in files:
+			xmlfiles.append(os.path.join(subdir,file))
+	return xmlfiles
 
 """ Convert XML to PP """
 print "--CONVERTING XML TO PP--"
 pps = []
 print "Parsing XML..."
+xmlfiles = getXMLFiles(tmp_dir_xml)
 for xmlfile in xmlfiles:
 	tree = ET.parse((xmlfile).strip("\r"))
 	pp = PPFile(xmlfile,tree,args.prefix_functions,args.prefix_packages,doxyReader.include_private_bool,tmp_dir_cpp)

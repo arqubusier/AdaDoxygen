@@ -1,0 +1,4 @@
+with "./package2/pkg2";
+project Main is
+	for Main use ("prog.adb");
+end Main;

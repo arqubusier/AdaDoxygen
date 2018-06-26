@@ -1,0 +1,3 @@
+project Pkg22 is
+	for Source_dirs use (".");
+end Pkg22;

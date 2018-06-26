@@ -8,5 +8,7 @@ python prog.py ./xmlnstest/*.xml
 #doxygen doxygen_config.txt
 
 
+python prog.py -d doxygen_config.txt -p ../examples/namespace-test/main.gpr ../examples/namespace-test/*.ad[sb] ../examples/namespace-test/package2/*.ad[sb] ../examples/namespace-test/package2/package22/*.ad[sb]
 
-#python prog.py ../examples/namespace-test/*.ads ../examples/namespace-test/*.adb -a Everything
+
+python prog.py -d doxygen_config.txt ../examples/synth/src/*.ad[sb]

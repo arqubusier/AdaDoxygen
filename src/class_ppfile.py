@@ -29,54 +29,45 @@ class PPFile:
 	""" Recursively loop through each level in the XML-tree """
 	def _loop(self,node,elements,parent=None):
 		lastNode = None
+		
 		i = 0
 		for child in node:
-			
+			element = None
+			has_body_declarative_items_ql = False
 			if child.tag == 'function_body_declaration' or child.tag == 'procedure_body_declaration':
-				function = Extract.getFunction(child,lastNode)
-				function['comment'] = Extract.getComment(node,i)
-				function['uri'] = child.find('names_ql').find('defining_identifier').get('def')
-				elements.append(function)
-				if child.find('body_declarative_items_ql') is not None:
-					self._loop(child.find('body_declarative_items_ql'),function['childs'])
+				element = Extract.getFunction(child,lastNode)
+				element['uri'] = child.find('names_ql').find('defining_identifier').get('def')
+				has_body_declarative_items_ql = True
 			
 			elif child.tag == 'procedure_declaration' or child.tag == 'function_declaration':
-				function = Extract.getFunctionHead(child,lastNode)
-				function['comment'] = Extract.getComment(node,i)
-				function['uri'] = child.find('names_ql').find('defining_identifier').get('def')
-				elements.append(function)
+				element = Extract.getFunctionHead(child,lastNode)
+				element['uri'] = child.find('names_ql').find('defining_identifier').get('def')
 			
 			elif child.tag == 'ordinary_type_declaration':
-				struct = Extract.getStruct(child,lastNode)
-				struct['comment'] = Extract.getComment(node,i)
-				elements.append(struct)
-				if child.find('body_declarative_items_ql') is not None:
-					self._loop(child.find('body_declarative_items_ql'),struct['childs'])
+				element = Extract.getStruct(child,lastNode)
+				has_body_declarative_items_ql = True
 			
 			elif child.tag == 'package_body_declaration':
-				package = Extract.getPackage(child,self.prefixClass,lastNode)
-				package['comment'] = Extract.getComment(node,i)
-				elements.append(package)
-				nextNode = child.find('body_declarative_items_ql')
-				if nextNode is not None:
-					self._loop(nextNode,package['childs'])
+				element = Extract.getPackage(child,self.prefixClass,lastNode)
+				has_body_declarative_items_ql = True
 					
 			elif child.tag == 'package_declaration':
-				package = Extract.getPackage(child,self.prefixClass,lastNode)
-				package['comment'] = Extract.getComment(node,i)
-				package['public'] = []
-				package['private'] = []
-				elements.append(package)
+				element = Extract.getPackage(child,self.prefixClass,lastNode)
+				element['public'] = []
+				element['private'] = []
 				if child.find('visible_part_declarative_items_ql') is not None:
-					self._loop(child.find('visible_part_declarative_items_ql'),package['public'])
+					self._loop(child.find('visible_part_declarative_items_ql'),element['public'])
 				if child.find('private_part_declarative_items_ql') is not None:
-					self._loop(child.find('private_part_declarative_items_ql'),package['private'])
+					self._loop(child.find('private_part_declarative_items_ql'),element['private'])
+					
 			elif child.tag == 'package_renaming_declaration':
-				rename = Extract.getRename(child)
-				rename['comment'] = Extract.getComment(node,i)
-				elements.append(rename)
+				element = Extract.getRename(child)
 				
-				
+			if element is not None:
+				element['comment'] = Extract.getComment(node,i)
+				elements.append(element)
+				if has_body_declarative_items_ql and child.find('body_declarative_items_ql') is not None:
+					self._loop(child.find('body_declarative_items_ql'),element['childs'])
 			i+=1
 			lastNode = child
 			

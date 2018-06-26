@@ -1,0 +1,4 @@
+with "./package22/pkg22";
+project Pkg2 is
+	for Source_dirs use (".");
+end Pkg2;
