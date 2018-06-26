@@ -1,14 +1,15 @@
-import os,sys,argparse,ntpath
+import os,sys,argparse,ntpath,glob
 import xml.etree.ElementTree as ET
 from subprocess import call
 from class_ppfile import PPFile
 from class_doxyreader import DoxyReader
 from class_commentpreprocess import CommentPreprocess
+from class_convert import Convert
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument('files', nargs='+', help="XML-files for Ada to C++. ADB/ADS-files for comment preprocessing")
 argparser.add_argument('-d', '--doxygen-file', default="", help="Doxygen config file")
-argparser.add_argument('-p', '--project-file', default="", help="Ada project file")
+argparser.add_argument('-p', '--project-file', default="", help="Ada project file, mandatory if source files is in different directories")
 argparser.add_argument('--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
 argparser.add_argument('--prefix-packages', default="", help="Prefix for packages, default=''")
 
@@ -21,13 +22,9 @@ tmp_dir_ada = os.path.join(tmp_dir,"ada")
 tmp_dir_xml = os.path.join(tmp_dir,"xml")
 tmp_dir_cpp = os.path.join(tmp_dir,"cpp")
 
-adafiles = sorted(args.files,key=len)
+adafiles = args.files
 preprocfiles = []
 xmlfiles = []
-cppfiles = []
-
-commonpath = os.path.commonprefix(adafiles)
-commondir = os.path.dirname(commonpath)
 
 print "--CONFIGS--"
 print "Prefix for functions: '"+args.prefix_functions+"'"
@@ -38,13 +35,15 @@ print "Doxygen config file: "+ args.doxygen_file
 print "Ada project file: "+ args.project_file
 
 call(['rm','-r',tmp_dir])
-call(['mkdir',tmp_dir])
-call(['mkdir',tmp_dir_ada])
-call(['mkdir',tmp_dir_xml])
-call(['mkdir',tmp_dir_cpp])
+if not os.path.exists(tmp_dir_ada): os.makedirs(tmp_dir_ada)
+if not os.path.exists(tmp_dir_xml): os.makedirs(tmp_dir_xml)
+if not os.path.exists(tmp_dir_cpp): os.makedirs(tmp_dir_cpp)
+
 
 """ Preprocess ada-comments to pragma """
 print "--PREPROCESSING--"
+commonpath = os.path.commonprefix(adafiles)
+commondir = os.path.dirname(commonpath)
 for adafile in adafiles:
 	preproc = CommentPreprocess(adafile)
 	if adafile.startswith(commondir) is False: 
@@ -64,37 +63,31 @@ print "--CALLING gnat2xml--"
 gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml] + preprocfiles
 if args.project_file != '':
 	gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml,'-P'+args.project_file,'-U']
-
 print " ".join(gnatArgs)
 call(gnatArgs)
 
-def getXMLFiles(dir):
-	xmlfiles = []
-	for subdir, dirs, files in os.walk(dir):
-		for file in files:
-			xmlfiles.append(os.path.join(subdir,file))
-	return xmlfiles
 
 """ Convert XML to PP """
 print "--CONVERTING XML TO PP--"
 pps = []
-print "Parsing XML..."
-xmlfiles = getXMLFiles(tmp_dir_xml)
+xmlfiles = glob.glob(os.path.join(tmp_dir_xml,"*.xml"))
+print "Number of Ada-files: "+str(len(preprocfiles))
+print "Number of XML-files: "+str(len(xmlfiles))
+
 for xmlfile in xmlfiles:
 	tree = ET.parse((xmlfile).strip("\r"))
-	pp = PPFile(xmlfile,tree,args.prefix_functions,args.prefix_packages,doxyReader.include_private_bool,tmp_dir_cpp)
-	
-	print "Parsing XML from "+xmlfile
+	filename = Convert.filename(xmlfile, preprocfiles, tmp_dir_cpp)
+	dirname = os.path.dirname(filename)
+	if not os.path.exists(dirname): os.makedirs(dirname)
+	pp = PPFile(filename,tree,args.prefix_functions,args.prefix_packages,doxyReader.include_private_bool)
 	pp.parse()
 	pps.append(pp)
-
-print "Set includes, privates and namespaces..."
+	
 for pp in pps:
 	pp.setIncludes(pps)
 	pp.setNamespaces(pps)
 	pp.setPrivates(pps)
 	
-print "Generate PP-files..."
 for pp in pps:
 	print "Creating "+pp.name+"..."
 	pp.write()

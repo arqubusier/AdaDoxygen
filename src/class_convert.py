@@ -1,4 +1,4 @@
-import sys, ntpath
+import os, sys, ntpath
 
 """ 
 The static methods below converts dictionaries to c++ code
@@ -6,15 +6,32 @@ The static methods below converts dictionaries to c++ code
 class Convert:
 	
 	@staticmethod
-	def filename(filepath):
-		file = ntpath.basename(filepath).split('.')
+	def filename(xmlfile, preprocfiles, tmp_dir_cpp):
+		preprocfile = ""
+		for test_file in preprocfiles:
+			if ntpath.basename(test_file)+".xml" == ntpath.basename(xmlfile):
+				preprocfile = test_file
+		if preprocfile == "":
+			print preprocfile
+			print xmlfile
+			sys.exit("A XML file found that could not be matched with the original Ada-file")
+
+		commonpath = os.path.commonprefix(preprocfiles)
+		commondir = os.path.dirname(commonpath)
+		preprocfilepath = preprocfile[len(commondir)+1:]
+		ext_pp = Convert.fileext(xmlfile)
+		newfilepath = os.path.splitext(preprocfilepath)[0] + ext_pp
+		return os.path.join(tmp_dir_cpp, newfilepath)
+		
+	@staticmethod
+	def fileext(xmlfile):
+		file = ntpath.basename(xmlfile).split('.')
 		ext_ada = file[len(file)-2]
 		if ext_ada == 'ads': ext_pp = '.hpp'
 		elif ext_ada == 'adb': ext_pp = '.cpp'
-		else: sys.exit(filepath+" is not ads or adb")
-		file = ''.join(file[:len(file)-2])
-		return file + ext_pp
-	
+		else: sys.exit(xmlfile+" is not ads or adb")
+		return ext_pp
+		
 	@staticmethod
 	def struct(struct):
 		out = Convert.comment(struct['comment'])
@@ -76,7 +93,7 @@ class Convert:
 		
 	@staticmethod
 	def include(include):
-		return '#include "'+include['file']+'"'
+		return '#include "'+os.path.split(include['file'])[1]+'"'
 		
 	@staticmethod
 	def namespace(namespace):

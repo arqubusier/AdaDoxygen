@@ -1,17 +1,17 @@
-import re
+import os,re
 from class_convert import Convert
 from class_extract import Extract
 
 class PPFile:
 	
-	def __init__(self,xmlfile,tree,prefixFunction,prefixClass,includePrivate,cpp_dir):
+	def __init__(self,filename,tree,prefixFunction,prefixClass,includePrivate):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.type = "program"
 		self.source = self.root.get('source_file')
-		self.filename = Convert.filename(xmlfile)
+		self.filename = filename
 		self.filetype = self.filename.split('.')[-1]
-		self.file = open(cpp_dir+"/"+self.filename,"w+")
+		self.file = open(self.filename,"w+")
 		self.elements = [] #holds functions, structs and packages
 		self.typedefs = []
 		self.includes = []
@@ -148,7 +148,7 @@ class PPFile:
 	Write result to the c++ file
 	"""
 	def write(self):
-		out = "/*! @file "+self.filename+" */"
+		out = "/*! @file "+os.path.split(self.filename)[1]+" */"
 		for include in self.includes:
 			out += "\n"+Convert.include(include)
 		for namespace in self.namespaces:
