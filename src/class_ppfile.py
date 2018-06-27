@@ -64,10 +64,13 @@ class PPFile:
 				element = Extract.getRename(child)
 				
 			if element is not None:
-				element['comment'] = Extract.getComment(node,i)
+				c = Extract.getComment(node,i)
+				element['comment'] = c
+				print c
 				elements.append(element)
 				if has_body_declarative_items_ql and child.find('body_declarative_items_ql') is not None:
 					self._loop(child.find('body_declarative_items_ql'),element['childs'])
+				
 			i+=1
 			lastNode = child
 			
@@ -178,6 +181,8 @@ class PPFile:
 					out += "\n" + Convert.struct(element) + "\n"
 				if element['type'] == 'enum':
 					out += "\n" + Convert.enum(element) + "\n"
+				if element['type'] == 'type':
+					out += "\n" + Convert.type(element) + "\n"
 				if element['type'] == 'rename':
 					out += "\n" + Convert.rename(element) + "\n"
 				elif element['type'] == 'function':

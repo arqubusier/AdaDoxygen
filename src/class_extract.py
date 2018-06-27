@@ -42,6 +42,11 @@ class Extract:
 					enums.append(tmpNode.get('def_name'))
 				elem['type'] = 'enum'
 				elem['enums'] = enums
+			else:
+				for child in structNode.find('type_declaration_view_q'):
+					elem['type'] = 'type'
+					elem['type_name'] = child.tag
+					break
 		return elem
 	
 	@staticmethod

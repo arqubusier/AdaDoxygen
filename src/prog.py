@@ -7,7 +7,7 @@ from class_commentpreprocess import CommentPreprocess
 from class_convert import Convert
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument('files', nargs='+', help="XML-files for Ada to C++. ADB/ADS-files for comment preprocessing")
+argparser.add_argument('files', nargs='+', help="XML-files for Ada to C++. ADB/ADS/GPR-files for comment preprocessing")
 argparser.add_argument('-d', '--doxygen-file', default="", help="Doxygen config file")
 argparser.add_argument('-p', '--project-file', default="", help="Ada project file, mandatory if source files is in different directories")
 argparser.add_argument('--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
@@ -52,17 +52,22 @@ for adafile in adafiles:
 	preprocfilename = os.path.join(tmp_dir_ada,adafilepath)
 	preprocdirname = os.path.dirname(preprocfilename)
 	if not os.path.exists(preprocdirname): os.makedirs(preprocdirname)
-	with open(preprocfilename,"w+") as preprocfile:
+	with open(preprocfilename,"wb") as preprocfile:
 		print preprocfilename + " created"
-		preprocfiles.append(preprocfilename)
 		preprocfile.write(preproc.getResult())
+		#print preproc.getResult()
+		preprocfiles.append(preprocfilename)
 
 
 """ Convert ada to XML with gnat2xml """
 print "--CALLING gnat2xml--"
 gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml] + preprocfiles
 if args.project_file != '':
-	gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml,'-P'+args.project_file,'-U']
+	for preprocfile in preprocfiles:
+		if ntpath.basename(preprocfile) == ntpath.basename(args.project_file):
+			project_file = preprocfile
+	print "Projekt fil: "+project_file
+	gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml,'-P'+project_file,'-U']
 print " ".join(gnatArgs)
 call(gnatArgs)
 

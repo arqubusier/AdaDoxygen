@@ -43,11 +43,20 @@ class Convert:
 		
 	@staticmethod
 	def enum(enum):
-		comment = "<b>Enumaration type</b> ("+",".join(enum['enums'])+")<br/>"+enum['comment']
-		print comment
-		out = Convert.comment(comment)
+		c = "<b>Enumaration type</b> ("+",".join(enum['enums'])+")<br/>"+enum['comment']
+		print c
+		out = Convert.comment(c)
 		out += "typedef int "+enum['name']+";"
 		return out
+		
+	@staticmethod
+	def type(type):
+		c = "<b>Type</b> ("+type['type_name']+")<br/>"+type['comment']
+		print c
+		out = Convert.comment(c)
+		out += "typedef int "+type['name']+";"
+		return out
+		
 		
 	@staticmethod
 	def rename(rename):
