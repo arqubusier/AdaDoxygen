@@ -17,7 +17,7 @@ args = argparser.parse_args()
 doxyReader = DoxyReader(args.doxygen_file)
 script_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + os.sep
 
-tmp_dir =  os.path.join(script_dir,"_tmp")
+tmp_dir = os.path.join(script_dir,"_tmp")
 tmp_dir_ada = os.path.join(tmp_dir,"ada")
 tmp_dir_xml = os.path.join(tmp_dir,"xml")
 tmp_dir_cpp = os.path.join(tmp_dir,"cpp")
@@ -81,10 +81,10 @@ print "Number of XML-files: "+str(len(xmlfiles))
 
 for xmlfile in xmlfiles:
 	tree = ET.parse((xmlfile).strip("\r"))
-	filename = Convert.filename(xmlfile, preprocfiles, tmp_dir_cpp)
+	filename, sourcefile = Convert.filename(xmlfile, preprocfiles, tmp_dir_cpp)
 	dirname = os.path.dirname(filename)
 	if not os.path.exists(dirname): os.makedirs(dirname)
-	pp = PPFile(filename,tree,args.prefix_functions,args.prefix_packages,doxyReader.include_private_bool)
+	pp = PPFile(filename,sourcefile,tree,args.prefix_functions,args.prefix_packages,doxyReader.include_private_bool)
 	pp.parse()
 	pps.append(pp)
 	

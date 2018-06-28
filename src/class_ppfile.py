@@ -4,14 +4,19 @@ from class_extract import Extract
 
 class PPFile:
 	
-	def __init__(self,filename,tree,prefixFunction,prefixClass,includePrivate):
+	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,includePrivate):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.type = "program"
 		self.source = self.root.get('source_file')
+		
 		self.filename = filename
 		self.filetype = self.filename.split('.')[-1]
+		if self.filetype == 'adb':self.filetype = 'cpp'
+		elif self.filetype == 'ads':self.filetype = 'hpp'
+		
 		self.file = open(self.filename,"w+")
+		self.sourcefile = sourcefile
 		self.elements = [] #holds functions, structs and packages
 		self.typedefs = []
 		self.includes = []
@@ -25,9 +30,9 @@ class PPFile:
 	def parse(self):
 		node = self.root.find('unit_declaration_q')
 		self._loop(node,self.elements)
-		
+				
 	""" Recursively loop through each level in the XML-tree """
-	def _loop(self,node,elements,parent=None):
+	def _loop(self,node,elements,parent=None,isPrivate=False):
 		lastNode = None
 		
 		i = 0
@@ -45,7 +50,8 @@ class PPFile:
 			
 			elif child.tag == 'ordinary_type_declaration':
 				element = Extract.getStruct(child,lastNode)
-				has_body_declarative_items_ql = True
+				if element is not None: has_body_declarative_items_ql = True
+				else: element = Extract.getType(child,self.sourcefile)
 			
 			elif child.tag == 'package_body_declaration':
 				element = Extract.getPackage(child,self.prefixClass,lastNode)
@@ -56,9 +62,9 @@ class PPFile:
 				element['public'] = []
 				element['private'] = []
 				if child.find('visible_part_declarative_items_ql') is not None:
-					self._loop(child.find('visible_part_declarative_items_ql'),element['public'])
+					self._loop(child.find('visible_part_declarative_items_ql'),element['public'],child,isPrivate)
 				if child.find('private_part_declarative_items_ql') is not None:
-					self._loop(child.find('private_part_declarative_items_ql'),element['private'])
+					self._loop(child.find('private_part_declarative_items_ql'),element['private'],child,True)
 					
 			elif child.tag == 'package_renaming_declaration':
 				element = Extract.getRename(child)
@@ -66,10 +72,10 @@ class PPFile:
 			if element is not None:
 				c = Extract.getComment(node,i)
 				element['comment'] = c
-				print c
+				element['is_private'] = isPrivate
 				elements.append(element)
 				if has_body_declarative_items_ql and child.find('body_declarative_items_ql') is not None:
-					self._loop(child.find('body_declarative_items_ql'),element['childs'])
+					self._loop(child.find('body_declarative_items_ql'),element['childs'],child,isPrivate)
 				
 			i+=1
 			lastNode = child
@@ -122,8 +128,7 @@ class PPFile:
 		for el in elements:
 			if 'childs' in el: self.setPrivatesRecursive(el['childs'],hpp)
 			el['is_private'] = self.isPrivate(el,hpp.root)
-			if el['is_private']:
-				el['comment'] = ' <b>PRIVATE</b><br/>'+el['comment']
+			#if el['is_private']:el['comment'] = ' <b>PRIVATE</b><br/>'+el['comment']
 			
 	def isPrivate(self,el,hppRoot):
 		if 'uri' not in el: return False
@@ -177,10 +182,12 @@ class PPFile:
 						out += self.writeNested(element,element['public'])
 						
 					out += "\n}"
+				
+				if self.isPrivateElement(element) and self.filetype == 'hpp':
+					element['comment'] = ' <b>PRIVATE</b>'+Convert.commentDivider()+element['comment']
+					
 				if element['type'] == 'struct':
 					out += "\n" + Convert.struct(element) + "\n"
-				if element['type'] == 'enum':
-					out += "\n" + Convert.enum(element) + "\n"
 				if element['type'] == 'type':
 					out += "\n" + Convert.type(element) + "\n"
 				if element['type'] == 'rename':

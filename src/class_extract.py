@@ -14,7 +14,6 @@ class Extract:
 		elem['type'] = 'package'
 		elem['name'] = Extract.getPackageName(packNode,prefix)
 		elem['childs'] = []
-		#elem['comment'] = Extract.getComment(commentNode)
 		return elem
 		
 	@staticmethod
@@ -32,23 +31,41 @@ class Extract:
 				prop['name'] = Extract.getName(propNode)
 				prop['type'] = propNode.find('object_declaration_view_q').find('component_definition').find('component_definition_view_q').find('subtype_indication').find('subtype_mark_q').find('identifier').get('ref_name')
 				elem['props'].append(prop)
-			#elem['comment'] = Extract.getComment(commentNode)
-		else:
-			tmpNode = structNode.find('type_declaration_view_q').find('enumeration_type_definition')
-			if tmpNode is not None:
-				tmpNodes = tmpNode.findall('.//defining_enumeration_literal')
-				enums = []
-				for tmpNode in tmpNodes:
-					enums.append(tmpNode.get('def_name'))
-				elem['type'] = 'enum'
-				elem['enums'] = enums
-			else:
-				for child in structNode.find('type_declaration_view_q'):
-					elem['type'] = 'type'
-					elem['type_name'] = child.tag
-					break
+		else: return None
 		return elem
 	
+	@staticmethod
+	def getType(typeNode,sourcefile):
+		elem = {}
+		elem['type'] = 'type'
+		elem['name'] = Extract.getName(typeNode)
+		elem['childs'] = []
+		elem['plain'] = Extract.getPlaintext(sourcefile,typeNode)
+		return elem
+	
+	@staticmethod
+	def getPlaintext(file,node):
+		sloc = node.find('sloc')
+		
+		startline = int(sloc.get('line'))
+		startcol = int(sloc.get('col'))
+		endline = int(sloc.get('endline'))
+		endcol = int(sloc.get('endcol'))
+		
+		fh = open(file)
+		i_line = 1
+		plain = ""
+		for line in fh:
+			if i_line >= startline and i_line <= endline:
+				str = line.strip("\r")
+				i_col = 1
+				for c in str:
+					if i_col >= startcol and i_col <= endcol:
+						plain += c
+					i_col += 1
+			i_line += 1
+		return plain
+		
 	@staticmethod
 	def getFunction(functionNode, commentNode):
 		elem = Extract.getFunctionHead(functionNode,commentNode)
@@ -135,7 +152,7 @@ class Extract:
 		if commentNode.tag != 'implementation_defined_pragma': return ''
 		if commentNode.get('pragma_name') != 'Comment': return ''
 		comment = commentNode.find('pragma_argument_associations_ql').find('pragma_argument_association').find('actual_parameter_q').find('string_literal').get('lit_val')
-		return comment
+		return comment.strip('"')
 		
 	@staticmethod
 	def getVariables(varNodes):

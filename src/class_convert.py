@@ -15,18 +15,20 @@ class Convert:
 			print preprocfile
 			print xmlfile
 			sys.exit("A XML file found that could not be matched with the original Ada-file")
-
+		
 		commonpath = os.path.commonprefix(preprocfiles)
 		commondir = os.path.dirname(commonpath)
 		preprocfilepath = preprocfile[len(commondir)+1:]
 		ext_pp = Convert.fileext(xmlfile)
 		newfilepath = os.path.splitext(preprocfilepath)[0] + ext_pp
-		return os.path.join(tmp_dir_cpp, newfilepath)
+		return os.path.join(tmp_dir_cpp, newfilepath),preprocfile
 		
 	@staticmethod
 	def fileext(xmlfile):
 		file = ntpath.basename(xmlfile).split('.')
 		ext_ada = file[len(file)-2]
+		return '.'+ext_ada
+		
 		if ext_ada == 'ads': ext_pp = '.hpp'
 		elif ext_ada == 'adb': ext_pp = '.cpp'
 		else: sys.exit(xmlfile+" is not ads or adb")
@@ -42,17 +44,10 @@ class Convert:
 		return out
 		
 	@staticmethod
-	def enum(enum):
-		c = "<b>Enumaration type</b> ("+",".join(enum['enums'])+")<br/>"+enum['comment']
-		print c
-		out = Convert.comment(c)
-		out += "typedef int "+enum['name']+";"
-		return out
-		
-	@staticmethod
 	def type(type):
-		c = "<b>Type</b> ("+type['type_name']+")<br/>"+type['comment']
-		print c
+		c = "<b>Type</b>"
+		c += "<br/>"+type['plain']
+		c += Convert.commentDivider()+type['comment']
 		out = Convert.comment(c)
 		out += "typedef int "+type['name']+";"
 		return out
@@ -97,8 +92,12 @@ class Convert:
 	@staticmethod
 	def comment(comment):
 		out = ''
-		if comment != '': out += "/*! "+comment+" */\n"
+		c = comment.replace('""','"')
+		if c != '': out += "/*! "+c+" */\n"
 		return out
+		
+	@staticmethod
+	def commentDivider(): return "<div style='border-top: 1px solid #A8B8D9;'></div>"
 		
 	@staticmethod
 	def include(include):
