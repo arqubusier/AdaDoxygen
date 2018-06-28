@@ -6,23 +6,27 @@ from class_doxyreader import DoxyReader
 from class_commentpreprocess import CommentPreprocess
 from class_convert import Convert
 
+script_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + os.sep
+default_tmp_dir = os.path.join(script_dir,"_tmp")
+
 argparser = argparse.ArgumentParser()
-argparser.add_argument('files', nargs='+', help="XML-files for Ada to C++. ADB/ADS/GPR-files for comment preprocessing")
-argparser.add_argument('-d', '--doxygen-file', default="", help="Doxygen config file")
+argparser.add_argument('doxygen_file', default="", help="Doxygen config file")
 argparser.add_argument('-p', '--project-file', default="", help="Ada project file, mandatory if source files is in different directories")
+argparser.add_argument('-t','--temporary-dir', default=default_tmp_dir, help="Path to tmp dir, dirs will be created if not exists, default='"+default_tmp_dir+"'")
 argparser.add_argument('--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
 argparser.add_argument('--prefix-packages', default="", help="Prefix for packages, default=''")
 
 args = argparser.parse_args()
 doxyReader = DoxyReader(args.doxygen_file)
-script_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + os.sep
 
-tmp_dir = os.path.join(script_dir,"_tmp")
+if os.path.isabs(args.temporary_dir): tmp_dir = args.temporary_dir
+else: tmp_dir = os.path.abspath(os.path.join(os.getcwd(),args.temporary_dir))
+	
 tmp_dir_ada = os.path.join(tmp_dir,"ada")
 tmp_dir_xml = os.path.join(tmp_dir,"xml")
 tmp_dir_cpp = os.path.join(tmp_dir,"cpp")
 
-adafiles = args.files
+adafiles = doxyReader.input_files
 preprocfiles = []
 xmlfiles = []
 
