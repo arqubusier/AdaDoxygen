@@ -1,0 +1,20 @@
+Options that is not listed below is used as usual by Doxygen
+
+INPUT
+	is overwritten by AdaDoxygen during runtime 
+
+RECURSIVE
+	must be YES because the input to doxygen is a temporary directory with possible subdirectories
+
+FILE_PATTERNS
+	The following must be added:
+	*.ads \
+	*.adb
+
+EXTENSION_MAPPING 
+	= adb=C++ ads=C++
+
+STRIP_FROM_PATH
+	The real location can not be used because AdaDoxygen 
+	creates a temporary file system.
+	"C:/Users/John/Project" changes to "C:/<path-to-AdaDoxygen>/src/_tmp/cpp"
