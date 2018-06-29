@@ -68,7 +68,6 @@ class CommentPreprocess:
 		
 	def commentToPragma(self,comment): 
 		c = comment.replace('"','""')
-		print c
 		return 'pragma Comment ("'+c+'");'
 	
 	def mergeComments(self):
@@ -84,7 +83,6 @@ class CommentPreprocess:
 			last_linenumber = comment['linenumber']
 		if len(tmp_text_arr) > 0:
 			text = "<br/>".join(tmp_text_arr)
-			print text
 			merged.append({'text':text,'linenumber':last_linenumber})
 		return merged
 	

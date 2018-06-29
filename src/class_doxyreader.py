@@ -6,15 +6,16 @@ class DoxyReader:
 		self.file = file
 		self.parser = self.getParser()
 		
+		self.extract_all_bool = self.getBool('EXTRACT_ALL')
 		self.include_private_bool = self.getBool('EXTRACT_PRIVATE')
 		self.recursive_bool = self.getBool('RECURSIVE')
 		
 		if self.get('EXTENSION_MAPPING') != "adb=C++ ads=C++":
 			print "Warning: EXTENSION_MAPPING in doxyfile should be 'adb=C++ ads=C++'"
 		self.input_files = self.getInputFiles()
-		#print self.input_files
-		#sys.exit()
-			
+		self.stripfrompath = self.get('STRIP_FROM_PATH')
+		self.quiet = self.getBool('QUIET')
+		
 			
 	def getInputFiles(self):
 		res = []
@@ -45,3 +46,6 @@ class DoxyReader:
 		return parser
 		
 	def get(self,key): return self.parser.get('root',key).strip()
+	
+	def printt(self,str): 
+		if self.quiet is False: print str

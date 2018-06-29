@@ -6,7 +6,7 @@ The static methods below converts dictionaries to c++ code
 class Convert:
 	
 	@staticmethod
-	def filename(xmlfile, preprocfiles, tmp_dir_cpp):
+	def filename(xmlfile, preprocfiles, tmp_dir_ada, tmp_dir_cpp):
 		preprocfile = ""
 		for test_file in preprocfiles:
 			if ntpath.basename(test_file)+".xml" == ntpath.basename(xmlfile):
@@ -16,12 +16,9 @@ class Convert:
 			print xmlfile
 			sys.exit("A XML file found that could not be matched with the original Ada-file")
 		
-		commonpath = os.path.commonprefix(preprocfiles)
-		commondir = os.path.dirname(commonpath)
-		preprocfilepath = preprocfile[len(commondir)+1:]
-		ext_pp = Convert.fileext(xmlfile)
-		newfilepath = os.path.splitext(preprocfilepath)[0] + ext_pp
-		return os.path.join(tmp_dir_cpp, newfilepath),preprocfile
+		preprocfilepath = os.path.relpath(preprocfile,tmp_dir_ada)
+		newfilepathabs = os.path.join(tmp_dir_cpp, preprocfilepath)
+		return newfilepathabs,preprocfile
 		
 	@staticmethod
 	def fileext(xmlfile):
@@ -35,8 +32,14 @@ class Convert:
 		return ext_pp
 		
 	@staticmethod
-	def struct(struct):
-		out = Convert.comment(struct['comment'])
+	def struct(struct,extractAll):
+		if extractAll is False and struct['comment'] == '':
+			out = ''
+		else:
+			c = Convert.getPrivateComment(struct)
+			c += struct['comment']
+			out = Convert.comment(c)
+
 		out += "struct "+struct['name']+"{\n"
 		for prop in struct['props']:
 			out += "\t"+prop['type']+" "+prop['name']+";\n"
@@ -44,14 +47,24 @@ class Convert:
 		return out
 		
 	@staticmethod
-	def type(type):
-		c = "<b>Type</b>"
-		c += "<br/>"+type['plain']
-		c += Convert.commentDivider()+type['comment']
-		out = Convert.comment(c)
+	def type(type,extractAll):
+		if extractAll is False and type['comment'] == '':
+			out = ''
+		else:
+			c = "<b>Type</b>"
+			c += "<br/>"+type['plain']
+			c += Convert.commentDivider()
+			c += Convert.getPrivateComment(type)
+			c += type['comment']
+			out = Convert.comment(c)
 		out += "typedef int "+type['name']+";"
 		return out
 		
+	@staticmethod
+	def getPrivateComment(element):
+		if element['comment_add_private']:
+			return '<b>PRIVATE</b>'+Convert.commentDivider()
+		return ''
 		
 	@staticmethod
 	def rename(rename):
@@ -65,10 +78,16 @@ class Convert:
 		return "using namespace " + prefix + function['name']+";\n"
 	
 	@staticmethod
-	def function(function,prefix):
-		out = Convert.comment(function['comment'])
+	def function(function,prefix,extractAll):
+		if extractAll is False and function['comment'] == '':
+			out = ''
+		else:
+			c = Convert.getPrivateComment(function)
+			c += function['comment']
+			out = Convert.comment(c)
 		out += function['output'] + " " + function['name']
 		out += " ("+Convert.params(function['params'])+")"
+		
 		if 'body' in function:
 			out += ' {\n'
 			out += Convert.namespaces(function,prefix)
@@ -88,7 +107,7 @@ class Convert:
 		for p in params:
 			paramStrings.append(p['type']+" "+p['name'])
 		return (", ".join(paramStrings))
-	
+		
 	@staticmethod
 	def comment(comment):
 		out = ''

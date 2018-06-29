@@ -4,7 +4,7 @@ from class_extract import Extract
 
 class PPFile:
 	
-	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,includePrivate):
+	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,includePrivate,extractAll):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.type = "program"
@@ -24,6 +24,7 @@ class PPFile:
 		self.prefixFunction = prefixFunction
 		self.prefixClass = prefixClass
 		self.includePrivate = includePrivate
+		self.extractAll = extractAll
 		self.privateUris = []
 		
 	""" Start parsing tree """
@@ -73,9 +74,17 @@ class PPFile:
 				c = Extract.getComment(node,i)
 				element['comment'] = c
 				element['is_private'] = isPrivate
+				element['is_extract'] = c != '' or self.extractAll or parent == None
+				
+				"""tmpNode = child.find('names_ql').find('defining_identifier')
+				if tmpNode is not None:
+					print tmpNode.get('def')
+				else: print child.tag"""
+				
 				elements.append(element)
 				if has_body_declarative_items_ql and child.find('body_declarative_items_ql') is not None:
 					self._loop(child.find('body_declarative_items_ql'),element['childs'],child,isPrivate)
+	
 				
 			i+=1
 			lastNode = child
@@ -182,17 +191,17 @@ class PPFile:
 						out += self.writeNested(element,element['public'])
 						
 					out += "\n}"
-				
-				if self.isPrivateElement(element) and self.filetype == 'hpp':
-					element['comment'] = ' <b>PRIVATE</b>'+Convert.commentDivider()+element['comment']
+
+					
+				element['comment_add_private'] = self.isPrivateElement(element) and self.filetype == 'hpp'
 					
 				if element['type'] == 'struct':
-					out += "\n" + Convert.struct(element) + "\n"
+					out += "\n" + Convert.struct(element,self.extractAll) + "\n"
 				if element['type'] == 'type':
-					out += "\n" + Convert.type(element) + "\n"
+					out += "\n" + Convert.type(element,self.extractAll) + "\n"
 				if element['type'] == 'rename':
 					out += "\n" + Convert.rename(element) + "\n"
 				elif element['type'] == 'function':
-					out += "\n" + Convert.function(element,self.prefixFunction) + "\n"
+					out += "\n" + Convert.function(element,self.prefixFunction,self.extractAll) + "\n"
 				
 		return out

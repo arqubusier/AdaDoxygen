@@ -1,3 +1,4 @@
+--! test
 package Pkg1 is
         procedure Print_Something;
 		function getInt(x : Integer) return Integer;
@@ -11,7 +12,7 @@ package Pkg1 is
 		
 	private
 		
-		--subtype t4 is Integer (t2);
+		--!t5 is also commented....
 		type t5 is digits 4 range 0.0 .. 1.0;
 		type t6 is mod 2;
 		type t7 is array(t1) of t2;

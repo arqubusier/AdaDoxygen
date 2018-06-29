@@ -6,6 +6,8 @@ from class_doxyreader import DoxyReader
 from class_commentpreprocess import CommentPreprocess
 from class_convert import Convert
 
+def abs2rel(path): return path.replace(":","",1).strip("/")
+
 script_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + os.sep
 default_tmp_dir = os.path.join(script_dir,"_tmp")
 
@@ -30,18 +32,21 @@ adafiles = doxyReader.input_files
 preprocfiles = []
 xmlfiles = []
 
-print "--CONFIGS--"
-print "Prefix for functions: '"+args.prefix_functions+"'"
-print "Prefix for packages: '"+args.prefix_packages+"'"
-print "Include private members: '"+str(doxyReader.include_private_bool)+"'"
-print "Temporary directory: "+ tmp_dir
-print "Doxygen config file: "+ args.doxygen_file
-print "Ada project file: "+ args.project_file
+doxyReader.printt( "--CONFIGS--" )
+doxyReader.printt( "Prefix for functions: '"+args.prefix_functions+"'" )
+doxyReader.printt( "Prefix for packages: '"+args.prefix_packages+"'" )
+doxyReader.printt( "Extract undocumented members: '"+str(doxyReader.extract_all_bool)+"'" )
+doxyReader.printt( "Include private members: '"+str(doxyReader.include_private_bool)+"'" )
+doxyReader.printt( "Temporary directory: "+ tmp_dir )
+doxyReader.printt( "Doxygen config file: "+ args.doxygen_file )
+doxyReader.printt( "Ada project file: "+ args.project_file )
 
-call(['rm','-r',tmp_dir])
-if not os.path.exists(tmp_dir_ada): os.makedirs(tmp_dir_ada)
-if not os.path.exists(tmp_dir_xml): os.makedirs(tmp_dir_xml)
-if not os.path.exists(tmp_dir_cpp): os.makedirs(tmp_dir_cpp)
+if os.path.exists(tmp_dir):
+	sys.exit("Error: The path '"+tmp_dir+"' already exists")
+	
+os.makedirs(tmp_dir_ada)
+os.makedirs(tmp_dir_xml)
+os.makedirs(tmp_dir_cpp)
 
 
 """ Preprocess ada-comments to pragma """
@@ -50,45 +55,41 @@ commonpath = os.path.commonprefix(adafiles)
 commondir = os.path.dirname(commonpath)
 for adafile in adafiles:
 	preproc = CommentPreprocess(adafile)
-	if adafile.startswith(commondir) is False: 
-		sys.exit("Error: '"+adafile+"' does not start with "+commondir)
-	adafilepath = adafile[len(commondir)+1:]
+	adafilepath = abs2rel(adafile)
 	preprocfilename = os.path.join(tmp_dir_ada,adafilepath)
 	preprocdirname = os.path.dirname(preprocfilename)
 	if not os.path.exists(preprocdirname): os.makedirs(preprocdirname)
 	with open(preprocfilename,"wb") as preprocfile:
-		print preprocfilename + " created"
+		doxyReader.printt( preprocfilename + " created" )
 		preprocfile.write(preproc.getResult())
-		#print preproc.getResult()
 		preprocfiles.append(preprocfilename)
 
 
 """ Convert ada to XML with gnat2xml """
-print "--CALLING gnat2xml--"
+doxyReader.printt( "--CALLING gnat2xml--" )
 gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml] + preprocfiles
 if args.project_file != '':
 	for preprocfile in preprocfiles:
 		if ntpath.basename(preprocfile) == ntpath.basename(args.project_file):
 			project_file = preprocfile
-	print "Projekt fil: "+project_file
+	doxyReader.printt( "Projekt fil: "+project_file )
 	gnatArgs = ['gnat2xml','--output-dir='+tmp_dir_xml,'-P'+project_file,'-U']
-print " ".join(gnatArgs)
+doxyReader.printt( " ".join(gnatArgs) )
 call(gnatArgs)
 
-
 """ Convert XML to PP """
-print "--CONVERTING XML TO PP--"
+doxyReader.printt( "--CONVERTING XML TO PP--" )
 pps = []
 xmlfiles = glob.glob(os.path.join(tmp_dir_xml,"*.xml"))
-print "Number of Ada-files: "+str(len(preprocfiles))
-print "Number of XML-files: "+str(len(xmlfiles))
+doxyReader.printt( "Number of Ada-files: "+str(len(preprocfiles)) )
+doxyReader.printt( "Number of XML-files: "+str(len(xmlfiles)) )
 
 for xmlfile in xmlfiles:
 	tree = ET.parse((xmlfile).strip("\r"))
-	filename, sourcefile = Convert.filename(xmlfile, preprocfiles, tmp_dir_cpp)
+	filename, sourcefile = Convert.filename(xmlfile, preprocfiles, tmp_dir_ada, tmp_dir_cpp)
 	dirname = os.path.dirname(filename)
 	if not os.path.exists(dirname): os.makedirs(dirname)
-	pp = PPFile(filename,sourcefile,tree,args.prefix_functions,args.prefix_packages,doxyReader.include_private_bool)
+	pp = PPFile(filename,sourcefile,tree,args.prefix_functions,args.prefix_packages,doxyReader.include_private_bool,doxyReader.extract_all_bool)
 	pp.parse()
 	pps.append(pp)
 	
@@ -98,14 +99,16 @@ for pp in pps:
 	pp.setPrivates(pps)
 	
 for pp in pps:
-	print "Creating "+pp.name+"..."
+	doxyReader.printt( "Creating "+pp.name+"..." )
 	pp.write()
 
 	
 """ Run doxygen and override INPUT in config-file """
-print "--CALLING DOXYGEN--"
-doxyCommand = '( cat '+args.doxygen_file+' & echo "INPUT='+tmp_dir_cpp+'" ) | doxygen -' #& is ; in unix
-print doxyCommand
+doxyReader.printt( "--CALLING DOXYGEN--" )
+nl = "r\n"
+strip = 'STRIP_FROM_PATH='+os.path.join(tmp_dir_cpp,abs2rel(doxyReader.stripfrompath))
+doxyCommand = '( cat '+args.doxygen_file+' & echo "INPUT='+tmp_dir_cpp+'" & echo "" & echo "'+strip+'" ) | doxygen -' #& is ; in unix
+doxyReader.printt( doxyCommand )
 os.system(doxyCommand)
 sys.exit("Everything done")
 

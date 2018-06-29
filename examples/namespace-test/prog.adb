@@ -10,7 +10,7 @@ use Pkg1;
 --! This is the " main procedure
 procedure Prog is
 	x : Integer;
-	--! This alias is commented
+	-- This alias is commented
 	package twotwo renames Pkg2.Pkg22;
 	
 begin

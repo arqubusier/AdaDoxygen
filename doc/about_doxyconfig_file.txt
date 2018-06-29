@@ -1,11 +1,11 @@
 Options that is not listed below is used as usual by Doxygen
 
 INPUT
-	is overwritten by AdaDoxygen during runtime 
+	is modified with same behavior 
 
 RECURSIVE
-	must be YES because the input to doxygen is a temporary directory with possible subdirectories
-
+	is modified with same behavior 
+	
 FILE_PATTERNS
 	The following must be added:
 	*.ads \
@@ -15,6 +15,10 @@ EXTENSION_MAPPING
 	= adb=C++ ads=C++
 
 STRIP_FROM_PATH
-	The real location can not be used because AdaDoxygen 
-	creates a temporary file system.
-	"C:/Users/John/Project" changes to "C:/<path-to-AdaDoxygen>/src/_tmp/cpp"
+	is modified so that the tmp-directory is prepepended 
+	
+EXTRACT_ALL
+	Only print c++ code that has a user-comment if set to NO
+
+EXTRACT_PRIVATE
+	Only print c++ code that is public if set to NO
