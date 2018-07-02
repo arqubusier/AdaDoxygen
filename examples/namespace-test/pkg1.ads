@@ -1,4 +1,5 @@
---! test
+--! asd test
+--! asd line 2
 package Pkg1 is
         procedure Print_Something;
 		function getInt(x : Integer) return Integer;

@@ -15,10 +15,13 @@ EXTENSION_MAPPING
 	= adb=C++ ads=C++
 
 STRIP_FROM_PATH
-	is modified so that the tmp-directory is prepepended 
+	is modified so that the tmp-directory is prepepended. Only absolute path is supported.
 	
 EXTRACT_ALL
-	Only print c++ code that has a user-comment if set to NO
+	If EXTRACT_ALL=NO, no system comment will be appended
 
 EXTRACT_PRIVATE
 	Only print c++ code that is public if set to NO
+	
+HIDE_UNDOC_CLASSES
+	If HIDE_UNDOC_CLASSES=NO, undocumented packages will be extracted as well.

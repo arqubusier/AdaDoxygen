@@ -88,7 +88,7 @@ class Extract:
 			param['type'] = "::".join(attrs)
 			elem['params'].append(param)
 		if functionNode.find('result_profile_q') is None:
-			elem['output'] = 'void'
+			elem['output'] = 'Procedure'
 		else:
 			attrs = Extract.getRefNames(functionNode.find('result_profile_q'))
 			output = "::".join(attrs)
@@ -153,6 +153,12 @@ class Extract:
 		if commentNode.get('pragma_name') != 'Comment': return ''
 		comment = commentNode.find('pragma_argument_associations_ql').find('pragma_argument_association').find('actual_parameter_q').find('string_literal').get('lit_val')
 		return comment.strip('"')
+		
+	@staticmethod
+	def getUnitComment(rootNode):
+		tmpNode = rootNode.find('context_clause_elements_ql')
+		if tmpNode is None: return ""
+		else: return Extract.getCommentValue(tmpNode.find('implementation_defined_pragma'))
 		
 	@staticmethod
 	def getVariables(varNodes):

@@ -15,6 +15,7 @@ class DoxyReader:
 		self.input_files = self.getInputFiles()
 		self.stripfrompath = self.get('STRIP_FROM_PATH')
 		self.quiet = self.getBool('QUIET')
+		self.hideundoc_classes = self.getBool('HIDE_UNDOC_CLASSES')
 		
 			
 	def getInputFiles(self):

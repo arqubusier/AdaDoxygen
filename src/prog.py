@@ -9,7 +9,7 @@ from class_convert import Convert
 def abs2rel(path): return path.replace(":","",1).strip("/")
 
 script_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + os.sep
-default_tmp_dir = os.path.join(script_dir,"_tmp")
+default_tmp_dir = os.path.abspath(os.path.join(script_dir,"..","_tmp"))
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument('doxygen_file', default="", help="Doxygen config file")
@@ -37,16 +37,15 @@ doxyReader.printt( "Prefix for functions: '"+args.prefix_functions+"'" )
 doxyReader.printt( "Prefix for packages: '"+args.prefix_packages+"'" )
 doxyReader.printt( "Extract undocumented members: '"+str(doxyReader.extract_all_bool)+"'" )
 doxyReader.printt( "Include private members: '"+str(doxyReader.include_private_bool)+"'" )
+doxyReader.printt( "Hide undoc classes: '"+str(doxyReader.hideundoc_classes)+"'" )
 doxyReader.printt( "Temporary directory: "+ tmp_dir )
 doxyReader.printt( "Doxygen config file: "+ args.doxygen_file )
 doxyReader.printt( "Ada project file: "+ args.project_file )
-
-if os.path.exists(tmp_dir):
-	sys.exit("Error: The path '"+tmp_dir+"' already exists")
 	
-os.makedirs(tmp_dir_ada)
-os.makedirs(tmp_dir_xml)
-os.makedirs(tmp_dir_cpp)
+	
+if os.path.isdir(tmp_dir_ada) is False: os.makedirs(tmp_dir_ada)
+if os.path.isdir(tmp_dir_xml) is False: os.makedirs(tmp_dir_xml)
+if os.path.isdir(tmp_dir_cpp) is False: os.makedirs(tmp_dir_cpp)
 
 
 """ Preprocess ada-comments to pragma """
@@ -89,7 +88,7 @@ for xmlfile in xmlfiles:
 	filename, sourcefile = Convert.filename(xmlfile, preprocfiles, tmp_dir_ada, tmp_dir_cpp)
 	dirname = os.path.dirname(filename)
 	if not os.path.exists(dirname): os.makedirs(dirname)
-	pp = PPFile(filename,sourcefile,tree,args.prefix_functions,args.prefix_packages,doxyReader.include_private_bool,doxyReader.extract_all_bool)
+	pp = PPFile(filename,sourcefile,tree,args.prefix_functions,args.prefix_packages,doxyReader)
 	pp.parse()
 	pps.append(pp)
 	

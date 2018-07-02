@@ -4,7 +4,7 @@ from class_extract import Extract
 
 class PPFile:
 	
-	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,includePrivate,extractAll):
+	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,doxyReader):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.type = "program"
@@ -23,8 +23,7 @@ class PPFile:
 		self.namespaces = []
 		self.prefixFunction = prefixFunction
 		self.prefixClass = prefixClass
-		self.includePrivate = includePrivate
-		self.extractAll = extractAll
+		self.doxyReader = doxyReader
 		self.privateUris = []
 		
 	""" Start parsing tree """
@@ -71,15 +70,12 @@ class PPFile:
 				element = Extract.getRename(child)
 				
 			if element is not None:
-				c = Extract.getComment(node,i)
+				if parent is None: 
+					c = Extract.getUnitComment(self.root)
+				else: c = Extract.getComment(node,i)
 				element['comment'] = c
 				element['is_private'] = isPrivate
-				element['is_extract'] = c != '' or self.extractAll or parent == None
-				
-				"""tmpNode = child.find('names_ql').find('defining_identifier')
-				if tmpNode is not None:
-					print tmpNode.get('def')
-				else: print child.tag"""
+				element['is_extract'] = c != '' or self.doxyReader.extract_all_bool or parent == None
 				
 				elements.append(element)
 				if has_body_declarative_items_ql and child.find('body_declarative_items_ql') is not None:
@@ -178,13 +174,19 @@ class PPFile:
 	def writeNested(self,parent,elements):
 		out = ''
 		for element in elements:
-			if self.includePrivate or self.isPrivateElement(element) is False:
+			if self.doxyReader.include_private_bool or self.isPrivateElement(element) is False:
 				if len(element['childs']) > 0 or element['type'] == 'package':
-					if element['type'] == 'package': out += "namespace "+element['name']+" {\n"
-					else: out += "namespace "+self.prefixFunction+element['name']+" {\n"
+					if element['type'] == 'package': 
+						comment = element['comment']
+						if comment == '' and (self.doxyReader.hideundoc_classes is False):
+							comment = "<b>HIDE_UNDOC_CLASSES=NO</b>"
+						out += Convert.comment(comment)
+						out += "namespace "+element['name']+" {\n"
+					else: 
+						out += "namespace "+self.prefixFunction+element['name']+" {\n"
 					out += self.writeNested(element,element['childs'])
 					
-					if 'private' in element and self.includePrivate: 
+					if 'private' in element and self.doxyReader.include_private_bool: 
 						out += self.writeNested(element,element['private'])
 					if 'public' in element: 
 						out += "\n/*Public starts here...*/\n"
@@ -196,12 +198,12 @@ class PPFile:
 				element['comment_add_private'] = self.isPrivateElement(element) and self.filetype == 'hpp'
 					
 				if element['type'] == 'struct':
-					out += "\n" + Convert.struct(element,self.extractAll) + "\n"
+					out += "\n" + Convert.struct(element,self.doxyReader.extract_all_bool) + "\n"
 				if element['type'] == 'type':
-					out += "\n" + Convert.type(element,self.extractAll) + "\n"
+					out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool) + "\n"
 				if element['type'] == 'rename':
 					out += "\n" + Convert.rename(element) + "\n"
 				elif element['type'] == 'function':
-					out += "\n" + Convert.function(element,self.prefixFunction,self.extractAll) + "\n"
+					out += "\n" + Convert.function(element,self.prefixFunction,self.doxyReader.extract_all_bool) + "\n"
 				
 		return out
