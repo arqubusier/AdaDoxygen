@@ -51,19 +51,20 @@ class Convert:
 		if extractAll is False and type['comment'] == '':
 			out = ''
 		else:
-			c = "<b>Type</b>"
-			c += "<br/>"+type['plain']
+			#out = "/*! \\addtogroup type Types This is ADA-types!!! @{*/\n"
+			out = "/* \\addtogroup types @{*/\n"
+			c = "<b>Type</b><br/>"+type['plain']
 			c += Convert.commentDivider()
 			c += Convert.getPrivateComment(type)
 			c += type['comment']
-			out = Convert.comment(c)
-		out += "typedef int "+type['name']+";"
+			out += Convert.comment(c)
+		out += "typedef int "+type['name']+";" + "\n" # */
+		out += "/* @} */"
 		return out
 		
 	@staticmethod
 	def getPrivateComment(element):
-		if element['comment_add_private']:
-			return '<b>PRIVATE</b>'+Convert.commentDivider()
+		if element['comment_add_private']: return '\\private '
 		return ''
 		
 	@staticmethod

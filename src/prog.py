@@ -5,6 +5,7 @@ from class_ppfile import PPFile
 from class_doxyreader import DoxyReader
 from class_commentpreprocess import CommentPreprocess
 from class_convert import Convert
+from class_htmlpostprocess import HTMLPostprocess
 
 def abs2rel(path): return path.replace(":","",1).strip("/")
 
@@ -17,6 +18,7 @@ argparser.add_argument('-p', '--project-file', default="", help="Ada project fil
 argparser.add_argument('-t','--temporary-dir', default=default_tmp_dir, help="Path to tmp dir, dirs will be created if not exists, default='"+default_tmp_dir+"'")
 argparser.add_argument('--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
 argparser.add_argument('--prefix-packages', default="", help="Prefix for packages, default=''")
+argparser.add_argument('--post-process', default="off", help="Post process HTML-files on/off, default='off'")
 
 args = argparser.parse_args()
 doxyReader = DoxyReader(args.doxygen_file)
@@ -41,7 +43,7 @@ doxyReader.printt( "Hide undoc classes: '"+str(doxyReader.hideundoc_classes)+"'"
 doxyReader.printt( "Temporary directory: "+ tmp_dir )
 doxyReader.printt( "Doxygen config file: "+ args.doxygen_file )
 doxyReader.printt( "Ada project file: "+ args.project_file )
-	
+doxyReader.printt( "Post process: "+ args.post_process )
 	
 if os.path.isdir(tmp_dir_ada) is False: os.makedirs(tmp_dir_ada)
 if os.path.isdir(tmp_dir_xml) is False: os.makedirs(tmp_dir_xml)
@@ -95,7 +97,6 @@ for xmlfile in xmlfiles:
 for pp in pps:
 	pp.setIncludes(pps)
 	pp.setNamespaces(pps)
-	pp.setPrivates(pps)
 	
 for pp in pps:
 	doxyReader.printt( "Creating "+pp.name+"..." )
@@ -109,7 +110,30 @@ strip = 'STRIP_FROM_PATH='+os.path.join(tmp_dir_cpp,abs2rel(doxyReader.stripfrom
 doxyCommand = '( cat '+args.doxygen_file+' & echo "INPUT='+tmp_dir_cpp+'" & echo "" & echo "'+strip+'" ) | doxygen -' #& is ; in unix
 doxyReader.printt( doxyCommand )
 os.system(doxyCommand)
+
+
+""" Postprocess HTML-files """
+if args.post_process == 'on':
+	doxyReader.printt( "--POST PROCESSING--" )
+	htmlfiles = glob.glob(os.path.join(doxyReader.htmlpath,"*.html"))
+	for htmlfile in htmlfiles:
+		postproc = HTMLPostprocess(htmlfile)
+		with open(htmlfile,"wb") as fh:
+			doxyReader.printt( htmlfile + " post processed" )
+			try:
+				res = postproc.getResult()
+				fh.write(res)
+			except:
+				print "Error for "+htmlfile
+				raise
+		#break
+
 sys.exit("Everything done")
+
+
+
+
+
 
 
 

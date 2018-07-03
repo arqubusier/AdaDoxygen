@@ -79,6 +79,8 @@ class PPFile:
 				
 				elements.append(element)
 				if has_body_declarative_items_ql and child.find('body_declarative_items_ql') is not None:
+					if element['type'] == 'function': 
+						isPrivate = True
 					self._loop(child.find('body_declarative_items_ql'),element['childs'],child,isPrivate)
 	
 				
@@ -118,40 +120,6 @@ class PPFile:
 					break
 			if isIncluded == False:
 				self.namespaces.append("::".join(attrs))
-				
-	def setPrivates(self,pps):
-		if self.filetype == 'hpp': return
-		hpp = None
-		for pp in pps:
-			if self.name == pp.name and pp.filetype == 'hpp': hpp = pp
-		if hpp is None:
-			print "Warning, no header-file for '"+self.name+"' found. Assuming all members to be public"
-			return
-		self.setPrivatesRecursive(self.elements,hpp)
-		
-	def setPrivatesRecursive(self,elements,hpp):
-		for el in elements:
-			if 'childs' in el: self.setPrivatesRecursive(el['childs'],hpp)
-			el['is_private'] = self.isPrivate(el,hpp.root)
-			#if el['is_private']:el['comment'] = ' <b>PRIVATE</b><br/>'+el['comment']
-			
-	def isPrivate(self,el,hppRoot):
-		if 'uri' not in el: return False
-		
-		p = re.compile('^(ada:\/\/[^\/]+)(_body)(.*)$')
-		m = p.match(el['uri'])
-		
-		if m is False: print "Warning, wierd uri: "+el['uri']
-		
-		uri = m.group(1)+m.group(3)		
-		nodes = hppRoot.iter('private_part_declarative_items_ql')
-		
-		for node in nodes:
-			tmpNode = node.find('.//defining_identifier')
-			if tmpNode is not None:
-				if uri == tmpNode.get('def'):
-					return True
-		return False
 		
 	def isPrivateElement(self,element):
 		if 'is_private' in element: return element['is_private']
@@ -167,43 +135,49 @@ class PPFile:
 		for namespace in self.namespaces:
 			out += "\n"+Convert.namespace(namespace)
 		out += "\n".join(self.typedefs)+"\n\n"
+		out += "/* \\defgroup types AdaTypes */\n"
 		out += "\n"+self.writeNested(None,self.elements)
 		self.file.write(out)
 		self.file.close()
 	
+	def getNrVisibleChilds(self,childs):
+		if self.doxyReader.include_private_bool: return len(childs)
+		nr = 0
+		for child in childs:
+			if child['is_private']: nr += 1
+		return nr
+	
 	def writeNested(self,parent,elements):
 		out = ''
 		for element in elements:
-			if self.doxyReader.include_private_bool or self.isPrivateElement(element) is False:
-				if len(element['childs']) > 0 or element['type'] == 'package':
-					if element['type'] == 'package': 
-						comment = element['comment']
-						if comment == '' and (self.doxyReader.hideundoc_classes is False):
-							comment = "<b>HIDE_UNDOC_CLASSES=NO</b>"
-						out += Convert.comment(comment)
-						out += "namespace "+element['name']+" {\n"
-					else: 
-						out += "namespace "+self.prefixFunction+element['name']+" {\n"
-					out += self.writeNested(element,element['childs'])
-					
-					if 'private' in element and self.doxyReader.include_private_bool: 
-						out += self.writeNested(element,element['private'])
-					if 'public' in element: 
-						out += "\n/*Public starts here...*/\n"
-						out += self.writeNested(element,element['public'])
-						
-					out += "\n}"
-
-					
-				element['comment_add_private'] = self.isPrivateElement(element) and self.filetype == 'hpp'
-					
-				if element['type'] == 'struct':
-					out += "\n" + Convert.struct(element,self.doxyReader.extract_all_bool) + "\n"
-				if element['type'] == 'type':
-					out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool) + "\n"
-				if element['type'] == 'rename':
-					out += "\n" + Convert.rename(element) + "\n"
-				elif element['type'] == 'function':
-					out += "\n" + Convert.function(element,self.prefixFunction,self.doxyReader.extract_all_bool) + "\n"
+			if element['type'] == 'package':
+				comment = element['comment']
+				if comment == '' and (self.doxyReader.hideundoc_classes is False):
+					comment = "<b style='display:none;'>HIDE_UNDOC_CLASSES=NO</b>"
+				out += Convert.comment(comment)
+				out += "namespace "+element['name']+" {\n"
+				if 'private' in element: 
+					out += self.writeNested(element,element['private'])
+				if 'public' in element: 
+					out += "\n/*Public starts here...*/\n"
+					out += self.writeNested(element,element['public'])
+				out += self.writeNested(element,element['childs'])
+				out += "\n}"
 				
+			elif self.getNrVisibleChilds(element['childs']) > 0 and self.doxyReader.include_private_bool:
+				out += "namespace "+self.prefixFunction+element['name']+" {\n"
+				out += self.writeNested(element,element['childs'])
+				out += "\n}"
+				
+			element['comment_add_private'] = self.isPrivateElement(element)
+				
+			if element['type'] == 'struct':
+				out += "\n" + Convert.struct(element,self.doxyReader.extract_all_bool) + "\n"
+			if element['type'] == 'type':
+				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool) + "\n"
+			if element['type'] == 'rename':
+				out += "\n" + Convert.rename(element) + "\n"
+			elif element['type'] == 'function':
+				out += "\n" + Convert.function(element,self.prefixFunction,self.doxyReader.extract_all_bool) + "\n"
+			
 		return out

@@ -16,6 +16,7 @@ class DoxyReader:
 		self.stripfrompath = self.get('STRIP_FROM_PATH')
 		self.quiet = self.getBool('QUIET')
 		self.hideundoc_classes = self.getBool('HIDE_UNDOC_CLASSES')
+		self.htmlpath = os.path.join(os.getcwd(),self.get('HTML_OUTPUT'))
 		
 			
 	def getInputFiles(self):
