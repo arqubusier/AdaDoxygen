@@ -6,6 +6,7 @@ from class_doxyreader import DoxyReader
 from class_commentpreprocess import CommentPreprocess
 from class_convert import Convert
 from class_htmlpostprocess import HTMLPostprocess
+from class_xmlpostprocess import XMLPostprocess
 
 def abs2rel(path): return path.replace(":","",1).strip("/")
 
@@ -117,16 +118,12 @@ if args.post_process == 'on':
 	doxyReader.printt( "--POST PROCESSING--" )
 	htmlfiles = glob.glob(os.path.join(doxyReader.htmlpath,"*.html"))
 	for htmlfile in htmlfiles:
-		postproc = HTMLPostprocess(htmlfile)
-		with open(htmlfile,"wb") as fh:
-			doxyReader.printt( htmlfile + " post processed" )
-			try:
-				res = postproc.getResult()
-				fh.write(res)
-			except:
-				print "Error for "+htmlfile
-				raise
-		#break
+		postproc = XMLPostprocess(htmlfile)
+		if postproc.succeded():
+			with open(htmlfile,"wb") as fh:
+				doxyReader.printt( htmlfile + " post processed" )
+				fh.write(postproc.getResult())
+		else: print "Failed: "+ htmlfile
 
 sys.exit("Everything done")
 
