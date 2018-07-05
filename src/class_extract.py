@@ -77,6 +77,9 @@ class Extract:
 	@staticmethod
 	def getFunctionHead(functionNode, commentNode):
 		elem = {}
+		genNode = functionNode.find('generic_formal_part_ql')
+		if genNode is not None:
+			elem['generic'] = Extract.getGeneric(genNode)
 		elem['type'] = 'function'
 		elem['name'] = Extract.getName(functionNode)
 		elem['params'] = []
@@ -99,6 +102,14 @@ class Extract:
 	@staticmethod
 	def getName(node):
 		return node.find('names_ql').find('defining_identifier').get('def_name')
+		
+	@staticmethod
+	def getGeneric(genNode):
+		typeNodes = genNode.findall('formal_type_declaration')
+		arr = []
+		for typeNode in typeNodes:
+			arr.append(Extract.getName(typeNode))
+		return arr
 		
 	@staticmethod
 	def getPackageName(node,prefix):

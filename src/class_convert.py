@@ -12,8 +12,8 @@ class Convert:
 			if ntpath.basename(test_file)+".xml" == ntpath.basename(xmlfile):
 				preprocfile = test_file
 		if preprocfile == "":
-			print preprocfile
-			print xmlfile
+			print(preprocfile)
+			print(xmlfile)
 			sys.exit("A XML file found that could not be matched with the original Ada-file")
 		
 		preprocfilepath = os.path.relpath(preprocfile,tmp_dir_ada)
@@ -24,7 +24,7 @@ class Convert:
 	def fileext(xmlfile):
 		file = ntpath.basename(xmlfile).split('.')
 		ext_ada = file[len(file)-2]
-		return '.'+ext_ada
+		#return '.'+ext_ada
 		
 		if ext_ada == 'ads': ext_pp = '.hpp'
 		elif ext_ada == 'adb': ext_pp = '.cpp'
@@ -86,8 +86,8 @@ class Convert:
 			c = Convert.getPrivateComment(function)
 			c += function['comment']
 			out = Convert.comment(c)
-		out += function['output'] + " " + function['name']
-		out += " ("+Convert.params(function['params'])+")"
+			
+		out += Convert.functionHead(function)
 		
 		if 'body' in function:
 			out += ' {\n'
@@ -101,6 +101,24 @@ class Convert:
 		else:
 			out += ';'
 		return out	
+		
+	@staticmethod
+	def functionHead(function):
+		if 'function_head' in function: return function['function_head']
+		out = ""
+		if 'generic' in function:
+			out += Convert.generic(function['generic'])+" "
+		out += function['output'] + " " + function['name']
+		out += " ("+Convert.params(function['params'])+")"
+		return out
+		
+	@staticmethod
+	def generic(types):
+		arr = []
+		for type in types:
+			arr.append("typename "+type)
+		out = "template <" + (",".join(arr)) + ">"
+		return out
 		
 	@staticmethod
 	def params(params):

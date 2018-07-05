@@ -1,6 +1,15 @@
-import os,sys,argparse,ntpath,glob
+import os,sys
+
+py_version = str(sys.version_info[0])+"."+str(sys.version_info[1])
+if py_version != '2.7':
+	print("Warning: You are running Python with version "+py_version+"")
+	print("This program is only tested for 2.7.15")
+	print("If you get unexpected result, please run python again with the flag '-2'")
+	
+import argparse,ntpath,glob
 import xml.etree.ElementTree as ET
 from subprocess import call
+
 from class_ppfile import PPFile
 from class_doxyreader import DoxyReader
 from class_commentpreprocess import CommentPreprocess
@@ -51,8 +60,8 @@ if os.path.isdir(tmp_dir_xml) is False: os.makedirs(tmp_dir_xml)
 if os.path.isdir(tmp_dir_cpp) is False: os.makedirs(tmp_dir_cpp)
 
 
-""" Preprocess ada-comments to pragma """
-print "--PREPROCESSING--"
+""" Preprocess ada-comments to pragma """ 
+doxyReader.printt( "--PREPROCESSING--" )
 commonpath = os.path.commonprefix(adafiles)
 commondir = os.path.dirname(commonpath)
 for adafile in adafiles:
@@ -98,6 +107,7 @@ for xmlfile in xmlfiles:
 for pp in pps:
 	pp.setIncludes(pps)
 	pp.setNamespaces(pps)
+	pp.setFunctionHeads(pps)
 	
 for pp in pps:
 	doxyReader.printt( "Creating "+pp.name+"..." )
@@ -123,7 +133,8 @@ if args.post_process == 'on':
 			with open(htmlfile,"wb") as fh:
 				doxyReader.printt( htmlfile + " post processed" )
 				fh.write(postproc.getResult())
-		else: print "Failed: "+ htmlfile
+		else: 
+			doxyReader.printt( "Failed: "+ htmlfile )
 
 sys.exit("Everything done")
 

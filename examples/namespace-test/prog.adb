@@ -1,6 +1,7 @@
 with Pkg1;
 with Pkg2;
 with Pkg2.Pkg22;
+with Pkg2.Pkg23;
 with Ada.Text_IO; 
 
 use Ada.Text_IO;

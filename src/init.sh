@@ -12,3 +12,6 @@ python prog.py -d doxygen_config.txt -p ../examples/namespace-test/main.gpr ../e
 
 
 python prog.py -d doxygen_config.txt ../examples/synth/src/*.ad[sb]
+
+
+python src/prog.py src/doxygen_config.txt -p examples/namespace-test/main.gpr --post-process off

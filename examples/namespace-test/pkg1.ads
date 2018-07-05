@@ -26,11 +26,11 @@ package Pkg1 is
 		type t7 is array(t1) of t2;
 		
 	
-	--! record test 2
-	type Constant_type is
-	record
-		name : String(1..2);
-		value : Float;
-	end record;
+		--! record test 2
+		type Constant_type is
+		record
+			name : String(1..2);
+			value : Float;
+		end record;
 		
 end Pkg1;
