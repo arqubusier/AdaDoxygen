@@ -80,6 +80,7 @@ class Extract:
 		genNode = functionNode.find('generic_formal_part_ql')
 		if genNode is not None:
 			elem['generic'] = Extract.getGeneric(genNode)
+			print(elem['generic'])
 		elem['type'] = 'function'
 		elem['name'] = Extract.getName(functionNode)
 		elem['params'] = []

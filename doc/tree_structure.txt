@@ -7,6 +7,7 @@ unit_declaration_q
 	  - ordinary_type_declaration
 	  - procedure_body_declaration
 	  - implementation_defined_pragma
+	  - generic_function_declaration
 	- body_statements_ql
 	  - procedure_call_statement
 	    - called_name_q 
@@ -36,3 +37,8 @@ ordinary_type_declaration
 			
 procedure_body_declaration
   - same as function
+  
+generic_function_declaration
+  - generic_formal_part_ql
+    - formal_object_declaration  (list)
+	- formal_type_declaration (list)

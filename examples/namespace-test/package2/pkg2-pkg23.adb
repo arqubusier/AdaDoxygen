@@ -11,4 +11,11 @@ package body Pkg2.Pkg23 is
 		return x;
 	end getInput;
 	
+	package body Pkg231 is 
+		procedure genProd(x: T3) is 
+		begin
+		   Ada.Text_IO.Put_Line("Hi from Pkg23");
+		end genProd;	
+	end Pkg231;
+	
 end Pkg2.Pkg23;

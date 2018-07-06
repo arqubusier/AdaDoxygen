@@ -17,16 +17,20 @@ class PPFile:
 		
 		self.file = open(self.filename,"w+")
 		self.sourcefile = sourcefile
-		self.elements = [] #holds functions, structs and packages
+		
+		# a list of dictionaries with extracted info about functions, structs, packages etc...
+		self.elements = [] 
+		
+		# function dictionaries stored with uri as index
 		self.elementsByUris = {}
-		self.typedefs = []
+		
 		self.includes = []
 		self.namespaces = []
 		self.prefixFunction = prefixFunction
 		self.prefixClass = prefixClass
 		self.doxyReader = doxyReader
 		self.privateUris = []
-		
+
 	""" Start parsing tree """
 	def parse(self):
 		node = self.root.find('unit_declaration_q')
@@ -40,12 +44,12 @@ class PPFile:
 		for child in node:
 			element = None
 			has_body_declarative_items_ql = False
-			if child.tag == 'function_body_declaration' or child.tag == 'procedure_body_declaration':
+			if child.tag in ['procedure_body_declaration','function_body_declaration']:
 				element = Extract.getFunction(child,lastNode)
 				element['uri'] = child.find('names_ql').find('defining_identifier').get('def')
 				has_body_declarative_items_ql = True
 			
-			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration']:
+			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration','generic_procedure_declaration']:
 				element = Extract.getFunctionHead(child,lastNode)
 				element['uri'] = child.find('names_ql').find('defining_identifier').get('def')
 			
@@ -58,7 +62,7 @@ class PPFile:
 				element = Extract.getPackage(child,self.prefixClass,lastNode)
 				has_body_declarative_items_ql = True
 					
-			elif child.tag == 'package_declaration':
+			elif child.tag in ['generic_package_declaration','package_declaration']:
 				element = Extract.getPackage(child,self.prefixClass,lastNode)
 				element['public'] = []
 				element['private'] = []
@@ -66,9 +70,11 @@ class PPFile:
 					self._loop(child.find('visible_part_declarative_items_ql'),element['public'],child,isPrivate)
 				if child.find('private_part_declarative_items_ql') is not None:
 					self._loop(child.find('private_part_declarative_items_ql'),element['private'],child,True)
-					
+			
 			elif child.tag == 'package_renaming_declaration':
 				element = Extract.getRename(child)
+				
+			else: print("Not parsed: "+child.tag)
 				
 			if element is not None:
 				if parent is None: c = Extract.getUnitComment(self.root)
@@ -78,7 +84,6 @@ class PPFile:
 				element['is_extract'] = c != '' or self.doxyReader.extract_all_bool or parent == None
 				
 				if 'uri' in element: self.elementsByUris[element['uri']] = element
-				
 				elements.append(element)
 				if has_body_declarative_items_ql and child.find('body_declarative_items_ql') is not None:
 					if element['type'] == 'function': 
@@ -123,8 +128,8 @@ class PPFile:
 			if isIncluded == False:
 				self.namespaces.append("::".join(attrs))
 				
-	""" Get and set function declaration from hpp to cpp file """
-	def setFunctionHeads(self,pps):
+	""" Get and set generic function bodies from cpp to hpp file """
+	def setGenericFunctionBodies(self,pps):
 		if self.filetype == 'hpp': return
 		hpp = None
 		for pp in pps:
@@ -132,13 +137,13 @@ class PPFile:
 		if hpp is None:
 			print "Warning, no header-file for '"+self.name+"' found."
 			return
-		self.setFunctionHeadsRecursive(self.elements,hpp)
+		self.setGenericFunctionBodiesRecursive(self.elements,hpp)
 	
-	def setFunctionHeadsRecursive(self,elements,hpp):
+	def setGenericFunctionBodiesRecursive(self,elements,hpp):
 		for el in elements:
-			if 'childs' in el: self.setFunctionHeadsRecursive(el['childs'],hpp)
-			if 'public' in el: self.setFunctionHeadsRecursive(el['public'],hpp)
-			if 'private' in el: self.setFunctionHeadsRecursive(el['private'],hpp)
+			if 'childs' in el: self.setGenericFunctionBodiesRecursive(el['childs'],hpp)
+			if 'public' in el: self.setGenericFunctionBodiesRecursive(el['public'],hpp)
+			if 'private' in el: self.setGenericFunctionBodiesRecursive(el['private'],hpp)
 			
 			if el['type'] == 'function':
 				uri = self.cppToHppUri(el['uri'])
@@ -147,19 +152,26 @@ class PPFile:
 					return
 				el_hpp = hpp.getElementByUri(uri)
 				if el_hpp is None:
-					print("Warning: Couldnt find hpp-element")
-				el['function_head'] = Convert.functionHead(el_hpp)
+					print("Warning: Couldnt find hpp-element '"+uri+"'")
+					return
+				el_hpp['function_body'] = Convert.functionBody(el,self.prefixFunction)
+				#el['function_head'] = Convert.functionHead(el_hpp)
+				if 'generic' in el_hpp:
+					el['is_hidden'] = True
 				
 	def getElementByUri(self,uri):
 		if uri in self.elementsByUris: return self.elementsByUris[uri]
+		uri2 = uri.replace("ada://function","ada://generic_function")
+		uri2 = uri2.replace("ada://procedure","ada://generic_procedure")
+		if uri2 in self.elementsByUris: return self.elementsByUris[uri2]
 		return None
 		
 	def cppToHppUri(self,uri):
 		p = re.compile('^(ada:\/\/[^\/]+)(_body)(.*)$')
 		m = p.match(uri)
-		if m is False: print "Warning, wierd uri: "+uri
-		return (m.group(1)+m.group(3))
-		
+		if m is False: return None
+		else: return (m.group(1)+m.group(3))
+
 	def isPrivateElement(self,element):
 		if 'is_private' in element: return element['is_private']
 		return False
@@ -173,8 +185,6 @@ class PPFile:
 			out += "\n"+Convert.include(include)
 		for namespace in self.namespaces:
 			out += "\n"+Convert.namespace(namespace)
-		out += "\n".join(self.typedefs)+"\n\n"
-		out += "/* \\defgroup types AdaTypes */\n"
 		out += "\n"+self.writeNested(None,self.elements)
 		self.file.write(out)
 		self.file.close()
@@ -216,7 +226,7 @@ class PPFile:
 				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool) + "\n"
 			if element['type'] == 'rename':
 				out += "\n" + Convert.rename(element) + "\n"
-			elif element['type'] == 'function':
+			elif element['type'] == 'function': 
 				out += "\n" + Convert.function(element,self.prefixFunction,self.doxyReader.extract_all_bool) + "\n"
 			
 		return out

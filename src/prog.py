@@ -96,6 +96,7 @@ doxyReader.printt( "Number of Ada-files: "+str(len(preprocfiles)) )
 doxyReader.printt( "Number of XML-files: "+str(len(xmlfiles)) )
 
 for xmlfile in xmlfiles:
+	""" PHASE 1 - Extract information into dictionaries """
 	tree = ET.parse((xmlfile).strip("\r"))
 	filename, sourcefile = Convert.filename(xmlfile, preprocfiles, tmp_dir_ada, tmp_dir_cpp)
 	dirname = os.path.dirname(filename)
@@ -105,11 +106,13 @@ for xmlfile in xmlfiles:
 	pps.append(pp)
 	
 for pp in pps:
+	""" PHASE 2 - All files have been parsed """
 	pp.setIncludes(pps)
 	pp.setNamespaces(pps)
-	pp.setFunctionHeads(pps)
+	pp.setGenericFunctionBodies(pps)
 	
 for pp in pps:
+	""" PHASE 3 - Every file has all information it needs to be converted and printed  """
 	doxyReader.printt( "Creating "+pp.name+"..." )
 	pp.write()
 

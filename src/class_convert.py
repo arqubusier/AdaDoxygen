@@ -80,7 +80,8 @@ class Convert:
 	
 	@staticmethod
 	def function(function,prefix,extractAll):
-		if extractAll is False and function['comment'] == '':
+		if 'is_hidden' in function: return '/* A generic function was here... */'
+		if (extractAll is False and function['comment'] == ''):
 			out = ''
 		else:
 			c = Convert.getPrivateComment(function)
@@ -88,18 +89,9 @@ class Convert:
 			out = Convert.comment(c)
 			
 		out += Convert.functionHead(function)
-		
-		if 'body' in function:
-			out += ' {\n'
-			out += Convert.namespaces(function,prefix)
-			for var in function['body']['variables']:
-				out += var['type'] + " " + var['name'] + ";\n"
-			for call in function['body']['calls']:
-				if call['is_void'] is False: out += "(void)"
-				out += call['name']+"("+(",".join(call['params']))+");\n"
-			out += "\n}"
-		else:
-			out += ';'
+		if 'body' in function or 'generic' in function: 
+			out += Convert.functionBody(function,prefix)
+		else: out += ';'
 		return out	
 		
 	@staticmethod
@@ -112,6 +104,19 @@ class Convert:
 		out += " ("+Convert.params(function['params'])+")"
 		return out
 		
+	@staticmethod
+	def functionBody(function,prefix):
+		if 'function_body' in function: return function['function_body']
+		out = ' {\n'
+		out += Convert.namespaces(function,prefix)
+		for var in function['body']['variables']:
+			out += var['type'] + " " + var['name'] + ";\n"
+		for call in function['body']['calls']:
+			if call['is_void'] is False: out += "(void)"
+			out += call['name']+"("+(",".join(call['params']))+");\n"
+		out += "\n}"
+		return out
+	
 	@staticmethod
 	def generic(types):
 		arr = []
