@@ -169,7 +169,7 @@ class PPFile:
 	def cppToHppUri(self,uri):
 		p = re.compile('^(ada:\/\/[^\/]+)(_body)(.*)$')
 		m = p.match(uri)
-		if m is False: return None
+		if m is False or m is None: return None
 		else: return (m.group(1)+m.group(3))
 
 	def isPrivateElement(self,element):

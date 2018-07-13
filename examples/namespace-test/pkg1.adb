@@ -12,4 +12,19 @@ package body Pkg1 is
 	begin
 		return x;
 	end getInt;
+	
+	procedure p1(paramIn: IN Integer) is 
+	begin
+	   null;
+	end p1;
+	
+	procedure p2(paramInOut: IN OUT Integer) is 
+	begin
+	   null;
+	end p2;
+	
+	procedure p3(paramOut: OUT Integer) is 
+	begin
+	   null;
+	end p3;
 end Pkg1;

@@ -29,7 +29,9 @@ class Extract:
 			for propNode in tmpNode.findall('component_declaration'):
 				prop = {}
 				prop['name'] = Extract.getName(propNode)
-				prop['type'] = propNode.find('object_declaration_view_q').find('component_definition').find('component_definition_view_q').find('subtype_indication').find('subtype_mark_q').find('identifier').get('ref_name')
+				tmpNode2 = propNode.find('object_declaration_view_q/component_definition/component_definition_view_q/subtype_indication/subtype_mark_q/identifier')
+				if tmpNode2 is not None: prop['type'] = tmpNode2.get('ref_name')
+				else: prop['type'] = 'unknown_type_adadoxygen'
 				elem['props'].append(prop)
 		else: return None
 		return elem
@@ -88,6 +90,7 @@ class Extract:
 		for paramNode in functionNode.find('parameter_profile_ql').findall('parameter_specification'):
 			param = {}
 			param['name'] = Extract.getName(paramNode)
+			param['dir'] = Extract.getParamDirection(paramNode)
 			attrs = Extract.getRefNames(paramNode.find('object_declaration_view_q'))
 			param['type'] = "::".join(attrs)
 			elem['params'].append(param)
@@ -99,6 +102,17 @@ class Extract:
 			elem['output'] = output
 		#elem['comment'] = Extract.getComment(commentNode)
 		return elem
+	
+	@staticmethod
+	def getParamDirection(paramNode):
+		mode = paramNode.get('mode')
+		if mode == 'A_DEFAULT_IN_MODE': return 'in'
+		elif mode == 'AN_IN_MODE': return 'in'
+		elif mode == 'AN_IN_OUT_MODE': return 'inout'
+		elif mode == 'AN_OUT_MODE': return 'out'
+		else:
+			print("Warning: Mode '"+mode+"' not recognized, setting default mode='in'")
+			return 'in'
 	
 	@staticmethod
 	def getName(node):
@@ -178,7 +192,9 @@ class Extract:
 		for varNode in varNodes:
 			var = {}
 			var['name'] = Extract.getName(varNode)
-			var['type'] = varNode.find('object_declaration_view_q').find('subtype_indication').find('subtype_mark_q').find('identifier').get('ref_name')
+			tmpNode = varNode.find('object_declaration_view_q/subtype_indication/subtype_mark_q/identifier')
+			if tmpNode is not None: var['type'] = tmpNode.get('ref_name')
+			else: var['type'] = 'UNKNOWN_TYPE'
 			vars.append(var)
 		return vars;
 	

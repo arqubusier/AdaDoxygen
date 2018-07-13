@@ -34,7 +34,9 @@ class DoxyReader:
 			if os.path.isdir(el_abs) and self.recursive_bool:
 				self.getInputFilesRecursive(el_abs,os.listdir(el_abs),res)
 			elif os.path.isfile(el_abs):
-				res.append(el_abs)
+				fileext = os.path.splitext(el_abs)[1]
+				if fileext in ['.adb','.ads','.gpr']:
+					res.append(el_abs)
 			else: self.printt("Warning: '" + el_abs + "' is not directory or file")
 		
 	def getBool(self,key):

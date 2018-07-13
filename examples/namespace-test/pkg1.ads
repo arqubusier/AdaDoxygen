@@ -25,6 +25,10 @@ package Pkg1 is
 		type t6 is mod 2;
 		type t7 is array(t1) of t2;
 		
+		--!default parameter_specification@mode: A_DEFAULT_IN_MODE ---> in
+		procedure p1(paramIn: IN Integer);--AN_IN_MODE ---> in
+		procedure p2(paramInOut: IN OUT Integer);--AN_IN_OUT_MODE ---> inout
+		procedure p3(paramOut: OUT Integer);--AN_OUT_MODE ---> out
 	
 		--! record test 2
 		type Constant_type is

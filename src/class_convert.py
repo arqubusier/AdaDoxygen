@@ -52,14 +52,14 @@ class Convert:
 			out = ''
 		else:
 			#out = "/*! \\addtogroup type Types This is ADA-types!!! @{*/\n"
-			out = "/* \\addtogroup types @{*/\n"
+			#out = "/* \\addtogroup types @{*/\n"
 			c = "<b>Type</b><br/>"+type['plain']
 			c += Convert.commentDivider()
 			c += Convert.getPrivateComment(type)
 			c += type['comment']
-			out += Convert.comment(c)
+			out = Convert.comment(c)
 		out += "typedef int "+type['name']+";" + "\n" # */
-		out += "/* @} */"
+		#out += "/* @} */"
 		return out
 		
 	@staticmethod
@@ -81,8 +81,10 @@ class Convert:
 	@staticmethod
 	def function(function,prefix,extractAll):
 		if 'is_hidden' in function: return '/* A generic function was here... */'
+		function['include_param_dir_comment'] = True
 		if (extractAll is False and function['comment'] == ''):
 			out = ''
+			function['include_param_dir_comment'] = False
 		else:
 			c = Convert.getPrivateComment(function)
 			c += function['comment']
@@ -101,7 +103,7 @@ class Convert:
 		if 'generic' in function:
 			out += Convert.generic(function['generic'])+" "
 		out += function['output'] + " " + function['name']
-		out += " ("+Convert.params(function['params'])+")"
+		out += " ("+Convert.params(function)+")"
 		return out
 		
 	@staticmethod
@@ -126,11 +128,14 @@ class Convert:
 		return out
 		
 	@staticmethod
-	def params(params):
+	def params(function):
 		paramStrings = []
-		for p in params:
-			paramStrings.append(p['type']+" "+p['name'])
-		return (", ".join(paramStrings))
+		for p in function['params']:
+			str = p['type']+" "+p['name']
+			if 'include_param_dir_comment' in function and function['include_param_dir_comment']:
+				str += " /**< ["+p['dir']+"] */"
+			paramStrings.append(str)
+		return (",\n".join(paramStrings))
 		
 	@staticmethod
 	def comment(comment):
