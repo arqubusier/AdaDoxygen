@@ -22,10 +22,14 @@ package Pkg1 is
 		
 		--!t5 is also commented....
 		type t5 is digits 4 range 0.0 .. 1.0;
+		--! subtype to t5
+		subtype t5_sub is t5'Base range 0.1 .. 1.1;
 		type t6 is mod 2;
 		type t7 is array(t1) of t2;
 		
 		--!default parameter_specification@mode: A_DEFAULT_IN_MODE ---> in
+		--! test
+		--! \exception exception-test
 		procedure p1(paramIn: IN Integer);--AN_IN_MODE ---> in
 		procedure p2(paramInOut: IN OUT Integer);--AN_IN_OUT_MODE ---> inout
 		procedure p3(paramOut: OUT Integer);--AN_OUT_MODE ---> out

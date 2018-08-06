@@ -6,6 +6,7 @@ class Extract:
 	@staticmethod
 	def getPackage(packNode,prefix, commentNode):
 		elem = Extract.getPackageHead(packNode,prefix,commentNode)
+		elem['has_childs'] = True
 		return elem
 		
 	@staticmethod
@@ -17,12 +18,13 @@ class Extract:
 		return elem
 		
 	@staticmethod
-	def getStruct(structNode, commentNode):
+	def getStruct(structNode, commentNode, sourcefile):
 		elem = {}
 		elem['type'] = 'struct'
 		elem['name'] = Extract.getName(structNode)
 		elem['props'] = []
 		elem['childs'] = []
+		elem['has_childs'] = True
 		tmpNode = structNode.find('type_declaration_view_q').find('record_type_definition')
 		if tmpNode is not None:
 			tmpNode = tmpNode.find('record_definition_q').find('record_definition').find('record_components_ql')
@@ -33,13 +35,16 @@ class Extract:
 				if tmpNode2 is not None: prop['type'] = tmpNode2.get('ref_name')
 				else: prop['type'] = 'unknown_type_adadoxygen'
 				elem['props'].append(prop)
-		else: return None
-		return elem
+			return elem
+		else: 
+			return Extract.getType(structNode,sourcefile)
+			
 	
 	@staticmethod
 	def getType(typeNode,sourcefile):
 		elem = {}
 		elem['type'] = 'type'
+		elem['has_childs'] = False
 		elem['name'] = Extract.getName(typeNode)
 		elem['childs'] = []
 		elem['plain'] = Extract.getPlaintext(sourcefile,typeNode)
@@ -71,6 +76,7 @@ class Extract:
 	@staticmethod
 	def getFunction(functionNode, commentNode):
 		elem = Extract.getFunctionHead(functionNode,commentNode)
+		elem['has_childs'] = True
 		elem['body'] = {}
 		elem['body']['variables'] = Extract.getVariables(functionNode.find('body_declarative_items_ql').findall('variable_declaration'))
 		elem['body']['calls'] = Extract.getCalls(functionNode.find('body_statements_ql'))
@@ -83,9 +89,11 @@ class Extract:
 		if genNode is not None:
 			elem['generic'] = Extract.getGeneric(genNode)
 			print(elem['generic'])
+		elem['uri'] = functionNode.find('names_ql').find('defining_identifier').get('def')
 		elem['type'] = 'function'
 		elem['name'] = Extract.getName(functionNode)
 		elem['params'] = []
+		elem['has_childs'] = False
 		elem['childs'] = []
 		for paramNode in functionNode.find('parameter_profile_ql').findall('parameter_specification'):
 			param = {}
@@ -140,6 +148,7 @@ class Extract:
 	def getRename(node):
 		elem = {}
 		elem['type'] = 'rename'
+		elem['has_childs'] = False
 		elem['name'] = Extract.getName(node)
 		elem['package_names'] = Extract.getRefNames(node.find('renamed_entity_q'))
 		elem['childs'] = []

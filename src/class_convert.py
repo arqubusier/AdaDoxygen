@@ -64,7 +64,7 @@ class Convert:
 		
 	@staticmethod
 	def getPrivateComment(element):
-		if element['comment_add_private']: return '\\private '
+		if element['comment_add_private']: return "\\private "
 		return ''
 		
 	@staticmethod
@@ -82,7 +82,7 @@ class Convert:
 	def function(function,prefix,extractAll):
 		if 'is_hidden' in function: return '/* A generic function was here... */'
 		function['include_param_dir_comment'] = True
-		if (extractAll is False and function['comment'] == ''):
+		if (extractAll is False and (function['comment'] == '')):
 			out = ''
 			function['include_param_dir_comment'] = False
 		else:

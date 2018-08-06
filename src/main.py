@@ -42,6 +42,7 @@ class AdaDoxygen:
 		return argparser.parse_args()
 
 	def setDirectoryPaths(self):
+		self.src_dir = os.path.dirname(os.path.realpath(__file__))
 		if os.path.isabs(self.args.temporary_dir): self.tmp_dir = self.args.temporary_dir
 		else: self.tmp_dir = os.path.abspath(os.path.join(os.getcwd(),self.args.temporary_dir))
 		self.tmp_dir_ada = os.path.join(self.tmp_dir,"ada")
@@ -115,9 +116,9 @@ class AdaDoxygen:
 			
 		for pp in pps:
 			""" PHASE 2 - All files have been parsed """
-			pp.setIncludes(pps)
-			pp.setNamespaces(pps)
-			pp.setGenericFunctionBodies(pps)
+			pp.collectIncludes(pps)
+			pp.collectNamespaces(pps)
+			pp.moveGenericFunctionBodies(pps)
 			
 		for pp in pps:
 			""" PHASE 3 - Every file has all information it needs to be converted and printed  """
@@ -127,9 +128,14 @@ class AdaDoxygen:
 	""" Run doxygen with the generated pp-files """
 	def pp2doxy(self):
 		self.doxyReader.printt( "--pp2doxy--" )
-		nl = "r\n"
-		strip = 'STRIP_FROM_PATH='+os.path.join(self.tmp_dir_cpp,self.abs2rel(self.doxyReader.stripfrompath))
-		doxyCommand = '( cat '+self.args.doxygen_file+' & echo "INPUT='+self.tmp_dir_cpp+'" & echo "" & echo "'+strip+'" ) | doxygen -' #& is ; in unix
+		
+		echoArr = []
+		echoArr.append('INPUT='+self.tmp_dir_cpp)
+		echoArr.append('STRIP_FROM_PATH='+os.path.join(self.tmp_dir_cpp,self.abs2rel(self.doxyReader.stripfrompath)))
+		echoArr.append('LAYOUT_FILE='+os.path.join(self.src_dir,'DoxygenLayout.xml'))
+		
+		for i,el in enumerate(echoArr): echoArr[i] = 'echo "'+el+'"'
+		doxyCommand = '( cat '+self.args.doxygen_file+' & '+' & echo "" & '.join(echoArr)+' ) | doxygen -'
 		self.doxyReader.printt( doxyCommand )
 		os.system(doxyCommand)
 		
@@ -161,11 +167,6 @@ if __name__ == '__main__':
 	ad.process()
 	ad.postprocess()
 	print("adadoxygen done")
-
-
-
-
-
 
 
 

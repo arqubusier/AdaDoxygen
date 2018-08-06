@@ -46,34 +46,16 @@ class PPFile:
 			has_body_declarative_items_ql = False
 			if child.tag in ['procedure_body_declaration','function_body_declaration']:
 				element = Extract.getFunction(child,lastNode)
-				element['uri'] = child.find('names_ql').find('defining_identifier').get('def')
-				has_body_declarative_items_ql = True
-			
 			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration','generic_procedure_declaration']:
 				element = Extract.getFunctionHead(child,lastNode)
-				element['uri'] = child.find('names_ql').find('defining_identifier').get('def')
-			
-			elif child.tag == 'ordinary_type_declaration':
-				element = Extract.getStruct(child,lastNode)
-				if element is not None: has_body_declarative_items_ql = True
-				else: element = Extract.getType(child,self.sourcefile)
-			
+			elif child.tag in ['ordinary_type_declaration','subtype_declaration']:
+				element = Extract.getStruct(child,lastNode,self.sourcefile)
 			elif child.tag == 'package_body_declaration':
 				element = Extract.getPackage(child,self.prefixClass,lastNode)
-				has_body_declarative_items_ql = True
-					
 			elif child.tag in ['generic_package_declaration','package_declaration']:
-				element = Extract.getPackage(child,self.prefixClass,lastNode)
-				element['public'] = []
-				element['private'] = []
-				if child.find('visible_part_declarative_items_ql') is not None:
-					self._loop(child.find('visible_part_declarative_items_ql'),element['public'],child,isPrivate)
-				if child.find('private_part_declarative_items_ql') is not None:
-					self._loop(child.find('private_part_declarative_items_ql'),element['private'],child,True)
-			
+				element = self.parsePackage(child,lastNode,isPrivate)
 			elif child.tag == 'package_renaming_declaration':
 				element = Extract.getRename(child)
-				
 			else: print("Not parsed: "+child.tag)
 				
 			if element is not None:
@@ -85,7 +67,7 @@ class PPFile:
 				
 				if 'uri' in element: self.elementsByUris[element['uri']] = element
 				elements.append(element)
-				if has_body_declarative_items_ql and child.find('body_declarative_items_ql') is not None:
+				if element['has_childs'] and child.find('body_declarative_items_ql') is not None:
 					if element['type'] == 'function': 
 						isPrivate = True
 					self._loop(child.find('body_declarative_items_ql'),element['childs'],child,isPrivate)
@@ -94,8 +76,19 @@ class PPFile:
 			i+=1
 			lastNode = child
 			
+	def parsePackage(self,child,lastNode,isPrivate):
+		element = Extract.getPackage(child,self.prefixClass,lastNode)
+		element['has_childs'] = False
+		element['public'] = []
+		element['private'] = []
+		if child.find('visible_part_declarative_items_ql') is not None:
+			self._loop(child.find('visible_part_declarative_items_ql'),element['public'],child,isPrivate)
+		if child.find('private_part_declarative_items_ql') is not None:
+			self._loop(child.find('private_part_declarative_items_ql'),element['private'],child,True)
+		return element
+			
 	""" Set valid includes when all files have been parsed """
-	def setIncludes(self,pps):
+	def collectIncludes(self,pps):
 		node = self.root.find('context_clause_elements_ql')
 		if node is None: return
 
@@ -112,7 +105,7 @@ class PPFile:
 					break
 					
 	""" Set namespaces """
-	def setNamespaces(self,pps):
+	def collectNamespaces(self,pps):
 		node = self.root.find('context_clause_elements_ql')
 		if node is None: return
 		for nsNode in node.findall('use_package_clause'):
@@ -129,7 +122,7 @@ class PPFile:
 				self.namespaces.append("::".join(attrs))
 				
 	""" Get and set generic function bodies from cpp to hpp file """
-	def setGenericFunctionBodies(self,pps):
+	def moveGenericFunctionBodies(self,pps):
 		if self.filetype == 'hpp': return
 		hpp = None
 		for pp in pps:
@@ -137,13 +130,13 @@ class PPFile:
 		if hpp is None:
 			print "Warning, no header-file for '"+self.name+"' found."
 			return
-		self.setGenericFunctionBodiesRecursive(self.elements,hpp)
+		self.moveGenericFunctionBodiesRecursive(self.elements,hpp)
 	
-	def setGenericFunctionBodiesRecursive(self,elements,hpp):
+	def moveGenericFunctionBodiesRecursive(self,elements,hpp):
 		for el in elements:
-			if 'childs' in el: self.setGenericFunctionBodiesRecursive(el['childs'],hpp)
-			if 'public' in el: self.setGenericFunctionBodiesRecursive(el['public'],hpp)
-			if 'private' in el: self.setGenericFunctionBodiesRecursive(el['private'],hpp)
+			if 'childs' in el: self.moveGenericFunctionBodiesRecursive(el['childs'],hpp)
+			if 'public' in el: self.moveGenericFunctionBodiesRecursive(el['public'],hpp)
+			if 'private' in el: self.moveGenericFunctionBodiesRecursive(el['private'],hpp)
 			
 			if el['type'] == 'function':
 				uri = self.cppToHppUri(el['uri'])
@@ -154,10 +147,17 @@ class PPFile:
 				if el_hpp is None:
 					print("Warning: Couldnt find hpp-element '"+uri+"'")
 					return
-				el_hpp['function_body'] = Convert.functionBody(el,self.prefixFunction)
-				#el['function_head'] = Convert.functionHead(el_hpp)
+				self.privateInCppBugFix(el,el_hpp)
 				if 'generic' in el_hpp:
 					el['is_hidden'] = True
+					
+	
+	def privateInCppBugFix(self,el,el_hpp):
+		el_hpp['function_body'] = Convert.functionBody(el,self.prefixFunction)
+		if el_hpp['comment'] != '' and el['comment'] == '':
+			el['comment'] = ' '
+		el['is_private'] = el_hpp['is_private']
+		el['is_extract'] = el_hpp['is_extract']
 				
 	def getElementByUri(self,uri):
 		if uri in self.elementsByUris: return self.elementsByUris[uri]
@@ -218,7 +218,7 @@ class PPFile:
 				out += self.writeNested(element,element['childs'])
 				out += "\n}"
 				
-			element['comment_add_private'] = self.isPrivateElement(element) and self.filetype == 'hpp'
+			element['comment_add_private'] = self.isPrivateElement(element)
 				
 			if element['type'] == 'struct':
 				out += "\n" + Convert.struct(element,self.doxyReader.extract_all_bool) + "\n"

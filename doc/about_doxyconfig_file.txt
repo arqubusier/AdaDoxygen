@@ -25,3 +25,6 @@ EXTRACT_PRIVATE
 	
 HIDE_UNDOC_CLASSES
 	If HIDE_UNDOC_CLASSES=NO, undocumented packages will be extracted as well.
+	
+LAYOUT_FILE
+	Is not used. Overwritten by DoxygenLayout.xml in the src-directory
