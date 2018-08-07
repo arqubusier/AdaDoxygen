@@ -22,7 +22,7 @@ package Pkg1 is
 		
 		--!t5 is also commented....
 		type t5 is digits 4 range 0.0 .. 1.0;
-		--! subtype to t5
+		--!subtype to t5
 		subtype t5_sub is t5'Base range 0.1 .. 1.1;
 		type t6 is mod 2;
 		type t7 is array(t1) of t2;

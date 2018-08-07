@@ -10,6 +10,7 @@ import argparse,ntpath,glob
 import xml.etree.ElementTree as ET
 from subprocess import call
 
+from class_pplist import PPList
 from class_ppfile import PPFile
 from class_doxyreader import DoxyReader
 from class_commentpreprocess import CommentPreprocess
@@ -99,31 +100,27 @@ class AdaDoxygen:
 	""" Convert XML to PP """
 	def xml2pp(self):
 		self.doxyReader.printt( "--xml2pp--" )
-		pps = []
+		pplist = PPList()
 		self.xmlfiles = glob.glob(os.path.join(self.tmp_dir_xml,"*.xml"))
 		self.doxyReader.printt( "Number of Ada-files: "+str(len(self.preprocfiles)) )
 		self.doxyReader.printt( "Number of XML-files: "+str(len(self.xmlfiles)) )
 
 		for xmlfile in self.xmlfiles:
-			""" PHASE 1 - Extract information into dictionaries """
 			tree = ET.parse((xmlfile).strip("\r"))
 			filename, sourcefile = Convert.filename(xmlfile, self.preprocfiles, self.tmp_dir_ada, self.tmp_dir_cpp)
 			dirname = os.path.dirname(filename)
 			if not os.path.exists(dirname): os.makedirs(dirname)
 			pp = PPFile(filename,sourcefile,tree,self.args.prefix_functions,self.args.prefix_packages,self.doxyReader)
 			pp.parse()
-			pps.append(pp)
+			pplist.add(pp)
 			
-		for pp in pps:
-			""" PHASE 2 - All files have been parsed """
-			pp.collectIncludes(pps)
-			pp.collectNamespaces(pps)
-			pp.moveGenericFunctionBodies(pps)
-			
-		for pp in pps:
-			""" PHASE 3 - Every file has all information it needs to be converted and printed  """
-			self.doxyReader.printt( "Creating "+pp.name+"..." )
-			pp.write()
+		pplist.collectIncludes()
+		pplist.setNamespaces()
+		pplist.buildTuples()
+		pplist.moveGenericFunctionBodies()
+		pplist.exchangePrivateInfo()
+		pplist.write()
+		
 			
 	""" Run doxygen with the generated pp-files """
 	def pp2doxy(self):

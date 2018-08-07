@@ -49,10 +49,8 @@ class Convert:
 	@staticmethod
 	def type(type,extractAll):
 		if extractAll is False and type['comment'] == '':
-			out = ''
+			out =  Convert.comment(Convert.getPrivateComment(type))
 		else:
-			#out = "/*! \\addtogroup type Types This is ADA-types!!! @{*/\n"
-			#out = "/* \\addtogroup types @{*/\n"
 			c = "<b>Type</b><br/>"+type['plain']
 			c += Convert.commentDivider()
 			c += Convert.getPrivateComment(type)

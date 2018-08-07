@@ -86,26 +86,9 @@ class PPFile:
 		if child.find('private_part_declarative_items_ql') is not None:
 			self._loop(child.find('private_part_declarative_items_ql'),element['private'],child,True)
 		return element
-			
-	""" Set valid includes when all files have been parsed """
-	def collectIncludes(self,pps):
-		node = self.root.find('context_clause_elements_ql')
-		if node is None: return
-
-		for withNode in node.findall('with_clause'):
-			idNodes = withNode.iter('identifier')
-			attrs = []
-			for idNode in idNodes:
-				attrs.append(idNode.get('ref_name'))
-			name = ".".join(attrs)
-			for pp in pps:
-				if name == pp.name and pp.filetype == 'hpp':
-					self.includes.append({'name':name,'file':pp.filename})
-					isIncluded = True
-					break
 					
 	""" Set namespaces """
-	def collectNamespaces(self,pps):
+	def setNamespaces(self):
 		node = self.root.find('context_clause_elements_ql')
 		if node is None: return
 		for nsNode in node.findall('use_package_clause'):
@@ -121,56 +104,12 @@ class PPFile:
 			if isIncluded == False:
 				self.namespaces.append("::".join(attrs))
 				
-	""" Get and set generic function bodies from cpp to hpp file """
-	def moveGenericFunctionBodies(self,pps):
-		if self.filetype == 'hpp': return
-		hpp = None
-		for pp in pps:
-			if self.name == pp.name and pp.filetype == 'hpp': hpp = pp
-		if hpp is None:
-			print "Warning, no header-file for '"+self.name+"' found."
-			return
-		self.moveGenericFunctionBodiesRecursive(self.elements,hpp)
-	
-	def moveGenericFunctionBodiesRecursive(self,elements,hpp):
-		for el in elements:
-			if 'childs' in el: self.moveGenericFunctionBodiesRecursive(el['childs'],hpp)
-			if 'public' in el: self.moveGenericFunctionBodiesRecursive(el['public'],hpp)
-			if 'private' in el: self.moveGenericFunctionBodiesRecursive(el['private'],hpp)
-			
-			if el['type'] == 'function':
-				uri = self.cppToHppUri(el['uri'])
-				if uri is None:
-					print("Couldnt convert URI")
-					return
-				el_hpp = hpp.getElementByUri(uri)
-				if el_hpp is None:
-					print("Warning: Couldnt find hpp-element '"+uri+"'")
-					return
-				self.privateInCppBugFix(el,el_hpp)
-				if 'generic' in el_hpp:
-					el['is_hidden'] = True
-					
-	
-	def privateInCppBugFix(self,el,el_hpp):
-		el_hpp['function_body'] = Convert.functionBody(el,self.prefixFunction)
-		if el_hpp['comment'] != '' and el['comment'] == '':
-			el['comment'] = ' '
-		el['is_private'] = el_hpp['is_private']
-		el['is_extract'] = el_hpp['is_extract']
-				
 	def getElementByUri(self,uri):
 		if uri in self.elementsByUris: return self.elementsByUris[uri]
 		uri2 = uri.replace("ada://function","ada://generic_function")
 		uri2 = uri2.replace("ada://procedure","ada://generic_procedure")
 		if uri2 in self.elementsByUris: return self.elementsByUris[uri2]
 		return None
-		
-	def cppToHppUri(self,uri):
-		p = re.compile('^(ada:\/\/[^\/]+)(_body)(.*)$')
-		m = p.match(uri)
-		if m is False or m is None: return None
-		else: return (m.group(1)+m.group(3))
 
 	def isPrivateElement(self,element):
 		if 'is_private' in element: return element['is_private']
