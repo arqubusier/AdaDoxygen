@@ -86,8 +86,11 @@ class AdaDoxygen:
 			
 	""" Convert ada to XML with gnat2xml """
 	def ada2xml(self):
+
 		self.doxyReader.printt( "--ada2xml--" )
-		gnatArgs = ['gnat2xml','--output-dir='+self.tmp_dir_xml] + self.preprocfiles
+		incDirs = self.getGnat2xmlIncludeDirs()
+		#sys.exit()
+		gnatArgs = ['gnat2xml','-Iexamples/namespace-test/package2','--output-dir='+self.tmp_dir_xml] + self.preprocfiles + incDirs
 		if self.args.project_file != '':
 			for preprocfile in self.preprocfiles:
 				if ntpath.basename(preprocfile) == ntpath.basename(self.args.project_file):
@@ -96,6 +99,16 @@ class AdaDoxygen:
 			gnatArgs = ['gnat2xml','--output-dir='+self.tmp_dir_xml,'-P'+project_file,'-U']
 		self.doxyReader.printt( " ".join(gnatArgs) )
 		call(gnatArgs)
+		
+	
+	def getGnat2xmlIncludeDirs(self):
+		dirArr = []
+		for file in self.preprocfiles:
+			dir = os.path.dirname(file)
+			if dir not in dirArr: 
+				dirArr.append('-I'+dir)
+				print(dir)
+		return dirArr
 		
 	""" Convert XML to PP """
 	def xml2pp(self):

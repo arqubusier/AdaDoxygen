@@ -24,7 +24,6 @@ class PPList:
 				for pp2 in self.ppobjects:
 					if name == pp2.name and pp2.filetype == 'hpp':
 						pp.includes.append({'name':name,'file':pp2.filename})
-						isIncluded = True
 						break
 						
 	""" Set namespaces """

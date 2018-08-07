@@ -6,7 +6,7 @@ package Pkg2.Pkg23 is
 		
 	--! A generic function
 	--! @tparam T this is a generic type
-	--! @tparam T this type is commented twice
+	--! @tparam T <i>type T is (<>);</i>
 	--! @tparam T2 another generic type
 	generic
 		Max : Positive;

@@ -29,7 +29,7 @@ package Pkg1 is
 		
 		--!default parameter_specification@mode: A_DEFAULT_IN_MODE ---> in
 		--! test
-		--! \exception exception-test
+		--! \exception ExcpClass asdas dsaddas
 		procedure p1(paramIn: IN Integer);--AN_IN_MODE ---> in
 		procedure p2(paramInOut: IN OUT Integer);--AN_IN_OUT_MODE ---> inout
 		procedure p3(paramOut: OUT Integer);--AN_OUT_MODE ---> out
