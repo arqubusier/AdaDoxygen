@@ -32,18 +32,24 @@ class Convert:
 		return ext_pp
 		
 	@staticmethod
-	def struct(struct,extractAll):
-		if extractAll is False and struct['comment'] == '':
+	def record(record,extractAll):
+		if extractAll is False and record['comment'] == '':
 			out = ''
 		else:
-			c = Convert.getPrivateComment(struct)
-			c += struct['comment']
+			c = Convert.getPrivateComment(record)
+			c += record['comment']
 			out = Convert.comment(c)
 
-		out += "struct "+struct['name']+"{\n"
-		for prop in struct['props']:
-			out += "\t"+prop['type']+" "+prop['name']+";\n"
+		out += "struct "+record['name']+"{\n"
+		for comp in record['components']:
+			out += Convert.recordComponent(comp)
 		out += "};"
+		return out
+		
+	@staticmethod
+	def recordComponent(comp):
+		out = "\t"+comp['type']+" "+comp['name']+";"
+		out += "/*!< "+comp['comment']+" \code "+comp['plain']+" \endcode */\n"
 		return out
 		
 	@staticmethod
@@ -51,8 +57,7 @@ class Convert:
 		if extractAll is False and type['comment'] == '':
 			out =  Convert.comment(Convert.getPrivateComment(type))
 		else:
-			c = "<b>Type</b><br/>"+type['plain']
-			c += Convert.commentDivider()
+			c = " \code "+type['plain']+ " \endcode "
 			c += Convert.getPrivateComment(type)
 			c += type['comment']
 			out = Convert.comment(c)
@@ -87,6 +92,8 @@ class Convert:
 			c = Convert.getPrivateComment(function)
 			c += function['comment']
 			c += Convert.genericComment(function)
+			if 'plain' in function:
+				c += "\code "+function['plain']+" \endcode"
 			out = Convert.comment(c)
 			
 		out += Convert.functionHead(function)

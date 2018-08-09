@@ -70,7 +70,7 @@
       <services title=""/>
       <interfaces title=""/>
       <constructors title=""/>
-      <functions title="Functions and procedures"/>
+      <functions title="Functions, procedures and tasks"/>
       <related title=""/>
       <variables title=""/>
       <properties title=""/>
@@ -90,7 +90,7 @@
       <classes visible="yes" title="Records"/>
       <typedefs title="Types"/>
       <enums title=""/>
-      <functions title="Functions and procedures"/>
+      <functions title="Functions, procedures and tasks"/>
       <variables title=""/>
       <membergroups visible="yes"/>
     </memberdecl>
@@ -99,7 +99,7 @@
       <inlineclasses title=""/>
       <typedefs title="Types Documentation"/>
       <enums title=""/>
-      <functions title="Functions and procedures Documentation"/>
+      <functions title="Functions, procedures and tasks"/>
       <variables title=""/>
     </memberdef>
     <authorsection visible="yes"/>
@@ -119,7 +119,7 @@
       <defines title=""/>
       <typedefs title="Types"/>
       <enums title=""/>
-      <functions title="Functions and procedures"/>
+      <functions title="Functions, procedures and tasks"/>
       <variables title=""/>
       <membergroups visible="yes"/>
     </memberdecl>
@@ -129,7 +129,7 @@
       <defines title=""/>
       <typedefs title="Types"/>
       <enums title=""/>
-      <functions title="Functions and procedures"/>
+      <functions title="Functions, procedures and tasks"/>
       <variables title=""/>
     </memberdef>
     <authorsection/>
@@ -149,7 +149,7 @@
       <typedefs title="Types"/>
       <enums title=""/>
       <enumvalues title=""/>
-      <functions title="Functions and procedures"/>
+      <functions title="Functions, procedures and tasks"/>
       <variables title=""/>
       <signals title=""/>
       <publicslots title=""/>
@@ -168,7 +168,7 @@
       <typedefs title="Types"/>
       <enums title=""/>
       <enumvalues title=""/>
-      <functions title="Functions and procedures"/>
+      <functions title="Functions, procedures and tasks"/>
       <variables title=""/>
       <signals title=""/>
       <publicslots title=""/>

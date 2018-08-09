@@ -46,10 +46,12 @@ class PPFile:
 			has_body_declarative_items_ql = False
 			if child.tag in ['procedure_body_declaration','function_body_declaration']:
 				element = Extract.getFunction(child,lastNode,self.sourcefile)
-			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration','generic_procedure_declaration']:
+			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration','generic_procedure_declaration','single_task_declaration','task_type_declaration']:
 				element = Extract.getFunctionHead(child,lastNode,self.sourcefile)
 			elif child.tag in ['ordinary_type_declaration','subtype_declaration']:
-				element = Extract.getStruct(child,lastNode,self.sourcefile)
+				element = self.parseType(child,lastNode,isPrivate)
+			elif child.tag in ['component_declaration']:
+				element = Extract.getRecordComponent(child,self.sourcefile)
 			elif child.tag == 'package_body_declaration':
 				element = Extract.getPackage(child,self.prefixClass,lastNode)
 			elif child.tag in ['generic_package_declaration','package_declaration']:
@@ -74,7 +76,6 @@ class PPFile:
 						isPrivate = True
 					self.parseRecursive(child.find('body_declarative_items_ql'),element['childs'],child,isPrivate)
 	
-				
 			i+=1
 			lastNode = child
 			
@@ -88,6 +89,15 @@ class PPFile:
 		if child.find('private_part_declarative_items_ql') is not None:
 			self.parseRecursive(child.find('private_part_declarative_items_ql'),element['private'],child,True)
 		return element
+		
+	def parseType(self,child,lastNode,isPrivate):
+		recNode = Extract.getRecordNode(child)
+		if recNode is None:
+			return Extract.getType(child,self.sourcefile)
+		element = Extract.getRecord(child)
+		self.parseRecursive(recNode,element['components'],child,isPrivate)
+		return element
+		
 					
 	""" Set namespaces """
 	def setNamespaces(self):
@@ -149,8 +159,8 @@ class PPFile:
 				
 			element['comment_add_private'] = self.isPrivateElement(element)
 				
-			if element['type'] == 'struct':
-				out += "\n" + Convert.struct(element,self.doxyReader.extract_all_bool) + "\n"
+			if element['type'] == 'record':
+				out += "\n" + Convert.record(element,self.doxyReader.extract_all_bool) + "\n"
 			if element['type'] == 'type':
 				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool) + "\n"
 			if element['type'] == 'rename':

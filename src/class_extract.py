@@ -25,7 +25,7 @@ class Extract:
 		elem['props'] = []
 		elem['childs'] = []
 		elem['has_childs'] = True
-		tmpNode = structNode.find('type_declaration_view_q').find('record_type_definition')
+		tmpNode = structNode.find('type_declaration_view_q/record_type_definition/record_definition_q/record_definition/record_components_ql')
 		if tmpNode is not None:
 			tmpNode = tmpNode.find('record_definition_q').find('record_definition').find('record_components_ql')
 			for propNode in tmpNode.findall('component_declaration'):
@@ -39,6 +39,34 @@ class Extract:
 		else: 
 			return Extract.getType(structNode,sourcefile)
 			
+			
+	@staticmethod
+	def getRecordNode(node):
+		return node.find('type_declaration_view_q/record_type_definition/record_definition_q/record_definition/record_components_ql')
+	
+	@staticmethod
+	def getRecord(node):
+		elem = {}
+		elem['type'] = 'record'
+		elem['name'] = Extract.getName(node)
+		elem['childs'] = []
+		elem['components'] = []
+		elem['has_childs'] = False
+		return elem
+		
+	@staticmethod
+	def getRecordComponent(node,sourcefile):
+		elem = {}
+		elem['name'] = Extract.getName(node)
+		elem['has_childs'] = False
+		elem['plain'] = Extract.getPlaintext(sourcefile,node)
+		tmpNode = node.find('object_declaration_view_q/component_definition/component_definition_view_q/subtype_indication/subtype_mark_q/identifier')
+		if tmpNode is not None: 
+			elem['type'] = tmpNode.get('ref_name')
+		else: 
+			prop['type'] = 'unknown_type_adadoxygen'
+		return elem
+
 	
 	@staticmethod
 	def getType(typeNode,sourcefile):
@@ -64,7 +92,8 @@ class Extract:
 		plain = ""
 		for line in fh:
 			if i_line >= startline and i_line <= endline:
-				str = line.strip("\r")
+				#str = line.strip("\r")
+				str = line
 				i_col = 1
 				for c in str:
 					if i_col >= startcol and i_col <= endcol:
@@ -88,28 +117,40 @@ class Extract:
 		genNode = functionNode.find('generic_formal_part_ql')
 		if genNode is not None:
 			elem['generic'] = Extract.getGeneric(genNode,sourcefile)
-			print(elem['generic'])
 		elem['uri'] = functionNode.find('names_ql').find('defining_identifier').get('def')
 		elem['type'] = 'function'
 		elem['name'] = Extract.getName(functionNode)
 		elem['params'] = []
 		elem['has_childs'] = False
 		elem['childs'] = []
-		for paramNode in functionNode.find('parameter_profile_ql').findall('parameter_specification'):
-			param = {}
-			param['name'] = Extract.getName(paramNode)
-			param['dir'] = Extract.getParamDirection(paramNode)
-			attrs = Extract.getRefNames(paramNode.find('object_declaration_view_q'))
-			param['type'] = "::".join(attrs)
-			elem['params'].append(param)
-		if functionNode.find('result_profile_q') is None:
-			elem['output'] = 'Procedure'
-		else:
-			attrs = Extract.getRefNames(functionNode.find('result_profile_q'))
-			output = "::".join(attrs)
-			elem['output'] = output
-		#elem['comment'] = Extract.getComment(commentNode)
+		for paramNode in functionNode.findall('parameter_profile_ql/parameter_specification'):
+			elem['params'].append(Extract.getFunctionParam(paramNode))
+		elem['output'] = Extract.getFunctionOutput(functionNode)
+		if functionNode.tag in ['single_task_declaration','task_type_declaration']:
+			elem['plain'] = Extract.getPlaintext(sourcefile,functionNode)
+			print(elem['plain'])
 		return elem
+		
+	@staticmethod
+	def getFunctionParam(paramNode):
+		param = {}
+		param['name'] = Extract.getName(paramNode)
+		param['dir'] = Extract.getParamDirection(paramNode)
+		attrs = Extract.getRefNames(paramNode.find('object_declaration_view_q'))
+		param['type'] = "::".join(attrs)
+		return param
+		
+	@staticmethod
+	def getFunctionOutput(functionNode):
+		if functionNode.find('result_profile_q') is None:
+			if functionNode.tag in ['single_task_declaration','task_type_declaration']:
+				return 'Task'
+			else:
+				return 'Procedure'
+		attrs = Extract.getRefNames(functionNode.find('result_profile_q'))
+		output = "::".join(attrs)
+		return output
+
 	
 	@staticmethod
 	def getParamDirection(paramNode):

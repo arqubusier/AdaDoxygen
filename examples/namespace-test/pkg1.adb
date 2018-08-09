@@ -27,4 +27,23 @@ package body Pkg1 is
 	begin
 	   null;
 	end p3;
+	
+	task body mytask1 is 
+		Item : Integer;
+	begin
+		Item := 1;
+	end mytask1;
+	
+	task body mytask2 is 
+	begin
+		loop
+			accept Add(Item : in out Integer) do
+				Item := 1;
+			end Add;
+			accept Remove(Item : in out Integer) do
+				Item := 0;
+			end Remove;
+		end loop;
+	end mytask2;
+	
 end Pkg1;

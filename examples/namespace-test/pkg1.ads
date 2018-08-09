@@ -38,7 +38,16 @@ package Pkg1 is
 		type Constant_type is
 		record
 			name : String(1..2);
+			--! record member is commented
 			value : Float;
 		end record;
+		
+		--! this task is commented
+		task mytask1;
+		
+		task type mytask2 is
+			entry Add(Item : in out Integer);
+			entry Remove(Item : in out Integer);
+		end mytask2;
 		
 end Pkg1;
