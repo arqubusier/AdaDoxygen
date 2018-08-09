@@ -44,7 +44,7 @@ class DoxyReader:
 		filename = os.path.basename(file)
 		for f in files:
 			if filename == os.path.basename(f):
-				print('Warning: '+filename+' exists in more then one directory. Choosing the first one selected in doxyfile.')
+				self.printt('Warning: '+filename+' exists in more then one directory. Choosing the first one selected in doxyfile.')
 				return True
 		return False
 			

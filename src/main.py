@@ -15,7 +15,7 @@ from class_ppfile import PPFile
 from class_doxyreader import DoxyReader
 from class_commentpreprocess import CommentPreprocess
 from class_convert import Convert
-from class_htmlpostprocess import HTMLPostprocess
+#from class_htmlpostprocess import HTMLPostprocess
 from class_xmlpostprocess import XMLPostprocess
 
 
@@ -37,9 +37,11 @@ class AdaDoxygen:
 		argparser.add_argument('doxygen_file', default="", help="Doxygen config file")
 		argparser.add_argument('-p', '--project-file', default="", help="Ada project file, mandatory if source files is in different directories")
 		argparser.add_argument('-t','--temporary-dir', default=self.default_tmp_dir, help="Path to tmp dir, dirs will be created if not exists, default='"+self.default_tmp_dir+"'")
+		argparser.add_argument('--cargs', nargs='?', default="", help="gnat2xml cargs. If more then one, wrap with quotes")
 		argparser.add_argument('--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
 		argparser.add_argument('--prefix-packages', default="", help="Prefix for packages, default=''")
 		argparser.add_argument('--post-process', default="off", help="Post process HTML-files on/off, default='off'")
+		
 		return argparser.parse_args()
 
 	def setDirectoryPaths(self):
@@ -88,15 +90,20 @@ class AdaDoxygen:
 	def ada2xml(self):
 
 		self.doxyReader.printt( "--ada2xml--" )
-		incDirs = self.getGnat2xmlIncludeDirs()
-		#sys.exit()
-		gnatArgs = ['gnat2xml','-Iexamples/namespace-test/package2','--output-dir='+self.tmp_dir_xml] + self.preprocfiles + incDirs
-		if self.args.project_file != '':
+		gnatArgs = ['gnat2xml','--output-dir='+self.tmp_dir_xml]
+		
+		if self.args.project_file == '':
+			incDirs = self.getGnat2xmlIncludeDirs()
+			gnatArgs = gnatArgs + self.preprocfiles + incDirs
+		else:
 			for preprocfile in self.preprocfiles:
 				if ntpath.basename(preprocfile) == ntpath.basename(self.args.project_file):
 					project_file = preprocfile
 			self.doxyReader.printt( "Projekt fil: "+project_file )
-			gnatArgs = ['gnat2xml','--output-dir='+self.tmp_dir_xml,'-P'+project_file,'-U']
+			gnatArgs = gnatArgs + ['-P'+project_file,'-U']
+			
+		if self.args.cargs != '':
+			gnatArgs.append('-cargs '+self.args.cargs)
 		self.doxyReader.printt( " ".join(gnatArgs) )
 		call(gnatArgs)
 		
@@ -107,7 +114,6 @@ class AdaDoxygen:
 			dir = os.path.dirname(file)
 			if dir not in dirArr: 
 				dirArr.append('-I'+dir)
-				print(dir)
 		return dirArr
 		
 	""" Convert XML to PP """
@@ -141,11 +147,17 @@ class AdaDoxygen:
 		
 		echoArr = []
 		echoArr.append('INPUT='+self.tmp_dir_cpp)
+		echoArr.append('RECURSIVE=YES')
 		echoArr.append('STRIP_FROM_PATH='+os.path.join(self.tmp_dir_cpp,self.abs2rel(self.doxyReader.stripfrompath)))
 		echoArr.append('LAYOUT_FILE='+os.path.join(self.src_dir,'DoxygenLayout.xml'))
 		
+		sep = ';'
+		if os.name == 'nt': sep = '&'
+		
 		for i,el in enumerate(echoArr): echoArr[i] = 'echo "'+el+'"'
-		doxyCommand = '( cat '+self.args.doxygen_file+' & '+' & echo "" & '.join(echoArr)+' ) | doxygen -'
+		impStr = ' '+sep+' echo "" '+sep+' '
+		echoStr = impStr.join(echoArr)
+		doxyCommand = '( cat '+self.args.doxygen_file+' '+sep+' '+' '+echoStr+' ) | doxygen -'
 		self.doxyReader.printt( doxyCommand )
 		os.system(doxyCommand)
 		

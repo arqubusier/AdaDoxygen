@@ -34,10 +34,10 @@ class PPFile:
 	""" Start parsing tree """
 	def parse(self):
 		node = self.root.find('unit_declaration_q')
-		self._loop(node,self.elements)
+		self.parseRecursive(node,self.elements)
 				
 	""" Recursively loop through each level in the XML-tree """
-	def _loop(self,node,elements,parent=None,isPrivate=False):
+	def parseRecursive(self,node,elements,parent=None,isPrivate=False):
 		lastNode = None
 		
 		i = 0
@@ -45,9 +45,9 @@ class PPFile:
 			element = None
 			has_body_declarative_items_ql = False
 			if child.tag in ['procedure_body_declaration','function_body_declaration']:
-				element = Extract.getFunction(child,lastNode)
+				element = Extract.getFunction(child,lastNode,self.sourcefile)
 			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration','generic_procedure_declaration']:
-				element = Extract.getFunctionHead(child,lastNode)
+				element = Extract.getFunctionHead(child,lastNode,self.sourcefile)
 			elif child.tag in ['ordinary_type_declaration','subtype_declaration']:
 				element = Extract.getStruct(child,lastNode,self.sourcefile)
 			elif child.tag == 'package_body_declaration':
@@ -59,8 +59,10 @@ class PPFile:
 			else: print("Not parsed: "+child.tag)
 				
 			if element is not None:
-				if parent is None: c = Extract.getUnitComment(self.root)
-				else: c = Extract.getComment(node,i)
+				if parent is None: 
+					c = Extract.getUnitComment(self.root)
+				else: 
+					c = Extract.getComment(node,i) 
 				element['comment'] = c
 				element['is_private'] = isPrivate
 				element['is_extract'] = c != '' or self.doxyReader.extract_all_bool or parent == None
@@ -70,7 +72,7 @@ class PPFile:
 				if element['has_childs'] and child.find('body_declarative_items_ql') is not None:
 					if element['type'] == 'function': 
 						isPrivate = True
-					self._loop(child.find('body_declarative_items_ql'),element['childs'],child,isPrivate)
+					self.parseRecursive(child.find('body_declarative_items_ql'),element['childs'],child,isPrivate)
 	
 				
 			i+=1
@@ -82,9 +84,9 @@ class PPFile:
 		element['public'] = []
 		element['private'] = []
 		if child.find('visible_part_declarative_items_ql') is not None:
-			self._loop(child.find('visible_part_declarative_items_ql'),element['public'],child,isPrivate)
+			self.parseRecursive(child.find('visible_part_declarative_items_ql'),element['public'],child,isPrivate)
 		if child.find('private_part_declarative_items_ql') is not None:
-			self._loop(child.find('private_part_declarative_items_ql'),element['private'],child,True)
+			self.parseRecursive(child.find('private_part_declarative_items_ql'),element['private'],child,True)
 		return element
 					
 	""" Set namespaces """
@@ -124,7 +126,7 @@ class PPFile:
 			out += "\n"+Convert.include(include)
 		for namespace in self.namespaces:
 			out += "\n"+Convert.namespace(namespace)
-		out += "\n"+self.writeNested(None,self.elements)
+		out += "\n"+self.writeRecursive(None,self.elements)
 		self.file.write(out)
 		self.file.close()
 	
@@ -135,26 +137,14 @@ class PPFile:
 			if child['is_private']: nr += 1
 		return nr
 	
-	def writeNested(self,parent,elements):
+	def writeRecursive(self,parent,elements):
 		out = ''
 		for element in elements:
 			if element['type'] == 'package':
-				comment = element['comment']
-				if comment == '' and (self.doxyReader.hideundoc_classes is False):
-					comment = "<b style='display:none;'>HIDE_UNDOC_CLASSES=NO</b>"
-				out += Convert.comment(comment)
-				out += "namespace "+element['name']+" {\n"
-				if 'private' in element: 
-					out += self.writeNested(element,element['private'])
-				if 'public' in element: 
-					out += "\n/*Public starts here...*/\n"
-					out += self.writeNested(element,element['public'])
-				out += self.writeNested(element,element['childs'])
-				out += "\n}"
-				
+				out += self.writePackage(element)
 			elif self.getNrVisibleChilds(element['childs']) > 0 and self.doxyReader.include_private_bool:
 				out += "namespace "+self.prefixFunction+element['name']+" {\n"
-				out += self.writeNested(element,element['childs'])
+				out += self.writeRecursive(element,element['childs'])
 				out += "\n}"
 				
 			element['comment_add_private'] = self.isPrivateElement(element)
@@ -169,3 +159,21 @@ class PPFile:
 				out += "\n" + Convert.function(element,self.prefixFunction,self.doxyReader.extract_all_bool) + "\n"
 			
 		return out
+		
+	def writePackage(self,element):
+		out = ''
+		comment = element['comment']
+		if comment == '' and (self.doxyReader.hideundoc_classes is False):
+			comment = "<b style='display:none;'>HIDE_UNDOC_CLASSES=NO</b>"
+		out += Convert.comment(comment)
+		out += "namespace "+element['name']+" {\n"
+		if 'private' in element: 
+			out += self.writeRecursive(element,element['private'])
+		if 'public' in element: 
+			out += "\n/*Public starts here...*/\n"
+			out += self.writeRecursive(element,element['public'])
+		out += self.writeRecursive(element,element['childs'])
+		out += "\n}"
+		return out
+		
+	

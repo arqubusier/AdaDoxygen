@@ -1,7 +1,7 @@
 Options that is not listed below is used as usual by Doxygen
 
 INPUT
-	is modified with same behavior #ändra
+	if same filename exists in different input directories, the first one will be used
 
 RECURSIVE
 	is modified with same behavior 

@@ -86,6 +86,7 @@ class Convert:
 		else:
 			c = Convert.getPrivateComment(function)
 			c += function['comment']
+			c += Convert.genericComment(function)
 			out = Convert.comment(c)
 			
 		out += Convert.functionHead(function)
@@ -93,6 +94,15 @@ class Convert:
 			out += Convert.functionBody(function,prefix)
 		else: out += ';'
 		return out	
+		
+	@staticmethod
+	def genericComment(function):
+		if 'generic' not in function: return ''
+		out = '<br>\n'
+		for param in function['generic']:
+			str = '@tparam '+param['name'] + ' <i>'+param['plain']+'</i>'
+			out += str + "<br>\n"
+		return out
 		
 	@staticmethod
 	def functionHead(function):
@@ -121,7 +131,7 @@ class Convert:
 	def generic(types):
 		arr = []
 		for type in types:
-			arr.append("typename "+type)
+			arr.append("typename "+type['name'])
 		out = "template <" + (",".join(arr)) + ">"
 		return out
 		

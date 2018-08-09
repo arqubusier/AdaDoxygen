@@ -74,8 +74,8 @@ class Extract:
 		return plain
 		
 	@staticmethod
-	def getFunction(functionNode, commentNode):
-		elem = Extract.getFunctionHead(functionNode,commentNode)
+	def getFunction(functionNode, commentNode, sourcefile):
+		elem = Extract.getFunctionHead(functionNode,commentNode,sourcefile)
 		elem['has_childs'] = True
 		elem['body'] = {}
 		elem['body']['variables'] = Extract.getVariables(functionNode.find('body_declarative_items_ql').findall('variable_declaration'))
@@ -83,11 +83,11 @@ class Extract:
 		return elem
 	
 	@staticmethod
-	def getFunctionHead(functionNode, commentNode):
+	def getFunctionHead(functionNode, commentNode, sourcefile):
 		elem = {}
 		genNode = functionNode.find('generic_formal_part_ql')
 		if genNode is not None:
-			elem['generic'] = Extract.getGeneric(genNode)
+			elem['generic'] = Extract.getGeneric(genNode,sourcefile)
 			print(elem['generic'])
 		elem['uri'] = functionNode.find('names_ql').find('defining_identifier').get('def')
 		elem['type'] = 'function'
@@ -127,11 +127,11 @@ class Extract:
 		return node.find('names_ql').find('defining_identifier').get('def_name')
 		
 	@staticmethod
-	def getGeneric(genNode):
+	def getGeneric(genNode,sourcefile):
 		typeNodes = genNode.findall('formal_type_declaration')
 		arr = []
 		for typeNode in typeNodes:
-			arr.append(Extract.getName(typeNode))
+			arr.append({'name':Extract.getName(typeNode),'plain':Extract.getPlaintext(sourcefile,typeNode)})
 		return arr
 		
 	@staticmethod
@@ -154,6 +154,7 @@ class Extract:
 		elem['childs'] = []
 		return elem
 		
+	# Look for pragma comments above and below current node, i-1 and i+1
 	@staticmethod
 	def getComment(nodes,i):
 		i2 = 0
@@ -189,6 +190,7 @@ class Extract:
 		comment = commentNode.find('pragma_argument_associations_ql').find('pragma_argument_association').find('actual_parameter_q').find('string_literal').get('lit_val')
 		return comment.strip('"')
 		
+	# First pragma comment in file is in a different node in the xml-file
 	@staticmethod
 	def getUnitComment(rootNode):
 		tmpNode = rootNode.find('context_clause_elements_ql')
