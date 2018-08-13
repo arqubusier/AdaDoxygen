@@ -4,7 +4,7 @@ from class_extract import Extract
 
 class PPFile:
 	
-	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,doxyReader):
+	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,extractRepClause,doxyReader):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.type = "program"
@@ -18,18 +18,21 @@ class PPFile:
 		self.file = open(self.filename,"w+")
 		self.sourcefile = sourcefile
 		
-		# a list of dictionaries with extracted info about functions, structs, packages etc...
+		# List of dictionaries with extracted info about functions, structs, packages etc...
 		self.elements = [] 
 		
-		# function dictionaries stored with uri as index
+		# Function dictionaries stored with uri as index
 		self.elementsByUris = {}
 		
 		self.includes = []
 		self.namespaces = []
 		self.prefixFunction = prefixFunction
 		self.prefixClass = prefixClass
+		self.prefixRepClause = prefixRepClause
+		self.extractRepClause = (extractRepClause=='on')
 		self.doxyReader = doxyReader
 		self.privateUris = []
+		
 
 	""" Start parsing tree """
 	def parse(self):
@@ -49,7 +52,7 @@ class PPFile:
 			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration','generic_procedure_declaration','single_task_declaration','task_type_declaration']:
 				element = Extract.getFunctionHead(child,lastNode,self.sourcefile)
 			elif child.tag in ['ordinary_type_declaration','subtype_declaration']:
-				element = self.parseType(child,lastNode,isPrivate)
+				element = self.parseType(child,lastNode,isPrivate,node)
 			elif child.tag in ['component_declaration']:
 				element = Extract.getRecordComponent(child,self.sourcefile)
 			elif child.tag == 'package_body_declaration':
@@ -58,6 +61,8 @@ class PPFile:
 				element = self.parsePackage(child,lastNode,isPrivate)
 			elif child.tag == 'package_renaming_declaration':
 				element = Extract.getRename(child)
+			elif child.tag in ['attribute_definition_clause','record_representation_clause'] and self.extractRepClause:
+				element = Extract.getRepClause(child,self.prefixRepClause,self.sourcefile)
 			else: print("Not parsed: "+child.tag)
 				
 			if element is not None:
@@ -90,14 +95,14 @@ class PPFile:
 			self.parseRecursive(child.find('private_part_declarative_items_ql'),element['private'],child,True)
 		return element
 		
-	def parseType(self,child,lastNode,isPrivate):
+	def parseType(self,child,lastNode,isPrivate,nodes):
 		recNode = Extract.getRecordNode(child)
 		if recNode is None:
-			return Extract.getType(child,self.sourcefile)
-		element = Extract.getRecord(child)
-		self.parseRecursive(recNode,element['components'],child,isPrivate)
-		return element
-		
+			element = Extract.getType(child,self.sourcefile)
+		else:
+			element = Extract.getRecord(child)
+			self.parseRecursive(recNode,element['components'],child,isPrivate)
+		return element		
 					
 	""" Set namespaces """
 	def setNamespaces(self):
@@ -162,6 +167,8 @@ class PPFile:
 			if element['type'] == 'record':
 				out += "\n" + Convert.record(element,self.doxyReader.extract_all_bool) + "\n"
 			if element['type'] == 'type':
+				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool) + "\n"
+			if element['type'] == 'rep_clause':
 				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool) + "\n"
 			if element['type'] == 'rename':
 				out += "\n" + Convert.rename(element) + "\n"

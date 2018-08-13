@@ -36,7 +36,7 @@ class DoxyReader:
 					self.getInputFilesRecursive(el_abs,os.listdir(el_abs),res,True)
 			elif os.path.isfile(el_abs):
 				fileext = os.path.splitext(el_abs)[1]
-				if fileext in ['.adb','.ads','gpr'] and self.fileAlreadyIncluded(res,el_abs) is False:
+				if self.fileAlreadyIncluded(res,el_abs) is False: #and fileext in ['.adb','.ads','gpr']
 					res.append(el_abs)
 			else: self.printt("Warning: '" + el_abs + "' is not directory or file")
 

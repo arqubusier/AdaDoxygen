@@ -27,6 +27,12 @@ package Pkg1 is
 		type t6 is mod 2;
 		type t7 is array(t1) of t2;
 		
+		procedure runProgC;
+		pragma Import(C,runProgC,"runProgC2");
+		
+		--procedure getIntFromProgC;
+		--pragma Import(C,getIntFromProgC,"getIntFromProgC");
+		
 		--!default parameter_specification@mode: A_DEFAULT_IN_MODE ---> in
 		--! test
 		--! \exception ExcpClass asdas dsaddas
@@ -38,8 +44,7 @@ package Pkg1 is
 		type Constant_type is
 		record
 			name : String(1..2);
-			--! record member is commented
-			value : Float;
+			value : Float;--!< record member is commented
 		end record;
 		
 		--! this task is commented

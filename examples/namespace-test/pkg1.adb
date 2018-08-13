@@ -13,9 +13,11 @@ package body Pkg1 is
 		return x;
 	end getInt;
 	
+	
+	
 	procedure p1(paramIn: IN Integer) is 
 	begin
-	   null;
+	   runProgC;
 	end p1;
 	
 	procedure p2(paramInOut: IN OUT Integer) is 

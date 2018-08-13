@@ -77,6 +77,26 @@ class Extract:
 		elem['childs'] = []
 		elem['plain'] = Extract.getPlaintext(sourcefile,typeNode)
 		return elem
+		
+	@staticmethod
+	def getRepClause(repNode, prefixRepClause, sourcefile):
+		elem = {}
+		elem['name'] = Extract.getRepClauseName(repNode,prefixRepClause)
+		print(elem['name'])
+		elem['type'] = 'rep_clause'
+		elem['has_childs'] = False
+		elem['childs'] = []
+		elem['plain'] = Extract.getPlaintext(sourcefile,repNode)
+		return elem
+		
+	@staticmethod
+	def getRepClauseName(node,prefixRepClause):
+		nameNode = node.find('representation_clause_name_q')
+		tmpNodes = nameNode.iter('identifier')
+		name_parts = []
+		for tmpNode in tmpNodes:
+			name_parts.append(tmpNode.get('ref_name'))
+		return prefixRepClause+("_".join(name_parts))
 	
 	@staticmethod
 	def getPlaintext(file,node):
@@ -96,7 +116,7 @@ class Extract:
 				str = line
 				i_col = 1
 				for c in str:
-					if i_col >= startcol and i_col <= endcol:
+					if (i_col >= startcol or i_line > startline) and (i_col <= endcol or i_line < endline):
 						plain += c
 					i_col += 1
 			i_line += 1
@@ -128,7 +148,6 @@ class Extract:
 		elem['output'] = Extract.getFunctionOutput(functionNode)
 		if functionNode.tag in ['single_task_declaration','task_type_declaration']:
 			elem['plain'] = Extract.getPlaintext(sourcefile,functionNode)
-			print(elem['plain'])
 		return elem
 		
 	@staticmethod

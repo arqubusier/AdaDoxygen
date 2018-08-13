@@ -40,6 +40,8 @@ class AdaDoxygen:
 		argparser.add_argument('--cargs', nargs='?', default="", help="gnat2xml cargs. If more then one, wrap with quotes")
 		argparser.add_argument('--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
 		argparser.add_argument('--prefix-packages', default="", help="Prefix for packages, default=''")
+		argparser.add_argument('--prefix-repclause', default="_rep_", help="Prefix for representation clauses, default='_rep_'")
+		argparser.add_argument('--extract-repclause', default="on", help="Append 'for x use y'-clause as code block comment on original type, on/off, default='on'")
 		argparser.add_argument('--post-process', default="off", help="Post process HTML-files on/off, default='off'")
 		
 		return argparser.parse_args()
@@ -94,7 +96,7 @@ class AdaDoxygen:
 		
 		if self.args.project_file == '':
 			incDirs = self.getGnat2xmlIncludeDirs()
-			gnatArgs = gnatArgs + self.preprocfiles + incDirs
+			gnatArgs = gnatArgs + self.getGnat2xmlFiles() + incDirs
 		else:
 			for preprocfile in self.preprocfiles:
 				if ntpath.basename(preprocfile) == ntpath.basename(self.args.project_file):
@@ -116,6 +118,20 @@ class AdaDoxygen:
 				dirArr.append('-I'+dir)
 		return dirArr
 		
+	def getGnat2xmlFiles(self):
+		files = []
+		for file in self.preprocfiles:
+			ext = os.path.splitext(file)[1]
+			if ext in ['.adb','.ads']:
+				files.append(file)
+			else:
+				preprocfilepath = os.path.relpath(file,self.tmp_dir_ada)
+				newfilepathabs = os.path.join(self.tmp_dir_cpp, preprocfilepath)
+				if os.path.isfile(newfilepathabs): os.remove(newfilepathabs)
+				os.rename(file,newfilepathabs)
+				
+		return files
+		
 	""" Convert XML to PP """
 	def xml2pp(self):
 		self.doxyReader.printt( "--xml2pp--" )
@@ -129,7 +145,7 @@ class AdaDoxygen:
 			filename, sourcefile = Convert.filename(xmlfile, self.preprocfiles, self.tmp_dir_ada, self.tmp_dir_cpp)
 			dirname = os.path.dirname(filename)
 			if not os.path.exists(dirname): os.makedirs(dirname)
-			pp = PPFile(filename,sourcefile,tree,self.args.prefix_functions,self.args.prefix_packages,self.doxyReader)
+			pp = PPFile(filename,sourcefile,tree,self.args.prefix_functions,self.args.prefix_packages,self.args.prefix_repclause,self.args.extract_repclause,self.doxyReader)
 			pp.parse()
 			pplist.add(pp)
 			
