@@ -52,7 +52,7 @@ class PPFile:
 				element = Extract.getFunction(child,lastNode,self.sourcefile)
 			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration','generic_procedure_declaration','single_task_declaration','task_type_declaration']:
 				element = Extract.getFunctionHead(child,lastNode,self.sourcefile)
-			elif child.tag in ['ordinary_type_declaration','subtype_declaration']:
+			elif child.tag in ['ordinary_type_declaration','subtype_declaration','private_type_declaration']:
 				element = self.parseType(child,lastNode,isPrivate,node)
 			elif child.tag in ['component_declaration']:
 				element = Extract.getRecordComponent(child,self.sourcefile)
@@ -62,7 +62,7 @@ class PPFile:
 				element = self.parsePackage(child,lastNode,isPrivate)
 			elif child.tag == 'package_renaming_declaration':
 				element = Extract.getRename(child)
-			elif child.tag in ['attribute_definition_clause','record_representation_clause'] and self.extractRepClause:
+			elif child.tag in ['attribute_definition_clause','record_representation_clause','enumeration_representation_clause'] and self.extractRepClause:
 				element = Extract.getRepClause(child,self.prefixRepClause,self.sourcefile)
 			elif child.tag in ['import_pragma']:
 				self.imports.append(Extract.getImport(child))
@@ -89,6 +89,7 @@ class PPFile:
 			lastNode = child
 			
 	def parsePackage(self,child,lastNode,isPrivate):
+		
 		element = Extract.getPackage(child,self.prefixClass,lastNode)
 		element['has_childs'] = False
 		element['public'] = []
@@ -100,6 +101,8 @@ class PPFile:
 		return element
 		
 	def parseType(self,child,lastNode,isPrivate,nodes):
+		if child.tag == 'private_type_declaration' and self.doxyReader.include_private_bool:
+			return None
 		recNode = Extract.getRecordNode(child)
 		if recNode is None:
 			element = Extract.getType(child,self.sourcefile)
