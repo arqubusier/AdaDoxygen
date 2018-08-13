@@ -93,9 +93,11 @@ class Convert:
 			c += function['comment']
 			c += Convert.genericComment(function)
 			if 'plain' in function:
-				c += "\code "+function['plain']+" \endcode"
+				c += "\code "+function['plain']+" \endcode \n"
 			if 'is_imported' in function:
-				c += "<p><b>Import pragma</b></p>"
+				c += "<p><b>Import pragma</b></p> \n"
+			if function['output'] == 'Protected':
+				c += ' \protected \n'
 			out = Convert.comment(c)
 			
 		out += Convert.functionHead(function)

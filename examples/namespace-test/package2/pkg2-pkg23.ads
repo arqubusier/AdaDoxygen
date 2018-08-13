@@ -29,6 +29,17 @@ package Pkg2.Pkg23 is
 		type tEnum is (Red, Green, Blue);
 		for tEnum use (Red => 10, Green => 20, Blue => 30);
 	
+	
+		protected type TestProt is
+			entry Add(nr : in out Integer);
+		private
+			nr : Integer;
+		end TestProt;
+		
+		protected TestProt2 is
+			procedure protFunc;
+		end TestProt2;
+		
 	private
 	
 		type tLim is record

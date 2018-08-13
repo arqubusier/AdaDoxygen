@@ -152,7 +152,7 @@ class Extract:
 		for paramNode in functionNode.findall('parameter_profile_ql/parameter_specification'):
 			elem['params'].append(Extract.getFunctionParam(paramNode))
 		elem['output'] = Extract.getFunctionOutput(functionNode)
-		if functionNode.tag in ['single_task_declaration','task_type_declaration']:
+		if functionNode.tag in ['single_task_declaration','task_type_declaration','protected_type_declaration','single_protected_declaration']:
 			elem['plain'] = Extract.getPlaintext(sourcefile,functionNode)
 		return elem
 		
@@ -170,6 +170,8 @@ class Extract:
 		if functionNode.find('result_profile_q') is None:
 			if functionNode.tag in ['single_task_declaration','task_type_declaration']:
 				return 'Task'
+			elif functionNode.tag in ['single_protected_declaration','protected_type_declaration']:
+				return 'Protected'
 			else:
 				return 'Procedure'
 		attrs = Extract.getRefNames(functionNode.find('result_profile_q'))

@@ -18,4 +18,21 @@ package body Pkg2.Pkg23 is
 		end genProd;	
 	end Pkg231;
 	
+	
+	protected body TestProt is
+		entry Add(nr : in out Integer)
+			when True is
+		begin
+			null;
+		end Add;
+	end TestProt;
+	
+	protected body TestProt2 is
+			procedure protFunc is 
+			begin
+				null;
+			end protFunc;
+			
+	end TestProt2;
+	
 end Pkg2.Pkg23;
