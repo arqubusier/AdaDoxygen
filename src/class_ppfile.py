@@ -26,6 +26,7 @@ class PPFile:
 		
 		self.includes = []
 		self.namespaces = []
+		self.imports = []
 		self.prefixFunction = prefixFunction
 		self.prefixClass = prefixClass
 		self.prefixRepClause = prefixRepClause
@@ -63,7 +64,10 @@ class PPFile:
 				element = Extract.getRename(child)
 			elif child.tag in ['attribute_definition_clause','record_representation_clause'] and self.extractRepClause:
 				element = Extract.getRepClause(child,self.prefixRepClause,self.sourcefile)
-			else: print("Not parsed: "+child.tag)
+			elif child.tag in ['import_pragma']:
+				self.imports.append(Extract.getImport(child))
+			elif child.tag not in ['implementation_defined_pragma']: 
+				print("Not parsed: "+child.tag)
 				
 			if element is not None:
 				if parent is None: 
@@ -163,7 +167,7 @@ class PPFile:
 				out += "\n}"
 				
 			element['comment_add_private'] = self.isPrivateElement(element)
-				
+
 			if element['type'] == 'record':
 				out += "\n" + Convert.record(element,self.doxyReader.extract_all_bool) + "\n"
 			if element['type'] == 'type':

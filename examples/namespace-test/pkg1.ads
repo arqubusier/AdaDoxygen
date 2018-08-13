@@ -27,6 +27,7 @@ package Pkg1 is
 		type t6 is mod 2;
 		type t7 is array(t1) of t2;
 		
+		--! This function is implemented somewhere else
 		procedure runProgC;
 		pragma Import(C,runProgC,"runProgC2");
 		

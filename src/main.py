@@ -154,6 +154,7 @@ class AdaDoxygen:
 		pplist.buildTuples()
 		pplist.moveGenericFunctionBodies()
 		pplist.exchangePrivateInfo()
+		pplist.setImports()
 		pplist.write()
 		
 			

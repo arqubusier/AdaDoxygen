@@ -39,6 +39,13 @@ class Extract:
 		else: 
 			return Extract.getType(structNode,sourcefile)
 			
+	@staticmethod
+	def getImport(importNode):
+		tmpNodes = importNode.findall('pragma_argument_associations_ql/pragma_argument_association')[1]
+		lastNode = None
+		for tmpNode in tmpNodes.iter('identifier'):
+			lastNode = tmpNode
+		return lastNode.get('ref')
 			
 	@staticmethod
 	def getRecordNode(node):
@@ -82,7 +89,6 @@ class Extract:
 	def getRepClause(repNode, prefixRepClause, sourcefile):
 		elem = {}
 		elem['name'] = Extract.getRepClauseName(repNode,prefixRepClause)
-		print(elem['name'])
 		elem['type'] = 'rep_clause'
 		elem['has_childs'] = False
 		elem['childs'] = []

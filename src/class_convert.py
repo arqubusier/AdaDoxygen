@@ -94,6 +94,8 @@ class Convert:
 			c += Convert.genericComment(function)
 			if 'plain' in function:
 				c += "\code "+function['plain']+" \endcode"
+			if 'is_imported' in function:
+				c += "<p><b>Import pragma</b></p>"
 			out = Convert.comment(c)
 			
 		out += Convert.functionHead(function)

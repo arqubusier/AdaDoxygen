@@ -30,6 +30,16 @@ class PPList:
 	def setNamespaces(self):
 		for pp in self.ppobjects:
 			pp.setNamespaces()
+			
+	""" Set imports """
+	def setImports(self):
+		all_imports = []
+		for pp in self.ppobjects:
+			all_imports = all_imports + pp.imports
+		for pp in self.ppobjects:
+			for uri in all_imports:
+				if uri in pp.elementsByUris:
+					pp.elementsByUris[uri]['is_imported'] = True
 		
 	""" Build tuples with matching cpp and hpp files """
 	def buildTuples(self):
