@@ -1,13 +1,12 @@
 import os,re
-from class_convert import Convert
-from class_extract import Extract
+from convert import Convert
+from extract import Extract
 
 class PPFile:
 	
 	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,extractRepClause,doxyReader):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
-		self.type = "program"
 		self.source = self.root.get('source_file')
 		
 		self.filename = filename
@@ -35,12 +34,12 @@ class PPFile:
 		self.privateUris = []
 		
 
-	""" Start parsing tree """
+	## Start parsing the XML tree
 	def parse(self):
 		node = self.root.find('unit_declaration_q')
 		self.parseRecursive(node,self.elements)
 				
-	""" Recursively loop through each level in the XML-tree """
+	## Recursively loop through each level in the XML-tree
 	def parseRecursive(self,node,elements,parent=None,isPrivate=False):
 		lastNode = None
 		
@@ -88,6 +87,7 @@ class PPFile:
 			i+=1
 			lastNode = child
 			
+	## Parse a package
 	def parsePackage(self,child,lastNode,isPrivate):
 		
 		element = Extract.getPackage(child,self.prefixClass,lastNode)
@@ -100,6 +100,7 @@ class PPFile:
 			self.parseRecursive(child.find('private_part_declarative_items_ql'),element['private'],child,True)
 		return element
 		
+	## Parse a type
 	def parseType(self,child,lastNode,isPrivate,nodes):
 		if child.tag == 'private_type_declaration' and self.doxyReader.include_private_bool:
 			return None
@@ -111,7 +112,7 @@ class PPFile:
 			self.parseRecursive(recNode,element['components'],child,isPrivate)
 		return element
 					
-	""" Set namespaces """
+	## Set namespaces
 	def setNamespaces(self):
 		node = self.root.find('context_clause_elements_ql')
 		if node is None: return
@@ -139,9 +140,7 @@ class PPFile:
 		if 'is_private' in element: return element['is_private']
 		return False
 			
-	""" 
-	Write result to the c++ file
-	"""
+	## Write result to the c++ file
 	def write(self):
 		out = "/*! @file "+os.path.split(self.filename)[1]+" */"
 		for include in self.includes:
@@ -152,6 +151,7 @@ class PPFile:
 		self.file.write(out)
 		self.file.close()
 	
+	## Get number of visible childs, if EXTRACT_PRIVATE=YES, then the result will be len(childs)
 	def getNrVisibleChilds(self,childs):
 		if self.doxyReader.include_private_bool: return len(childs)
 		nr = 0
@@ -159,6 +159,7 @@ class PPFile:
 			if child['is_private']: nr += 1
 		return nr
 	
+	## Write result to the c++ file recursively
 	def writeRecursive(self,parent,elements):
 		out = ''
 		for element in elements:
@@ -184,6 +185,7 @@ class PPFile:
 			
 		return out
 		
+	## Write a package to file
 	def writePackage(self,element):
 		out = ''
 		comment = element['comment']

@@ -1,8 +1,6 @@
 import os, sys, ntpath
 
-""" 
-The static methods below converts dictionaries to c++ code
-"""
+## The static methods in this class converts dictionaries to c++ code
 class Convert:
 	
 	@staticmethod
@@ -12,9 +10,9 @@ class Convert:
 			if ntpath.basename(test_file)+".xml" == ntpath.basename(xmlfile):
 				preprocfile = test_file
 		if preprocfile == "":
-			print(preprocfile)
-			print(xmlfile)
-			sys.exit("A XML file found that could not be matched with the original Ada-file")
+			print("A XML file found that could not be matched with the original Ada-file.")
+			print("Please delete '"+xmlfile+"' and try again")
+			sys.exit()
 		
 		preprocfilepath = os.path.relpath(preprocfile,tmp_dir_ada)
 		newfilepathabs = os.path.join(tmp_dir_cpp, preprocfilepath)

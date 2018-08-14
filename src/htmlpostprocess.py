@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 
+## This class is not tested or used
 class HTMLPostprocess:
 	
 	def __init__(self, file):

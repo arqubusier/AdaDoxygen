@@ -1,11 +1,17 @@
 import re
-from class_convert import Convert
+from convert import Convert
 
+## Manages a tuple of PPFile-objects, 
+#  the cpp/adb with the corresponsing hpp/ads
 class PPTuple:
 	def __init__(self, hpp, cpp):
 		self.hpp = hpp
 		self.cpp = cpp
-		
+	
+	## In Ada, a generic function is declared in a ads-file and implemented in a adb-file
+	#  In C++, a generic function (template) is declared and implemented in the hpp-file
+	#  
+	#  So the function body has to be moved from adb/cpp to ads/hpp
 	def moveGenericFunctionBodiesRecursive(self, cpp_elements):
 		for el in cpp_elements:
 			if 'childs' in el: self.moveGenericFunctionBodiesRecursive(el['childs'])
@@ -25,14 +31,16 @@ class PPTuple:
 				if 'generic' in el_hpp:
 					el['is_hidden'] = True
 					
+	## Convert a body uri to a declaration uri
 	def cppToHppUri(self,uri):
 		p = re.compile('^(ada:\/\/[^\/]+)(_body)(.*)$')
 		m = p.match(uri)
 		if m is False or m is None: return None
 		else: return (m.group(1)+m.group(3))
 		
+	## Only the .ads.xml knows if a element is private or not
+	#  Therefore the info has to be exchanged to the adb PPFile object.
 	def exchangePrivateInfoRecursive(self, cpp_elements):
-		
 		for el_cpp in cpp_elements:
 			if 'childs' in el_cpp: self.exchangePrivateInfoRecursive(el_cpp['childs'])
 			if 'public' in el_cpp: self.exchangePrivateInfoRecursive(el_cpp['public'])

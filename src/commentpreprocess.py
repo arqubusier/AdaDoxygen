@@ -1,5 +1,8 @@
-
-
+## Convert adacomments to pragma comments 
+#  in order for gnat2xml to extract them
+#
+#  Example:
+#  "--! Test" becomes "pragma comment('Test')" 
 class CommentPreprocess:
 	
 	def __init__(self,adafile):
@@ -31,6 +34,7 @@ class CommentPreprocess:
 		self.comment = ''
 		
 			
+	## Process a line
 	def readLine(self,line):
 		self.linenumber += 1
 		line = line.strip("\n\r")
@@ -40,6 +44,7 @@ class CommentPreprocess:
 		if self.comment != '':
 			self.comments.append({'text':self.comment,'linenumber':self.linenumber})
 		
+	## Process a char in a line
 	def readChar(self,c):
 		if self.is_comment:
 			self.comment += c
@@ -66,10 +71,12 @@ class CommentPreprocess:
 			else:
 				self.was_escaped = False
 		
+	## Convert ada comment to pragma
 	def commentToPragma(self,comment): 
 		c = comment.replace('"','""')
 		return 'pragma Comment ("'+c+'");'
 	
+	## Merge multi lined comment into one
 	def mergeComments(self):
 		merged = []
 		last_linenumber = -1
@@ -86,6 +93,7 @@ class CommentPreprocess:
 			merged.append({'text':text,'linenumber':last_linenumber})
 		return merged
 	
+	## Save result to file
 	def setNewLines(self,mergedComments):
 		i = 0
 		for line in self.lines_old:

@@ -1,5 +1,6 @@
 import os,sys,re,ConfigParser,StringIO
 
+## Reads values from a Doxyfile
 class DoxyReader:
 
 	def __init__(self,file):
@@ -20,26 +21,28 @@ class DoxyReader:
 		self.htmlpath = os.path.join(os.getcwd(),self.get('HTML_OUTPUT'))
 		
 			
+	## Returns list of files selected in INPUT
 	def getInputFiles(self):
 		res = []
 		arr = self.get('INPUT').split(' ')
 		doxypath = os.path.dirname(self.file)
 		
-		self.getInputFilesRecursive(doxypath,arr,res)
+		self._getInputFilesRecursive(doxypath,arr,res)
 		return res
 		
-	def getInputFilesRecursive(self,current_dir,arr,res,has_traversed=False):
+	def _getInputFilesRecursive(self,current_dir,arr,res,has_traversed=False):
 		for el in arr:
 			el_abs = os.path.abspath(os.path.join(current_dir,el))
 			if os.path.isdir(el_abs):
 				if has_traversed is False or self.recursive_bool:
-					self.getInputFilesRecursive(el_abs,os.listdir(el_abs),res,True)
+					self._getInputFilesRecursive(el_abs,os.listdir(el_abs),res,True)
 			elif os.path.isfile(el_abs):
 				fileext = os.path.splitext(el_abs)[1]
 				if self.fileAlreadyIncluded(res,el_abs) is False: #and fileext in ['.adb','.ads','gpr']
 					res.append(el_abs)
 			else: self.printt("Warning: '" + el_abs + "' is not directory or file")
 
+	## Check if the basename already exists in a list of files
 	def fileAlreadyIncluded(self,files,file):
 		filename = os.path.basename(file)
 		for f in files:
@@ -48,10 +51,12 @@ class DoxyReader:
 				return True
 		return False
 			
+	## Convert doxygen YES/NO to python boolean
 	def getBool(self,key):
 		if self.get(key) == 'YES': return True
 		return False
 		
+	## Get a config parser to read the doxyfile
 	def getParser(self):
 		parser = ConfigParser.ConfigParser()
 		with open(self.file) as stream:
@@ -59,7 +64,9 @@ class DoxyReader:
 			parser.readfp(stream)
 		return parser
 		
+	## Get a value by key in the doxyfile
 	def get(self,key): return self.parser.get('root',key).strip()
 	
+	## Only print if QUIET in doxyfile is set to NO
 	def printt(self,str): 
 		if self.quiet is False: print(str)

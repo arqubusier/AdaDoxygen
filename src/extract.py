@@ -1,6 +1,4 @@
-""" 
-The static methods below extracts data from XML-nodes into dictionaries
-"""
+## This class extracts data from XML-nodes into dictionaries
 class Extract:
 
 	@staticmethod
@@ -104,6 +102,7 @@ class Extract:
 			name_parts.append(tmpNode.get('ref_name'))
 		return prefixRepClause+("_".join(name_parts))
 	
+	## Given a XML node, return the source code
 	@staticmethod
 	def getPlaintext(file,node):
 		sloc = node.find('sloc')
@@ -222,7 +221,7 @@ class Extract:
 		elem['childs'] = []
 		return elem
 		
-	# Look for pragma comments above and below current node, i-1 and i+1
+	## Look for pragma comments above and below current node, i-1 and i+1
 	@staticmethod
 	def getComment(nodes,i):
 		i2 = 0
@@ -258,7 +257,7 @@ class Extract:
 		comment = commentNode.find('pragma_argument_associations_ql').find('pragma_argument_association').find('actual_parameter_q').find('string_literal').get('lit_val')
 		return comment.strip('"')
 		
-	# First pragma comment in file is in a different node in the xml-file
+	## First pragma comment in file is in a different node in the xml-file
 	@staticmethod
 	def getUnitComment(rootNode):
 		tmpNode = rootNode.find('context_clause_elements_ql')
@@ -316,7 +315,7 @@ class Extract:
 				if arg is not None: args.append(arg)
 		return args
 		
-	""" Iterate identifiers and return all ref-name attributes """
+	## Iterate identifiers and return all ref-name attributes
 	@staticmethod
 	def getRefNames(node):
 		nodes = node.iter('identifier')

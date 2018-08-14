@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from HTMLParser import HTMLParser
 
+## This class is not tested or used
 class XMLPostprocess:
 
 	prepend_output = ""

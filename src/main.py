@@ -6,23 +6,23 @@ if py_version != '2.7':
 	print("This program is only tested for 2.7")
 	print("If you get unexpected result, please run python again with the flag '-2'")
 	
+# Import std libs
 import argparse,ntpath,glob
 import xml.etree.ElementTree as ET
 from subprocess import call
 
-from class_pplist import PPList
-from class_ppfile import PPFile
-from class_doxyreader import DoxyReader
-from class_commentpreprocess import CommentPreprocess
-from class_convert import Convert
-#from class_htmlpostprocess import HTMLPostprocess
-from class_xmlpostprocess import XMLPostprocess
+# Import AdaDoxygen classes
+from pplist import PPList
+from ppfile import PPFile
+from doxyreader import DoxyReader
+from commentpreprocess import CommentPreprocess
+from convert import Convert
+from xmlpostprocess import XMLPostprocess
 
-
+## The main class
 class AdaDoxygen:
 
 	def __init__(self):
-
 		self.script_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + os.sep
 		self.default_tmp_dir = os.path.abspath(os.path.join(self.script_dir,"..","_tmp"))
 		self.args = self.getArgs()
@@ -32,6 +32,7 @@ class AdaDoxygen:
 		self.preprocfiles = []
 		self.xmlfiles = []
 		
+	## Get command line arguments with argparse
 	def getArgs(self):
 		argparser = argparse.ArgumentParser()
 		argparser.add_argument('doxygen_file', default="", help="Doxygen config file")
@@ -46,6 +47,7 @@ class AdaDoxygen:
 		
 		return argparser.parse_args()
 
+	## Setup needed paths and create tmp-dirs if not exists
 	def setDirectoryPaths(self):
 		self.src_dir = os.path.dirname(os.path.realpath(__file__))
 		if os.path.isabs(self.args.temporary_dir): self.tmp_dir = self.args.temporary_dir
@@ -57,6 +59,7 @@ class AdaDoxygen:
 		if os.path.isdir(self.tmp_dir_xml) is False: os.makedirs(self.tmp_dir_xml)
 		if os.path.isdir(self.tmp_dir_cpp) is False: os.makedirs(self.tmp_dir_cpp)
 		
+	## Print configs from cmd args and the doxyfile
 	def printConfigs(self):
 		if self.doxyReader.quiet: return
 		print( "--CONFIGS--" )
@@ -72,7 +75,7 @@ class AdaDoxygen:
 		
 	def abs2rel(self,path): return path.replace(":","",1).strip("/")
 
-	""" Preprocessing self.adafiles to self.preprocfiles """
+	## Preprocessing self.adafiles to self.preprocfiles
 	def comments2pragmas(self):
 		self.doxyReader.printt( "--comments2pragmas--" )
 		commonpath = os.path.commonprefix(self.adafiles)
@@ -88,15 +91,14 @@ class AdaDoxygen:
 				preprocfile.write(preproc.getResult())
 				self.preprocfiles.append(preprocfilename)
 			
-	""" Convert ada to XML with gnat2xml """
+	## Convert ada to XML with gnat2xml
 	def ada2xml(self):
-
 		self.doxyReader.printt( "--ada2xml--" )
 		gnatArgs = ['gnat2xml','--output-dir='+self.tmp_dir_xml]
 		
 		if self.args.project_file == '':
-			incDirs = self.getGnat2xmlIncludeDirs()
-			gnatArgs = gnatArgs + self.getGnat2xmlFiles() + incDirs
+			incDirs = self._getGnat2xmlIncludeDirs()
+			gnatArgs = gnatArgs + self._getGnat2xmlFiles() + incDirs
 		else:
 			for preprocfile in self.preprocfiles:
 				if ntpath.basename(preprocfile) == ntpath.basename(self.args.project_file):
@@ -109,8 +111,8 @@ class AdaDoxygen:
 		self.doxyReader.printt( " ".join(gnatArgs) )
 		call(gnatArgs)
 		
-	
-	def getGnat2xmlIncludeDirs(self):
+	## \private
+	def _getGnat2xmlIncludeDirs(self):
 		dirArr = []
 		for file in self.preprocfiles:
 			dir = os.path.dirname(file)
@@ -118,7 +120,8 @@ class AdaDoxygen:
 				dirArr.append('-I'+dir)
 		return dirArr
 		
-	def getGnat2xmlFiles(self):
+	## \private
+	def _getGnat2xmlFiles(self):
 		files = []
 		for file in self.preprocfiles:
 			ext = os.path.splitext(file)[1]
@@ -132,7 +135,7 @@ class AdaDoxygen:
 				
 		return files
 		
-	""" Convert XML to PP """
+	## Convert XML to PP files
 	def xml2pp(self):
 		self.doxyReader.printt( "--xml2pp--" )
 		pplist = PPList()
@@ -158,7 +161,7 @@ class AdaDoxygen:
 		pplist.write()
 		
 			
-	""" Run doxygen with the generated pp-files """
+	## Run doxygen with the generated pp-files
 	def pp2doxy(self):
 		self.doxyReader.printt( "--pp2doxy--" )
 		
@@ -178,6 +181,7 @@ class AdaDoxygen:
 		self.doxyReader.printt( doxyCommand )
 		os.system(doxyCommand)
 		
+	## Post process the doxygenerated html-files, not tested
 	def postprocessHTML(self):
 		doxyReader.printt( "--POST PROCESSING--" )
 		htmlfiles = glob.glob(os.path.join(doxyReader.htmlpath,"*.html"))
@@ -190,12 +194,15 @@ class AdaDoxygen:
 			else: 
 				doxyReader.printt( "Failed: "+ htmlfile )
 		
+	## Main steps for AdaDoxygen
 	def process(self):
 		self.comments2pragmas()
 		self.ada2xml()
 		self.xml2pp()
 		self.pp2doxy()
 		
+	## Runs postprocessHTML 
+	#  (maybe more postprocess related functions in the future)
 	def postprocess(self):
 		if self.args.post_process == 'on':
 			self.postprocessHTML()
