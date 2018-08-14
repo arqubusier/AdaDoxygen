@@ -18,7 +18,7 @@ To see all options, run
 ### Documentation
 To doxygenerate documentation for AdaDoxygen, 
 open a terminal in /path/to/AdaDoxygen/doc and run
-> doxygen adadoxygen_doc_config.txt
+> `doxygen adadoxygen_doc_config.txt`
 Then open /path/to/AdaDoxygen/doc/html in your browser
 
 ### Doxyfile options

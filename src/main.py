@@ -9,7 +9,7 @@ if py_version != '2.7':
 # Import std libs
 import argparse,ntpath,glob
 import xml.etree.ElementTree as ET
-from subprocess import call
+import subprocess
 
 # Import AdaDoxygen classes
 from pplist import PPList
@@ -35,15 +35,16 @@ class AdaDoxygen:
 	## Get command line arguments with argparse
 	def getArgs(self):
 		argparser = argparse.ArgumentParser()
-		argparser.add_argument('doxygen_file', default="", help="Doxygen config file")
+		argparser.add_argument('doxygen_file', default="", help="Doxygen config file, generate one by running 'doxygen -g'")
 		argparser.add_argument('-p', '--project-file', default="", help="Ada project file, mandatory if source files is in different directories")
 		argparser.add_argument('-t','--temporary-dir', default=self.default_tmp_dir, help="Path to tmp dir, dirs will be created if not exists, default='"+self.default_tmp_dir+"'")
 		argparser.add_argument('--cargs', nargs='?', default="", help="gnat2xml cargs. If more then one, wrap with quotes")
 		argparser.add_argument('--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
 		argparser.add_argument('--prefix-packages', default="", help="Prefix for packages, default=''")
 		argparser.add_argument('--prefix-repclause', default="_rep_", help="Prefix for representation clauses, default='_rep_'")
-		argparser.add_argument('--extract-repclause', default="on", help="Append 'for x use y'-clause as code block comment on original type, on/off, default='on'")
-		argparser.add_argument('--post-process', default="off", help="Post process HTML-files on/off, default='off'")
+		argparser.add_argument('--extract-repclause', action='store_true', help="Append 'for x use y'-clause as code block comment on original type")
+		argparser.add_argument('--post-process', action='store_true', help="Post process HTML-files")
+		argparser.add_argument('--hide-gnat-output', action='store_true', help='Output from gnat2xml will be hidden')
 		
 		return argparser.parse_args()
 
@@ -93,7 +94,7 @@ class AdaDoxygen:
 			
 	## Convert ada to XML with gnat2xml
 	def ada2xml(self):
-		self.doxyReader.printt( "--ada2xml--" )
+		self.doxyReader.printt( "--Calling gnat2xml--" )
 		gnatArgs = ['gnat2xml','--output-dir='+self.tmp_dir_xml]
 		
 		if self.args.project_file == '':
@@ -107,9 +108,15 @@ class AdaDoxygen:
 			gnatArgs = gnatArgs + ['-P'+project_file,'-U']
 			
 		if self.args.cargs != '':
-			gnatArgs.append('-cargs '+self.args.cargs)
-		self.doxyReader.printt( " ".join(gnatArgs) )
-		call(gnatArgs)
+			gnatArgs.append('-cargs')
+			gnatArgs.append(self.args.cargs)
+		print( " ".join(gnatArgs) )
+		if self.args.hide_gnat_output:
+			fnull = open(os.devnull,'w')
+			retcode = subprocess.call(gnatArgs, stdout=fnull, stderr=subprocess.STDOUT)
+			print("gnat2xml returned with status "+str(retcode))
+		else:
+			subprocess.call(gnatArgs)
 		
 	## \private
 	def _getGnat2xmlIncludeDirs(self):
@@ -204,7 +211,7 @@ class AdaDoxygen:
 	## Runs postprocessHTML 
 	#  (maybe more postprocess related functions in the future)
 	def postprocess(self):
-		if self.args.post_process == 'on':
+		if self.args.post_process:
 			self.postprocessHTML()
 	
 if __name__ == '__main__':

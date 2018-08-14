@@ -69,7 +69,7 @@ class Extract:
 		if tmpNode is not None: 
 			elem['type'] = tmpNode.get('ref_name')
 		else: 
-			prop['type'] = 'unknown_type_adadoxygen'
+			elem['type'] = 'adadoxygen_unknown_typename'
 		return elem
 
 	

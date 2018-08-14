@@ -126,6 +126,7 @@ class Convert:
 	@staticmethod
 	def functionBody(function,prefix):
 		if 'function_body' in function: return function['function_body']
+		if 'body' not in function: return ';'
 		out = ' {\n'
 		out += Convert.namespaces(function,prefix)
 		for var in function['body']['variables']:
