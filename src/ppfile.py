@@ -4,7 +4,7 @@ from extract import Extract
 
 class PPFile:
 	
-	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,extractRepClause,doxyReader):
+	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,hideRepClause,doxyReader):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.source = self.root.get('source_file')
@@ -29,7 +29,7 @@ class PPFile:
 		self.prefixFunction = prefixFunction
 		self.prefixClass = prefixClass
 		self.prefixRepClause = prefixRepClause
-		self.extractRepClause = (extractRepClause=='on')
+		self.hideRepClause = hideRepClause
 		self.doxyReader = doxyReader
 		self.privateUris = []
 		
@@ -61,7 +61,7 @@ class PPFile:
 				element = self.parsePackage(child,lastNode,isPrivate)
 			elif child.tag == 'package_renaming_declaration':
 				element = Extract.getRename(child)
-			elif child.tag in ['attribute_definition_clause','record_representation_clause','enumeration_representation_clause'] and self.extractRepClause:
+			elif child.tag in ['attribute_definition_clause','record_representation_clause','enumeration_representation_clause'] and self.hideRepClause is False:
 				element = Extract.getRepClause(child,self.prefixRepClause,self.sourcefile)
 			elif child.tag in ['import_pragma']:
 				self.imports.append(Extract.getImport(child))
