@@ -1,15 +1,16 @@
 # AdaDoxygen
 Ada to c++ converter for use with doxygen
 
-### Usage
+## Usage
 
 ```
-usage: main.py [-h] [-p PROJECT_FILE] [-t TEMPORARY_DIR] [-q] [-v]
+usage: main.py [-h] [-p PROJECT_FILE] [-t TEMPORARY_DIR] [-rt] [-q] [-v]
                [--prefix-functions PREFIX_FUNCTIONS]
                [--prefix-packages PREFIX_PACKAGES]
                [--prefix-repclause PREFIX_REPCLAUSE] [--hide-repclause]
                [--post-process] [--gnat-options [GNAT_OPTIONS]]
-               [--gnat-cargs [GNAT_CARGS]]
+               [--gnat-cargs [GNAT_CARGS]] [--path-gnat2xml [PATH_GNAT2XML]]
+               [--path-doxygen [PATH_DOXYGEN]]
                doxygen_file
 
 positional arguments:
@@ -22,7 +23,9 @@ optional arguments:
                         different directories
   -t TEMPORARY_DIR, --temporary-dir TEMPORARY_DIR
                         Path to tmp dir, dirs will be created if not exists,
-                        default='C:\Users\Olle\Desktop\AdaDoxygen\_tmp'
+                        default='/path/to/AdaDoxygen/_tmp'
+  -rt, --remove-temporary-dir
+                        Remove temporary dir when AdaDoxygen is done
   -q, --quiet           Hide AdaDoxygen output
   -v, --verbose         List generated files by AdaDoxygen
   --prefix-functions PREFIX_FUNCTIONS
@@ -39,21 +42,25 @@ optional arguments:
                         gnat2xml options. If more then one, wrap with quotes
   --gnat-cargs [GNAT_CARGS]
                         gnat2xml cargs. If more then one, wrap with quotes
+  --path-gnat2xml [PATH_GNAT2XML]
+                        Path to gnat2xml, default='gnat2xml'
+  --path-doxygen [PATH_DOXYGEN]
+                        Path to doxygen, default='doxygen'
 ```
 
-### Dependencies
+## Dependencies
 * python (tested with 2.7)
 * doxygen (tested with 1.8.14)
 * gnat2xml (tested with 20170515)
 
-### Documentation
-To doxygenerate documentation for AdaDoxygen, open a terminal in /path/to/AdaDoxygen/doc and run
+## Generate documentation for AdaDoxygen itself
+To generate documentation for AdaDoxygen, open a terminal in /path/to/AdaDoxygen/doc and run
 
 > `doxygen adadoxygen_doc_config.txt`
 
 Then open /path/to/AdaDoxygen/doc/html in your browser
 
-### Doxyfile options
+## Doxyfile options
 Note that the following doxyfile options has 
 special meaning for AdaDoxygen:
 
@@ -66,7 +73,7 @@ special meaning for AdaDoxygen:
 
 Options that is not listed above is used as usual by Doxygen (or modified with same behaviour by AdaDoxygen)
 
-### How it works
+## How it works
 AdaDoxygen replaces Ada-comments to pragmas.
 > `--! Example`
 becomes
@@ -80,4 +87,17 @@ AdaDoxygen then extracts information from the XML-files and converts the informa
 
 AdaDoxygen will then run doxygen for you along with the doxyfile you provided.
 
+## Notes
 
+### Arguments to gnat2xml problem
+If you got problems with passing arguments to gnat2xml with `--gnat-options` or `--gnat-args`, 
+try to add a space inside the argument string value like
+
+> ```main.py doxyfile.txt --gnat-options ' -q --compact'```
+
+This is a known and debated bug in argparse for python 2.7.
+
+### Hiding output
+* To hide output from gnat2xml, pass the ` -q` flag with `--gnat-options`
+* To hide output from doxygen, set QUIET to YES in your doxyfile
+* To hide output from adadoxygen, pass the -q flag

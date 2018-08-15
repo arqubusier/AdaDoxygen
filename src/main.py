@@ -1,4 +1,4 @@
-import os,sys
+import os,sys,shutil
 
 py_version = str(sys.version_info[0])+"."+str(sys.version_info[1])
 if py_version != '2.7':
@@ -38,6 +38,7 @@ class AdaDoxygen:
 		argparser.add_argument('doxygen_file', default="", help="Your doxyfile, generate one by running 'doxygen -g'")
 		argparser.add_argument('-p', '--project-file', default="", help="Ada project file, mandatory if source files is in different directories")
 		argparser.add_argument('-t','--temporary-dir', default=self.default_tmp_dir, help="Path to tmp dir, dirs will be created if not exists, default='"+self.default_tmp_dir+"'")
+		argparser.add_argument('-rt','--remove-temporary-dir', action='store_true', help="Remove temporary dir when AdaDoxygen is done")
 		argparser.add_argument('-q', '--quiet', action='store_true', help="Hide AdaDoxygen output")
 		argparser.add_argument('-v', '--verbose', action='store_true', help="List generated files by AdaDoxygen")
 		argparser.add_argument('--prefix-functions', default="__", help="Prefix for nested members except packages, default='__'")
@@ -47,6 +48,8 @@ class AdaDoxygen:
 		argparser.add_argument('--post-process', action='store_true', help="Post process HTML-files")
 		argparser.add_argument('--gnat-options', nargs='?', default="", help="gnat2xml options. If more then one, wrap with quotes")
 		argparser.add_argument('--gnat-cargs', nargs='?', default="", help="gnat2xml cargs. If more then one, wrap with quotes")
+		argparser.add_argument('--path-gnat2xml', nargs='?', default="gnat2xml", help="Path to gnat2xml, default='gnat2xml'")
+		argparser.add_argument('--path-doxygen', nargs='?', default="doxygen", help="Path to doxygen, default='doxygen'")
 		
 		return argparser.parse_args()
 		
@@ -105,7 +108,7 @@ class AdaDoxygen:
 	## Convert ada to XML with gnat2xml
 	def ada2xml(self):
 		self._print("--Calling gnat2xml--")
-		gnatArgs = ['gnat2xml','--output-dir='+self.tmp_dir_xml]
+		gnatArgs = [self.args.path_gnat2xml,'--output-dir='+self.tmp_dir_xml]
 		if self.args.gnat_options != '':
 			gnatArgs = gnatArgs + self.args.gnat_options.strip().split()
 		if self.args.project_file == '':
@@ -143,7 +146,10 @@ class AdaDoxygen:
 			else:
 				preprocfilepath = os.path.relpath(file,self.tmp_dir_ada)
 				newfilepathabs = os.path.join(self.tmp_dir_cpp, preprocfilepath)
-				if os.path.isfile(newfilepathabs): os.remove(newfilepathabs)
+				if os.path.isdir(os.path.dirname(newfilepathabs)) is False:
+					os.makedirs(os.path.dirname(newfilepathabs))
+				if os.path.isfile(newfilepathabs): 
+					os.remove(newfilepathabs)
 				os.rename(file,newfilepathabs)
 				
 		return files
@@ -190,7 +196,7 @@ class AdaDoxygen:
 		for i,el in enumerate(echoArr): echoArr[i] = 'echo "'+el+'"'
 		impStr = ' '+sep+' echo "" '+sep+' '
 		echoStr = impStr.join(echoArr)
-		doxyCommand = '( cat '+self.args.doxygen_file+' '+sep+' '+' '+echoStr+' ) | doxygen -'
+		doxyCommand = '( cat '+self.args.doxygen_file+' '+sep+' '+' '+echoStr+' ) | '+self.args.path_doxygen+' -'
 		self._print(doxyCommand)
 		os.system(doxyCommand)
 		
@@ -215,11 +221,12 @@ class AdaDoxygen:
 		self.xml2pp()
 		self.pp2doxy()
 		
-	## Runs postprocessHTML 
-	#  (maybe more postprocess related functions in the future)
+	## Remove temporary dir and run html post process
 	def postprocess(self):
 		if self.args.post_process:
 			self.postprocessHTML()
+		if self.args.remove_temporary_dir:
+			shutil.rmtree(self.tmp_dir,ignore_errors=True)
 	
 if __name__ == '__main__':
 	ad = AdaDoxygen()

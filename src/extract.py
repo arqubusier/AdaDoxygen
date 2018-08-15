@@ -129,7 +129,7 @@ class Extract:
 		
 	@staticmethod
 	def getFunction(functionNode, commentNode, sourcefile):
-		elem = Extract.getFunctionHead(functionNode,commentNode,sourcefile)
+		elem = Extract.getFunctionHead(functionNode,commentNode,sourcefile, True)
 		elem['has_childs'] = True
 		elem['body'] = {}
 		elem['body']['variables'] = Extract.getVariables(functionNode.find('body_declarative_items_ql').findall('variable_declaration'))
@@ -137,7 +137,7 @@ class Extract:
 		return elem
 	
 	@staticmethod
-	def getFunctionHead(functionNode, commentNode, sourcefile):
+	def getFunctionHead(functionNode, commentNode, sourcefile, includePrivate):
 		elem = {}
 		genNode = functionNode.find('generic_formal_part_ql')
 		if genNode is not None:
@@ -151,8 +151,10 @@ class Extract:
 		for paramNode in functionNode.findall('parameter_profile_ql/parameter_specification'):
 			elem['params'].append(Extract.getFunctionParam(paramNode))
 		elem['output'] = Extract.getFunctionOutput(functionNode)
-		if functionNode.tag in ['single_task_declaration','task_type_declaration','protected_type_declaration','single_protected_declaration']:
-			elem['plain'] = Extract.getPlaintext(sourcefile,functionNode)
+		if functionNode.tag in ['single_task_declaration','task_type_declaration']:
+			elem['plain'] = Extract.removePragmaComments(Extract.getPlaintext(sourcefile,functionNode))
+		elif functionNode.tag in ['protected_type_declaration','single_protected_declaration']:
+			elem['plain'] = Extract.getProtectedPlaintext(sourcefile,functionNode,includePrivate)
 		return elem
 		
 	@staticmethod
@@ -186,8 +188,43 @@ class Extract:
 		elif mode == 'AN_IN_OUT_MODE': return 'inout'
 		elif mode == 'AN_OUT_MODE': return 'out'
 		else:
-			print("Warning: Mode '"+mode+"' not recognized, setting default mode='in'")
+			print("AdaDoxygen: Warning: Mode '"+mode+"' not recognized, setting default mode='in'")
 			return 'in'
+	
+	@staticmethod
+	def removePragmaComments(text):
+		arr = text.split("\n")
+		lines2 = []
+		for line in arr:
+			if "pragma Comment (" not in line:
+				lines2.append(line)
+		return "\n".join(lines2)
+	
+	@staticmethod
+	def getProtectedPlaintext(sourcefile,node,includePrivate):
+		if includePrivate:
+			return Extract.getPlaintext(sourcefile,node)
+		else:
+			return Extract.getProtectedVisiblePlaintext(sourcefile,node)
+
+	@staticmethod
+	def getProtectedVisiblePlaintext(sourcefile,protNode):
+		protVisibleNodes = Extract.getProtectedVisibleNodes(protNode)
+		if protVisibleNodes is None: return ''
+		out = ''
+		for node in protVisibleNodes:
+			str = Extract.getCommentValue(node)
+			if str == '': str = Extract.getPlaintext(sourcefile,node)
+			else: str = "--!"+str
+			out += str + "\n"
+		return out
+			
+			
+	@staticmethod
+	def getProtectedVisibleNodes(node):
+		tmpNode = node.find('type_declaration_view_q/protected_definition/visible_part_items_ql')
+		if tmpNode is not None: return tmpNode
+		return node.find('object_declaration_view_q/protected_definition/visible_part_items_ql')
 	
 	@staticmethod
 	def getName(node):

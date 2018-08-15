@@ -37,7 +37,7 @@ package Pkg2.Pkg23 is
 		end TestProt;
 		
 		protected TestProt2 is
-			procedure protFunc;
+			procedure protFunc; --! test comment
 		end TestProt2;
 		
 	private

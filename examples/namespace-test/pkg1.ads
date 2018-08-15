@@ -52,7 +52,7 @@ package Pkg1 is
 		task mytask1;
 		
 		task type mytask2 is
-			entry Add(Item : in out Integer);
+			entry Add(Item : in out Integer); --! test
 			entry Remove(Item : in out Integer);
 		end mytask2;
 		

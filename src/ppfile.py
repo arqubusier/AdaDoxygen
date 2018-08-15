@@ -50,7 +50,7 @@ class PPFile:
 			if child.tag in ['procedure_body_declaration','function_body_declaration']:
 				element = Extract.getFunction(child,lastNode,self.sourcefile)
 			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration','generic_procedure_declaration','single_task_declaration','task_type_declaration','protected_type_declaration','single_protected_declaration']:
-				element = Extract.getFunctionHead(child,lastNode,self.sourcefile)
+				element = Extract.getFunctionHead(child,lastNode,self.sourcefile,self.doxyReader.include_private_bool)
 			elif child.tag in ['ordinary_type_declaration','subtype_declaration','private_type_declaration']:
 				element = self.parseType(child,lastNode,isPrivate,node)
 			elif child.tag in ['component_declaration']:
