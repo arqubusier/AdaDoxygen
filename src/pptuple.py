@@ -12,20 +12,22 @@ class PPTuple:
 	#  In C++, a generic function (template) is declared and implemented in the hpp-file
 	#  
 	#  So the function body has to be moved from adb/cpp to ads/hpp
-	def moveGenericFunctionBodiesRecursive(self, cpp_elements):
+	def moveGenericFunctionBodiesRecursive(self, cpp_elements, quiet):
 		for el in cpp_elements:
-			if 'childs' in el: self.moveGenericFunctionBodiesRecursive(el['childs'])
-			if 'public' in el: self.moveGenericFunctionBodiesRecursive(el['public'])
-			if 'private' in el: self.moveGenericFunctionBodiesRecursive(el['private'])
+			if 'childs' in el: self.moveGenericFunctionBodiesRecursive(el['childs'],quiet)
+			if 'public' in el: self.moveGenericFunctionBodiesRecursive(el['public'],quiet)
+			if 'private' in el: self.moveGenericFunctionBodiesRecursive(el['private'],quiet)
 			
 			if el['type'] == 'function':
 				uri = self.cppToHppUri(el['uri'])
 				if uri is None:
-					print("Couldnt convert URI")
+					if quiet is False: 
+						print("AdaDoxygen (pptuple.py): Warning: Couldnt convert URI ("+self.cpp.name+")")
 					return
 				el_hpp = self.hpp.getElementByUri(uri)
 				if el_hpp is None:
-					print("Warning: Couldnt find hpp-element '"+uri+"'")
+					if quiet is False: 
+						print("AdaDoxygen (pptuple.py): Warning: Couldnt find hpp-element '"+uri+"'")
 					return
 				el_hpp['function_body'] = Convert.functionBody(el,self.cpp.prefixFunction)
 				if 'generic' in el_hpp:

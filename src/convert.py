@@ -30,7 +30,9 @@ class Convert:
 		return ext_pp
 		
 	@staticmethod
-	def record(record,extractAll):
+	def record(record,extractAll,extractPrivate):
+		if extractPrivate is False and record['is_private']:
+			return " /* A private element was here... */ "
 		if extractAll is False and record['comment'] == '':
 			out = ''
 		else:
@@ -51,7 +53,9 @@ class Convert:
 		return out
 		
 	@staticmethod
-	def type(type,extractAll):
+	def type(type,extractAll,extractPrivate):
+		if extractPrivate is False and type['is_private']:
+			return " /* A private element was here... */ "
 		if extractAll is False and type['comment'] == '':
 			out =  Convert.comment(Convert.getPrivateComment(type))
 		else:
@@ -93,9 +97,9 @@ class Convert:
 			if 'plain' in function:
 				c += "\code "+function['plain']+" \endcode \n"
 			if 'is_imported' in function:
-				c += "<p><b>Import pragma</b></p> \n"
+				c += "\code "+function['imported_plain']+" \endcode \n"
 			if function['output'] == 'Protected':
-				c += ' \protected \n'
+				c += " \protected \n"
 			out = Convert.comment(c)
 			
 		out += Convert.functionHead(function)
@@ -107,10 +111,10 @@ class Convert:
 	@staticmethod
 	def genericComment(function):
 		if 'generic' not in function: return ''
-		out = '<br>\n'
+		out = " \n "
 		for param in function['generic']:
 			str = '@tparam '+param['name'] + ' <i>'+param['plain']+'</i>'
-			out += str + "<br>\n"
+			out += str + " \n "
 		return out
 		
 	@staticmethod

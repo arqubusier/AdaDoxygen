@@ -38,12 +38,12 @@ class Extract:
 			return Extract.getType(structNode,sourcefile)
 			
 	@staticmethod
-	def getImport(importNode):
+	def getImport(importNode,sourcefile):
 		tmpNodes = importNode.findall('pragma_argument_associations_ql/pragma_argument_association')[1]
 		lastNode = None
 		for tmpNode in tmpNodes.iter('identifier'):
 			lastNode = tmpNode
-		return lastNode.get('ref')
+		return {'uri':lastNode.get('ref'),'plain':Extract.getPlaintext(sourcefile,importNode)}
 			
 	@staticmethod
 	def getRecordNode(node):
@@ -188,7 +188,7 @@ class Extract:
 		elif mode == 'AN_IN_OUT_MODE': return 'inout'
 		elif mode == 'AN_OUT_MODE': return 'out'
 		else:
-			print("AdaDoxygen: Warning: Mode '"+mode+"' not recognized, setting default mode='in'")
+			print("AdaDoxygen (extract.py): Warning: Mode '"+mode+"' not recognized, setting default mode='in'")
 			return 'in'
 	
 	@staticmethod

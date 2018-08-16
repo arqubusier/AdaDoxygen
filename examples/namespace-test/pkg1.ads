@@ -26,6 +26,7 @@ package Pkg1 is
 		subtype t5_sub is t5'Base range 0.1 .. 1.1;
 		type t6 is mod 2;
 		type t7 is array(t1) of t2;
+		type t8 is (alt1, alt2, alt3);
 		
 		--! This function is implemented somewhere else
 		procedure runProgC;

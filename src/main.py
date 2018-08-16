@@ -24,9 +24,9 @@ class AdaDoxygen:
 
 	def __init__(self):
 		self.script_dir = os.path.dirname(os.path.realpath(sys.argv[0])) + os.sep
-		self.default_tmp_dir = os.path.abspath(os.path.join(self.script_dir,"..","_tmp"))
+		self.default_tmp_dir = "_tmp"
 		self.args = self.getArgs()
-		self.doxyReader = DoxyReader(self.args.doxygen_file)
+		self.doxyReader = DoxyReader(self.args.doxygen_file,self.args.quiet,self.args.verbose)
 		self.setDirectoryPaths()
 		self.adafiles = self.doxyReader.input_files
 		self.preprocfiles = []
@@ -75,25 +75,22 @@ class AdaDoxygen:
 		
 	## Print configs from cmd args and the doxyfile
 	def printConfigs(self):
-		if self.args.quiet: return
-		print( "--CONFIGS--" )
-		print( "Prefix for functions: '"+self.args.prefix_functions+"'" )
-		print( "Prefix for packages: '"+self.args.prefix_packages+"'" )
-		print( "Extract undocumented members: '"+str(self.doxyReader.extract_all_bool)+"'" )
-		print( "Include private members: '"+str(self.doxyReader.include_private_bool)+"'" )
-		print( "Hide undoc classes: '"+str(self.doxyReader.hideundoc_classes)+"'" )
-		print( "Temporary directory: "+ self.tmp_dir )
-		print( "Doxygen config file: "+ self.args.doxygen_file )
-		print( "Ada project file: "+ self.args.project_file )
-		print( "Post process: "+ str(self.args.post_process) )
+		self._print( "--CONFIGS--" )
+		self._print( "Prefix for functions: '"+self.args.prefix_functions+"'" )
+		self._print( "Prefix for packages: '"+self.args.prefix_packages+"'" )
+		self._print( "Extract undocumented members: '"+str(self.doxyReader.extract_all_bool)+"'" )
+		self._print( "Include private members: '"+str(self.doxyReader.include_private_bool)+"'" )
+		self._print( "Hide undoc classes: '"+str(self.doxyReader.hideundoc_classes)+"'" )
+		self._print( "Temporary directory: "+ self.tmp_dir )
+		self._print( "Doxygen config file: "+ self.args.doxygen_file )
+		self._print( "Ada project file: "+ self.args.project_file )
+		self._print( "Post process: "+ str(self.args.post_process) )
 		
 	def abs2rel(self,path): return path.replace(":","",1).strip("/")
 
 	## Preprocessing self.adafiles to self.preprocfiles
 	def comments2pragmas(self):
 		self._print( "--comments2pragmas--" )
-		commonpath = os.path.commonprefix(self.adafiles)
-		commondir = os.path.dirname(commonpath)
 		for adafile in self.adafiles:
 			preproc = CommentPreprocess(adafile)
 			adafilepath = self.abs2rel(adafile)
@@ -167,14 +164,14 @@ class AdaDoxygen:
 			filename, sourcefile = Convert.filename(xmlfile, self.preprocfiles, self.tmp_dir_ada, self.tmp_dir_cpp)
 			dirname = os.path.dirname(filename)
 			if not os.path.exists(dirname): os.makedirs(dirname)
-			pp = PPFile(filename,sourcefile,tree,self.args.prefix_functions,self.args.prefix_packages,self.args.prefix_repclause,self.args.hide_repclause,self.doxyReader)
+			pp = PPFile(self.args.quiet,self.args.verbose,filename,sourcefile,tree,self.args.prefix_functions,self.args.prefix_packages,self.args.prefix_repclause,self.args.hide_repclause,self.doxyReader)
 			pp.parse()
 			pplist.add(pp)
 			
 		pplist.collectIncludes()
 		pplist.setNamespaces()
-		pplist.buildTuples()
-		pplist.moveGenericFunctionBodies()
+		pplist.buildTuples(self.args.quiet)
+		pplist.moveGenericFunctionBodies(self.args.quiet)
 		pplist.exchangePrivateInfo()
 		pplist.setImports()
 		pplist.write()

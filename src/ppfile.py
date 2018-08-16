@@ -4,7 +4,10 @@ from extract import Extract
 
 class PPFile:
 	
-	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,hideRepClause,doxyReader):
+	def __init__(self,quiet,verbose,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,hideRepClause,doxyReader):
+		self.quiet = quiet
+		self.verbose = verbose
+		
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		self.source = self.root.get('source_file')
@@ -32,6 +35,14 @@ class PPFile:
 		self.hideRepClause = hideRepClause
 		self.doxyReader = doxyReader
 		self.privateUris = []
+		
+	def _print(self,msg):
+		if self.quiet: return
+		print("AdaDoxygen (ppfile.py): "+str(msg))
+		
+	def _printVerbose(self,msg):
+		if self.verbose is False: return
+		print("AdaDoxygen (ppfile.py): "+str(msg))
 		
 
 	## Start parsing the XML tree
@@ -65,9 +76,9 @@ class PPFile:
 			elif child.tag in ['attribute_definition_clause','record_representation_clause','enumeration_representation_clause'] and self.hideRepClause is False:
 				element = Extract.getRepClause(child,self.prefixRepClause,self.sourcefile)
 			elif child.tag in ['import_pragma']:
-				self.imports.append(Extract.getImport(child))
+				self.imports.append(Extract.getImport(child,self.sourcefile))
 			elif child.tag not in ['implementation_defined_pragma']: 
-				print("Not parsed: "+child.tag)
+				self._print("Not parsed: "+child.tag)
 				
 			if element is not None:
 				if parent is None: 
@@ -81,9 +92,10 @@ class PPFile:
 				if 'uri' in element: self.elementsByUris[element['uri']] = element
 				elements.append(element)
 				if element['has_childs'] and child.find('body_declarative_items_ql') is not None:
+					isPrivateSubLevel = isPrivate
 					if element['type'] == 'function': 
-						isPrivate = True
-					self.parseRecursive(child.find('body_declarative_items_ql'),element['childs'],child,isPrivate)
+						isPrivateSubLevel = True
+					self.parseRecursive(child.find('body_declarative_items_ql'),element['childs'],child,isPrivateSubLevel)
 	
 			i+=1
 			lastNode = child
@@ -143,6 +155,7 @@ class PPFile:
 			
 	## Write result to the c++ file
 	def write(self):
+		self._printVerbose("Creating "+self.name+"...")
 		out = "/*! @file "+os.path.split(self.filename)[1]+" */"
 		for include in self.includes:
 			out += "\n"+Convert.include(include)
@@ -174,11 +187,11 @@ class PPFile:
 			element['comment_add_private'] = self.isPrivateElement(element)
 
 			if element['type'] == 'record':
-				out += "\n" + Convert.record(element,self.doxyReader.extract_all_bool) + "\n"
+				out += "\n" + Convert.record(element,self.doxyReader.extract_all_bool,self.doxyReader.include_private_bool) + "\n"
 			if element['type'] == 'type':
-				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool) + "\n"
+				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool,self.doxyReader.include_private_bool) + "\n"
 			if element['type'] == 'rep_clause':
-				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool) + "\n"
+				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool,self.doxyReader.include_private_bool) + "\n"
 			if element['type'] == 'rename':
 				out += "\n" + Convert.rename(element) + "\n"
 			elif element['type'] == 'function': 

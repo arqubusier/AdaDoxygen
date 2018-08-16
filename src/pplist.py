@@ -39,12 +39,13 @@ class PPList:
 		for pp in self.ppobjects:
 			all_imports = all_imports + pp.imports
 		for pp in self.ppobjects:
-			for uri in all_imports:
-				if uri in pp.elementsByUris:
-					pp.elementsByUris[uri]['is_imported'] = True
+			for imp in all_imports:
+				if imp['uri'] in pp.elementsByUris:
+					pp.elementsByUris[imp['uri']]['is_imported'] = True
+					pp.elementsByUris[imp['uri']]['imported_plain'] = imp['plain']
 		
 	## Build tuples with matching cpp and hpp files
-	def buildTuples(self):
+	def buildTuples(self,quiet):
 		for hpp in self.ppobjects:
 			if hpp.filetype == 'hpp':
 				cpp = None
@@ -54,14 +55,15 @@ class PPList:
 						break
 
 				if cpp is None:
-					print "Warning, no source-file for '"+hpp.name+"' found."
+					if quiet is False:
+						print("AdaDoxygen (pplist.py): Warning, no source-file for '"+hpp.name+"' found.")
 				else:
 					self.tuples.append(PPTuple(hpp,cpp))
 	
 	## See PPTuple.moveGenericFunctionBodiesRecursive
-	def moveGenericFunctionBodies(self):
+	def moveGenericFunctionBodies(self,quiet):
 		for tuple in self.tuples:
-			tuple.moveGenericFunctionBodiesRecursive(tuple.cpp.elements)
+			tuple.moveGenericFunctionBodiesRecursive(tuple.cpp.elements,quiet)
 			
 	## See PPTuple.exchangePrivateInfoRecursive
 	def exchangePrivateInfo(self):
@@ -71,5 +73,4 @@ class PPList:
 	## See PPFile.write
 	def write(self):
 		for pp in self.ppobjects:
-			pp.doxyReader.printt( "Creating "+pp.name+"..." )
 			pp.write()
