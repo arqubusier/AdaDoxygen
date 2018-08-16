@@ -48,6 +48,9 @@ optional arguments:
                         Path to doxygen, default='doxygen'
 ```
 
+For a working example, run
+> ` python src/main.py examples/doxyfile.ini -rt `
+
 ## Dependencies
 * python (tested with 2.7)
 * doxygen (tested with 1.8.14)
@@ -69,7 +72,7 @@ special meaning for AdaDoxygen:
 * EXTENSION_MAPPING - The following must be added in order for AdaDoxygen to work: adb=C++ ads=C++
 * STRIP_FROM_PATH - Only absolute path is supported.
 * HIDE_UNDOC_CLASSES - If set to NO, undocumented packages will be extracted as well.
-* LAYOUT_FILE - Is not used. It is overwritten by DoxygenLayout.xml in the src-directory
+* LAYOUT_FILE - Is not used. It is overwritten by doxygenlayout.xml in the src-directory
 
 Options that is not listed above is used as usual by Doxygen (or modified with same behaviour by AdaDoxygen)
 
@@ -101,3 +104,29 @@ This is a known and debated bug in argparse for python 2.7.
 * To hide output from gnat2xml, pass the ` -q` flag with `--gnat-options`
 * To hide output from doxygen, set QUIET to YES in your doxyfile
 * To hide output from adadoxygen, pass the -q flag
+
+## Development
+### How to list unsupported elements
+* Set gnat2xml and doxygen to quiet
+* AdaDoxygen will default print `Not parsed: <element-tag-name>`
+* To print more information about the unparsed element, change the last elif-statement in PPFile.parseRecursive
+
+### How to add support for a unparsed element
+* Add a extract handler for your xml node tag in PPFile.parseRecursive that extracts data from xml to a python dict
+* Add a convert handler in PPFile.writeRecursive that converts your python dict to plain text with C++ syntax
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

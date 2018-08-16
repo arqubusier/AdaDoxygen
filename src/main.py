@@ -188,7 +188,7 @@ class AdaDoxygen:
 		echoArr.append('INPUT='+self.tmp_dir_cpp)
 		echoArr.append('RECURSIVE=YES')
 		echoArr.append('STRIP_FROM_PATH='+os.path.join(self.tmp_dir_cpp,self.abs2rel(self.doxyReader.stripfrompath)))
-		echoArr.append('LAYOUT_FILE='+os.path.join(self.src_dir,'DoxygenLayout.xml'))
+		echoArr.append('LAYOUT_FILE='+os.path.join(self.src_dir,'doxygenlayout.xml'))
 		
 		sep = ';'
 		if os.name == 'nt': sep = '&'

@@ -40,6 +40,7 @@ class PPFile:
 		self.parseRecursive(node,self.elements)
 				
 	## Recursively loop through each level in the XML-tree
+	#  To print more information about unparsed elements, change the last elif-statement
 	def parseRecursive(self,node,elements,parent=None,isPrivate=False):
 		lastNode = None
 		
