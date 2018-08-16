@@ -4,13 +4,12 @@ from extract import Extract
 
 class PPFile:
 	
-	def __init__(self,quiet,verbose,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,hideRepClause,doxyReader):
+	def __init__(self,quiet,verbose,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,hideRepClause,extractAll,extractPriv,hideUndocPkgs):
 		self.quiet = quiet
 		self.verbose = verbose
 		
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
-		self.source = self.root.get('source_file')
 		
 		self.filename = filename
 		self.filetype = self.filename.split('.')[-1]
@@ -20,10 +19,10 @@ class PPFile:
 		self.file = open(self.filename,"w+")
 		self.sourcefile = sourcefile
 		
-		# List of dictionaries with extracted info about functions, structs, packages etc...
+		## List of dictionaries with extracted info about functions, structs, packages etc...
 		self.elements = [] 
 		
-		# Function dictionaries stored with uri as index
+		## Some elements (functions) is stored with uri as index
 		self.elementsByUris = {}
 		
 		self.includes = []
@@ -33,7 +32,9 @@ class PPFile:
 		self.prefixClass = prefixClass
 		self.prefixRepClause = prefixRepClause
 		self.hideRepClause = hideRepClause
-		self.doxyReader = doxyReader
+		self.extractAll = extractAll
+		self.extractPriv = extractPriv
+		self.hideUndocPkgs = hideUndocPkgs
 		self.privateUris = []
 		
 	def _print(self,msg):
@@ -62,7 +63,7 @@ class PPFile:
 			if child.tag in ['procedure_body_declaration','function_body_declaration']:
 				element = Extract.getFunction(child,lastNode,self.sourcefile)
 			elif child.tag in ['function_declaration','generic_function_declaration','procedure_declaration','generic_procedure_declaration','single_task_declaration','task_type_declaration','protected_type_declaration','single_protected_declaration']:
-				element = Extract.getFunctionHead(child,lastNode,self.sourcefile,self.doxyReader.include_private_bool)
+				element = Extract.getFunctionHead(child,lastNode,self.sourcefile,self.extractPriv)
 			elif child.tag in ['ordinary_type_declaration','subtype_declaration','private_type_declaration']:
 				element = self.parseType(child,lastNode,isPrivate,node)
 			elif child.tag in ['component_declaration']:
@@ -87,7 +88,7 @@ class PPFile:
 					c = Extract.getComment(node,i) 
 				element['comment'] = c
 				element['is_private'] = isPrivate
-				element['is_extract'] = c != '' or self.doxyReader.extract_all_bool or parent == None
+				element['is_extract'] = c != '' or self.extractAll or parent == None
 				
 				if 'uri' in element: self.elementsByUris[element['uri']] = element
 				elements.append(element)
@@ -115,7 +116,7 @@ class PPFile:
 		
 	## Parse a type
 	def parseType(self,child,lastNode,isPrivate,nodes):
-		if child.tag == 'private_type_declaration' and self.doxyReader.include_private_bool:
+		if child.tag == 'private_type_declaration' and self.extractPriv:
 			return None
 		recNode = Extract.getRecordNode(child)
 		if recNode is None:
@@ -167,7 +168,7 @@ class PPFile:
 	
 	## Get number of visible childs, if EXTRACT_PRIVATE=YES, then the result will be len(childs)
 	def getNrVisibleChilds(self,childs):
-		if self.doxyReader.include_private_bool: return len(childs)
+		if self.extractPriv: return len(childs)
 		nr = 0
 		for child in childs:
 			if child['is_private']: nr += 1
@@ -179,7 +180,7 @@ class PPFile:
 		for element in elements:
 			if element['type'] == 'package':
 				out += self.writePackage(element)
-			elif self.getNrVisibleChilds(element['childs']) > 0 and self.doxyReader.include_private_bool:
+			elif self.getNrVisibleChilds(element['childs']) > 0 and self.extractPriv:
 				out += "namespace "+self.prefixFunction+element['name']+" {\n"
 				out += self.writeRecursive(element,element['childs'])
 				out += "\n}"
@@ -187,15 +188,15 @@ class PPFile:
 			element['comment_add_private'] = self.isPrivateElement(element)
 
 			if element['type'] == 'record':
-				out += "\n" + Convert.record(element,self.doxyReader.extract_all_bool,self.doxyReader.include_private_bool) + "\n"
+				out += "\n" + Convert.record(element,self.extractAll,self.extractPriv) + "\n"
 			if element['type'] == 'type':
-				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool,self.doxyReader.include_private_bool) + "\n"
+				out += "\n" + Convert.type(element,self.extractAll,self.extractPriv) + "\n"
 			if element['type'] == 'rep_clause':
-				out += "\n" + Convert.type(element,self.doxyReader.extract_all_bool,self.doxyReader.include_private_bool) + "\n"
+				out += "\n" + Convert.type(element,self.extractAll,self.extractPriv) + "\n"
 			if element['type'] == 'rename':
 				out += "\n" + Convert.rename(element) + "\n"
 			elif element['type'] == 'function': 
-				out += "\n" + Convert.function(element,self.prefixFunction,self.doxyReader.extract_all_bool) + "\n"
+				out += "\n" + Convert.function(element,self.prefixFunction,self.extractAll) + "\n"
 			
 		return out
 		
@@ -203,7 +204,7 @@ class PPFile:
 	def writePackage(self,element):
 		out = ''
 		comment = element['comment']
-		if comment == '' and (self.doxyReader.hideundoc_classes is False):
+		if comment == '' and (self.hideUndocPkgs is False):
 			comment = "<b style='display:none;'>HIDE_UNDOC_CLASSES=NO</b>"
 		out += Convert.comment(comment)
 		out += "namespace "+element['name']+" {\n"

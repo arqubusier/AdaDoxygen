@@ -164,7 +164,15 @@ class AdaDoxygen:
 			filename, sourcefile = Convert.filename(xmlfile, self.preprocfiles, self.tmp_dir_ada, self.tmp_dir_cpp)
 			dirname = os.path.dirname(filename)
 			if not os.path.exists(dirname): os.makedirs(dirname)
-			pp = PPFile(self.args.quiet,self.args.verbose,filename,sourcefile,tree,self.args.prefix_functions,self.args.prefix_packages,self.args.prefix_repclause,self.args.hide_repclause,self.doxyReader)
+			
+			extractAll = self.doxyReader.extract_all_bool
+			extractPriv = self.doxyReader.include_private_bool
+			hideUndocPkgs = self.doxyReader.include_private_bool
+			
+			pp = PPFile(self.args.quiet,self.args.verbose,filename,
+						sourcefile,tree,self.args.prefix_functions,self.args.prefix_packages,
+						self.args.prefix_repclause,self.args.hide_repclause,
+						extractAll,extractPriv,hideUndocPkgs)
 			pp.parse()
 			pplist.add(pp)
 			
