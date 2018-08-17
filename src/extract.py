@@ -1,3 +1,5 @@
+import logging
+
 ## This class extracts data from XML-nodes into dictionaries
 class Extract:
 
@@ -188,7 +190,7 @@ class Extract:
 		elif mode == 'AN_IN_OUT_MODE': return 'inout'
 		elif mode == 'AN_OUT_MODE': return 'out'
 		else:
-			print("AdaDoxygen (extract.py): Warning: Mode '"+mode+"' not recognized, setting default mode='in'")
+			logging.warning("Mode '"+mode+"' not recognized, setting default mode='in'")
 			return 'in'
 	
 	@staticmethod

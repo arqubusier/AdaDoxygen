@@ -1,4 +1,4 @@
-import os, sys, ntpath
+import os, sys, ntpath, logging
 
 ## The static methods in this class converts dictionaries to c++ code
 class Convert:
@@ -10,8 +10,8 @@ class Convert:
 			if ntpath.basename(test_file)+".xml" == ntpath.basename(xmlfile):
 				preprocfile = test_file
 		if preprocfile == "":
-			print("A XML file found that could not be matched with the original Ada-file.")
-			print("Please delete '"+xmlfile+"' and try again")
+			logging.error("A XML file found that could not be matched with the original Ada-file.")
+			logging.error("Please delete '"+xmlfile+"' and try again")
 			sys.exit()
 		
 		preprocfilepath = os.path.relpath(preprocfile,tmp_dir_ada)

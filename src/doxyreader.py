@@ -1,36 +1,25 @@
-import os,sys,re,ConfigParser,StringIO
+import os,sys,re,ConfigParser,StringIO,logging
 
 ## Reads values from a Doxyfile
 class DoxyReader:
 
-	def __init__(self,file,quiet,verbose):
+	def __init__(self,file):
 		self.file = file
 		self.parser = self.getParser()
-		
-		self.quiet = quiet
-		self.verbose = verbose
 		
 		self.extract_all_bool = self.getBool('EXTRACT_ALL')
 		self.include_private_bool = self.getBool('EXTRACT_PRIVATE')
 		self.recursive_bool = self.getBool('RECURSIVE')
 		
 		if self.get('EXTENSION_MAPPING') != "adb=C++ ads=C++":
-			self._print("Warning: EXTENSION_MAPPING in doxyfile should be 'adb=C++ ads=C++'")
+			logging.warning("EXTENSION_MAPPING in doxyfile should be 'adb=C++ ads=C++'")
 			
 		self.input_files = self.getInputFiles()
-		self._print("Number of input files: "+str(len(self.input_files)))
+		logging.info("Number of input files: "+str(len(self.input_files)))
 		
 		self.stripfrompath = self.get('STRIP_FROM_PATH')
 		self.hideundoc_classes = self.getBool('HIDE_UNDOC_CLASSES')
 		self.htmlpath = os.path.join(os.getcwd(),self.get('HTML_OUTPUT'))
-			
-	def _print(self,msg):
-		if self.quiet: return
-		print("AdaDoxygen (doxyreader.py): "+str(msg))
-		
-	def _printVerbose(self,msg):
-		if self.verbose is False: return
-		print("AdaDoxygen doxyreader.py: "+str(msg))
 			
 	## Returns list of files selected in INPUT
 	def getInputFiles(self):
@@ -49,16 +38,17 @@ class DoxyReader:
 					self._getInputFilesRecursive(el_abs,os.listdir(el_abs),res,True)
 			elif os.path.isfile(el_abs):
 				fileext = os.path.splitext(el_abs)[1]
-				if self.fileAlreadyIncluded(res,el_abs) is False: #and fileext in ['.adb','.ads','gpr']
+				if self.fileAlreadyIncluded(res,el_abs) is False:
 					res.append(el_abs)
-			else: self._print("Warning: '" + el_abs + "' is not directory or file")
+			else: 
+				logging.warning("'" + el_abs + "' is not directory or file")
 
 	## Check if the basename already exists in a list of files
 	def fileAlreadyIncluded(self,files,file):
 		filename = os.path.basename(file)
 		for f in files:
 			if filename == os.path.basename(f):
-				self._print('Warning: '+filename+' exists in more then one directory. Choosing the first one selected in doxyfile.')
+				logging.warning(''+filename+' exists in more then one directory. Choosing the first one selected in doxyfile.')
 				return True
 		return False
 			
@@ -78,6 +68,8 @@ class DoxyReader:
 	## Get a value by key in the doxyfile
 	def get(self,key): return self.parser.get('root',key).strip()
 	
-	## Only print if QUIET in doxyfile is set to NO
-	def printt(self,str): 
-		if self.quiet is False: print(str)
+	
+	
+	
+	
+	

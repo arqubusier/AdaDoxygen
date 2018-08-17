@@ -1,3 +1,4 @@
+import logging
 from pptuple import PPTuple
 
 ## Manage a list of PPFile-objects and PPTuple-objects
@@ -45,7 +46,7 @@ class PPList:
 					pp.elementsByUris[imp['uri']]['imported_plain'] = imp['plain']
 		
 	## Build tuples with matching cpp and hpp files
-	def buildTuples(self,quiet):
+	def buildTuples(self):
 		for hpp in self.ppobjects:
 			if hpp.filetype == 'hpp':
 				cpp = None
@@ -55,15 +56,14 @@ class PPList:
 						break
 
 				if cpp is None:
-					if quiet is False:
-						print("AdaDoxygen (pplist.py): Warning, no source-file for '"+hpp.name+"' found.")
+					logging.warning("No source-file for '"+hpp.name+"' found.")
 				else:
 					self.tuples.append(PPTuple(hpp,cpp))
 	
 	## See PPTuple.moveGenericFunctionBodiesRecursive
-	def moveGenericFunctionBodies(self,quiet):
+	def moveGenericFunctionBodies(self):
 		for tuple in self.tuples:
-			tuple.moveGenericFunctionBodiesRecursive(tuple.cpp.elements,quiet)
+			tuple.moveGenericFunctionBodiesRecursive(tuple.cpp.elements)
 			
 	## See PPTuple.exchangePrivateInfoRecursive
 	def exchangePrivateInfo(self):

@@ -4,8 +4,8 @@ Ada to c++ converter for use with doxygen
 ## Usage
 
 ```
-usage: main.py [-h] [-p PROJECT_FILE] [-t TEMPORARY_DIR] [-rt] [-q] [-v]
-               [--prefix-functions PREFIX_FUNCTIONS]
+usage: main.py [-h] [-p PROJECT_FILE] [-t TEMPORARY_DIR] [-r]
+               [-l LOGGING_LEVEL] [--prefix-functions PREFIX_FUNCTIONS]
                [--prefix-packages PREFIX_PACKAGES]
                [--prefix-repclause PREFIX_REPCLAUSE] [--hide-repclause]
                [--post-process] [--gnat-options [GNAT_OPTIONS]]
@@ -23,11 +23,11 @@ optional arguments:
                         different directories
   -t TEMPORARY_DIR, --temporary-dir TEMPORARY_DIR
                         Path to tmp dir, dirs will be created if not exists,
-                        default='/path/to/AdaDoxygen/_tmp'
-  -rt, --remove-temporary-dir
+                        default='_tmp'
+  -r, --remove-temporary-dir
                         Remove temporary dir when AdaDoxygen is done
-  -q, --quiet           Hide AdaDoxygen output
-  -v, --verbose         List generated files by AdaDoxygen
+  -l LOGGING_LEVEL, --logging-level LOGGING_LEVEL
+                        debug/info/warning/error/critical, default='warning'
   --prefix-functions PREFIX_FUNCTIONS
                         Prefix for nested members except packages,
                         default='__'
@@ -49,7 +49,7 @@ optional arguments:
 ```
 
 For a working example, run
-> ` python src/main.py examples/doxyfile.ini -rt `
+> ` python src/main.py examples/doxyfile.ini -r -l info`
 
 ## Dependencies
 * python (tested with 2.7)
@@ -100,15 +100,17 @@ try to add a space inside the argument string value like
 
 This is a known and debated bug in argparse for python 2.7.
 
-### Hiding output
+### Controlling output
 * To hide output from gnat2xml, pass the ` -q` flag with `--gnat-options`
 * To hide output from doxygen, set QUIET to YES in your doxyfile
-* To hide output from adadoxygen, pass the -q flag
+* To control output from adadoxygen, 
+pass the `-l` or `--logging-level` along with pythons logging module level. 
+`debug` is verbose and `critical` is quiet.
 
 ## Development
 ### How to list unsupported elements
 * Set gnat2xml and doxygen to quiet
-* AdaDoxygen will default print `Not parsed: <element-tag-name>`
+* AdaDoxygen will log `Not parsed: <element-tag-name>` on info level
 * To print more information about the unparsed element, change the last elif-statement in PPFile.parseRecursive
 
 ### How to add support for a unparsed element

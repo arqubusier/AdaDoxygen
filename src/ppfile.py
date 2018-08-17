@@ -1,13 +1,10 @@
-import os,re
+import os,re,logging
 from convert import Convert
 from extract import Extract
 
 class PPFile:
 	
-	def __init__(self,quiet,verbose,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,hideRepClause,extractAll,extractPriv,hideUndocPkgs):
-		self.quiet = quiet
-		self.verbose = verbose
-		
+	def __init__(self,filename,sourcefile,tree,prefixFunction,prefixClass,prefixRepClause,hideRepClause,extractAll,extractPriv,hideUndocPkgs):
 		self.root = tree.getroot()
 		self.name = self.root.get('def_name')
 		
@@ -36,15 +33,6 @@ class PPFile:
 		self.extractPriv = extractPriv
 		self.hideUndocPkgs = hideUndocPkgs
 		self.privateUris = []
-		
-	def _print(self,msg):
-		if self.quiet: return
-		print("AdaDoxygen (ppfile.py): "+str(msg))
-		
-	def _printVerbose(self,msg):
-		if self.verbose is False: return
-		print("AdaDoxygen (ppfile.py): "+str(msg))
-		
 
 	## Start parsing the XML tree
 	def parse(self):
@@ -79,7 +67,7 @@ class PPFile:
 			elif child.tag in ['import_pragma']:
 				self.imports.append(Extract.getImport(child,self.sourcefile))
 			elif child.tag not in ['implementation_defined_pragma']: 
-				self._print("Not parsed: "+child.tag)
+				logging.info("Not parsed: "+child.tag)
 				
 			if element is not None:
 				if parent is None: 
@@ -156,7 +144,7 @@ class PPFile:
 			
 	## Write result to the c++ file
 	def write(self):
-		self._printVerbose("Creating "+self.name+"...")
+		logging.debug("Creating "+self.name+"...")
 		out = "/*! @file "+os.path.split(self.filename)[1]+" */"
 		for include in self.includes:
 			out += "\n"+Convert.include(include)
